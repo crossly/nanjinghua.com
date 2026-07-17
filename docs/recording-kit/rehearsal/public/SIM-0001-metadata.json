@@ -1,0 +1,20 @@
+{
+	"participantCode": "SIM-0001",
+	"pseudonym": "演练甲",
+	"birthDecade": "1970 年代",
+	"growthArea": "南京主城区某片区（假数据）",
+	"longTermResidence": "南京与外地城市（假数据）",
+	"familyLanguages": "南京话、普通话（假数据）",
+	"mandarinUse": "工作场景经常使用（假数据）",
+	"recordingDate": "2026-07-17",
+	"recordingPlace": "室内安静环境（演练）",
+	"media": {
+		"original": "../originals/SIM-0001-original.wav",
+		"originalSha256": "7e8d5f3af594280a84abe4f72a3e9f71aca36637c2806aca9c37b9c6e96fbdb5",
+		"derivative": "../derivatives/SIM-0001-public.mp3",
+		"derivation": "FFmpeg 8.1；从原件生成 48 kHz、96 kbps 单声道 MP3；输入为 1 秒数字静音演练 WAV",
+		"processedAt": "2026-07-17",
+		"processedBy": "南京话项目流程演练"
+	},
+	"notice": "全部为假数据，音频不含真人声音"
+}

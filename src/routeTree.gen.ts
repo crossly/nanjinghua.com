@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RecordingKitRouteImport } from './routes/recording-kit'
 import { Route as ContributeRouteImport } from './routes/contribute'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ArticlesSlugRouteImport } from './routes/articles/$slug'
@@ -18,6 +19,11 @@ import { Route as ApiArchiveArchiveIdRouteImport } from './routes/api/archive/$a
 import { Route as ApiEditorSubmissionsMaintenanceRouteImport } from './routes/api/editor/submissions/maintenance'
 import { Route as ApiEditorSubmissionsSubmissionIdRouteImport } from './routes/api/editor/submissions/$submissionId'
 
+const RecordingKitRoute = RecordingKitRouteImport.update({
+  id: '/recording-kit',
+  path: '/recording-kit',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ContributeRoute = ContributeRouteImport.update({
   id: '/contribute',
   path: '/contribute',
@@ -64,6 +70,7 @@ const ApiEditorSubmissionsSubmissionIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/contribute': typeof ContributeRoute
+  '/recording-kit': typeof RecordingKitRoute
   '/api/submissions': typeof ApiSubmissionsRoute
   '/archive/$archiveId': typeof ArchiveArchiveIdRoute
   '/articles/$slug': typeof ArticlesSlugRoute
@@ -74,6 +81,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/contribute': typeof ContributeRoute
+  '/recording-kit': typeof RecordingKitRoute
   '/api/submissions': typeof ApiSubmissionsRoute
   '/archive/$archiveId': typeof ArchiveArchiveIdRoute
   '/articles/$slug': typeof ArticlesSlugRoute
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/contribute': typeof ContributeRoute
+  '/recording-kit': typeof RecordingKitRoute
   '/api/submissions': typeof ApiSubmissionsRoute
   '/archive/$archiveId': typeof ArchiveArchiveIdRoute
   '/articles/$slug': typeof ArticlesSlugRoute
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/contribute'
+    | '/recording-kit'
     | '/api/submissions'
     | '/archive/$archiveId'
     | '/articles/$slug'
@@ -107,6 +117,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/contribute'
+    | '/recording-kit'
     | '/api/submissions'
     | '/archive/$archiveId'
     | '/articles/$slug'
@@ -117,6 +128,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/contribute'
+    | '/recording-kit'
     | '/api/submissions'
     | '/archive/$archiveId'
     | '/articles/$slug'
@@ -128,6 +140,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ContributeRoute: typeof ContributeRoute
+  RecordingKitRoute: typeof RecordingKitRoute
   ApiSubmissionsRoute: typeof ApiSubmissionsRoute
   ArchiveArchiveIdRoute: typeof ArchiveArchiveIdRoute
   ArticlesSlugRoute: typeof ArticlesSlugRoute
@@ -138,6 +151,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/recording-kit': {
+      id: '/recording-kit'
+      path: '/recording-kit'
+      fullPath: '/recording-kit'
+      preLoaderRoute: typeof RecordingKitRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/contribute': {
       id: '/contribute'
       path: '/contribute'
@@ -200,6 +220,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ContributeRoute: ContributeRoute,
+  RecordingKitRoute: RecordingKitRoute,
   ApiSubmissionsRoute: ApiSubmissionsRoute,
   ArchiveArchiveIdRoute: ArchiveArchiveIdRoute,
   ArticlesSlugRoute: ArticlesSlugRoute,

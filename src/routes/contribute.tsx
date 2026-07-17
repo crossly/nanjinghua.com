@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Send } from "lucide-react";
+import { ArrowRight, Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { ArchiveHeader } from "../components/archive-header";
@@ -169,6 +169,10 @@ function ContributePage() {
 							<dd>表单不接收文件；确认来源与授权后，编辑再联系接收原件。</dd>
 						</div>
 					</dl>
+					<a className="contribute__recording-kit" href="/recording-kit">
+						<span>查看真人语音采集包</span>
+						<ArrowRight aria-hidden="true" strokeWidth={1.5} />
+					</a>
 				</section>
 
 				<form className="contribute-form" ref={formRef} onSubmit={submit}>
