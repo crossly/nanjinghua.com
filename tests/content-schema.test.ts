@@ -73,6 +73,34 @@ const validCollection = {
 	updatedAt: "2026-07-17",
 };
 
+const validOriginalFile = {
+	kind: "原始文件",
+	fileName: "source.wav",
+	mediaType: "audio/wav",
+	byteLength: 2048,
+	sha256: "a".repeat(64),
+	sourceUrl: "https://example.com/source.wav",
+	preservedAt: "2026-07-17",
+	storage: "编辑研究副本，未提交 Git",
+	publicAccess: false,
+	rightsBasis: "已获授权；原始文件不公开",
+};
+
+const validDerivedFile = {
+	kind: "派生文件",
+	fileName: "derived.mp3",
+	mediaType: "audio/mpeg",
+	byteLength: 1024,
+	sha256: "b".repeat(64),
+	sourceUrl: "https://example.com/derived.mp3",
+	preservedAt: "2026-07-17",
+	storage: "R2",
+	publicAccess: true,
+	rightsBasis: "已获授权",
+	derivedFromSha256: validOriginalFile.sha256,
+	processing: ["从 WAV 转码为 MP3"],
+};
+
 test("完整档案元数据可以通过模式校验", () => {
 	assert.equal(parseArchiveEntries([validEntry])[0]?.id, "NJH000001");
 });
@@ -117,24 +145,22 @@ test("可保存的原始文件记录校验值、来源和访问状态", () => {
 	const [entry] = parseArchiveEntries([
 		{
 			...validEntry,
-			preservedFiles: [
-				{
-					kind: "原始文件",
-					fileName: "source.pdf",
-					mediaType: "application/pdf",
-					byteLength: 1024,
-					sha256: "a".repeat(64),
-					sourceUrl: "https://example.com/source.pdf",
-					preservedAt: "2026-07-17",
-					storage: "编辑研究副本，未提交 Git",
-					publicAccess: false,
-					rightsBasis: "公版原著；数字文件不由本站再分发",
-				},
-			],
+			preservedFiles: [validOriginalFile],
 		},
 	]);
 
 	assert.equal(entry?.preservedFiles?.[0]?.sha256, "a".repeat(64));
+});
+
+test("派生文件可以追溯到同一档案中的原始文件", () => {
+	const [entry] = parseArchiveEntries([
+		{
+			...validEntry,
+			preservedFiles: [validOriginalFile, validDerivedFile],
+		},
+	]);
+
+	assert.equal(entry?.preservedFiles?.[1]?.derivedFromSha256, validOriginalFile.sha256);
 });
 
 test("派生文件必须记录原始文件校验值和处理过程", () => {
@@ -145,21 +171,52 @@ test("派生文件必须记录原始文件校验值和处理过程", () => {
 					...validEntry,
 					preservedFiles: [
 						{
-							kind: "派生文件",
-							fileName: "derived.mp3",
-							mediaType: "audio/mpeg",
-							byteLength: 1024,
-							sha256: "b".repeat(64),
-							sourceUrl: "https://example.com/derived.mp3",
-							preservedAt: "2026-07-17",
-							storage: "R2",
-							publicAccess: true,
-							rightsBasis: "已获授权",
+							...validDerivedFile,
+							derivedFromSha256: undefined,
+							processing: undefined,
 						},
 					],
 				},
 			]),
 		/派生文件必须记录原始文件校验值和处理过程/,
+	);
+});
+
+test("派生文件拒绝悬空的原始文件校验值", () => {
+	assert.throws(
+		() =>
+			parseArchiveEntries([
+				{
+					...validEntry,
+					preservedFiles: [
+						validOriginalFile,
+						{ ...validDerivedFile, derivedFromSha256: "c".repeat(64) },
+					],
+				},
+			]),
+		/派生文件必须指向同一档案中已保存的原始文件/,
+	);
+});
+
+test("派生文件不能把另一派生文件作为原始来源", () => {
+	assert.throws(
+		() =>
+			parseArchiveEntries([
+				{
+					...validEntry,
+					preservedFiles: [
+						validOriginalFile,
+						validDerivedFile,
+						{
+							...validDerivedFile,
+							fileName: "second-derived.mp3",
+							sha256: "c".repeat(64),
+							derivedFromSha256: validDerivedFile.sha256,
+						},
+					],
+				},
+			]),
+		/派生文件必须指向同一档案中已保存的原始文件/,
 	);
 });
 

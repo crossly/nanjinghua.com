@@ -128,6 +128,12 @@ function ArchiveEntryPage() {
 								<dd>{entry.archivePlace.collectionLocation}</dd>
 							</div>
 						) : null}
+						{entry.archivePlace.uncertainty ? (
+							<div>
+								<dt>地点不确定性</dt>
+								<dd>{entry.archivePlace.uncertainty}</dd>
+							</div>
+						) : null}
 						{entry.preservedFiles?.map((file) => (
 							<div key={file.sha256}>
 								<dt>保存文件</dt>

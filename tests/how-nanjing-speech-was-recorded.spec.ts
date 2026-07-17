@@ -58,6 +58,23 @@ test("读者可以沿材料链理解南京话如何被记录下来", async ({ pa
 		],
 	});
 
+	await page.goto("/archive/NJH000009");
+	const textbookFacts = page.getByRole("region", { name: "材料与审核" });
+	await expect(textbookFacts).toContainText("采集地点未载");
+	await expect(textbookFacts.getByText("地点不确定性", { exact: true })).toBeVisible();
+	await expect(textbookFacts.getByText("可确认的当代位置", { exact: true })).toHaveCount(0);
+	await expect(textbookFacts).toContainText(
+		"7a39e3b301877c8633321f8f00b70a6a5254b3e721ca8057ecfc5e1940965d71",
+	);
+	await expect(textbookFacts).toContainText("不公开");
+	const textbookViewportMetrics = await page.evaluate(() => ({
+		clientWidth: document.documentElement.clientWidth,
+		scrollWidth: document.documentElement.scrollWidth,
+	}));
+	expect(textbookViewportMetrics.scrollWidth).toBeLessThanOrEqual(
+		textbookViewportMetrics.clientWidth,
+	);
+
 	await page.goto("/archive/NJH000003");
 	await expect(page.getByRole("region", { name: "档案说明" })).toContainText(
 		"尚未取得原书和录音带",

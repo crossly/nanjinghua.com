@@ -10,11 +10,25 @@
 		"describedPeriod": "19 世纪末日本编者所称的“南京官话”与“南部会话”"
 	},
 	"archivePlace": {
-		"recordedName": "南京官話／支那南部會話",
-		"historicalJurisdiction": "清代中国；编印于日本东京",
-		"currentLocation": "题名所指地域需逐页考证，不能只定位为今日南京",
-		"collectionLocation": "国立国会图书馆数字馆藏"
+		"recordedName": "采集地点未载（题名仅作“南京官話／支那南部會話”）",
+		"historicalJurisdiction": "未能确认；书籍于 1895 年在日本东京编印",
+		"collectionLocation": "国立国会图书馆数字馆藏",
+		"uncertainty": "题名与序文是语言及教材标签，不足以确认采集地点，也不能映射为今日南京市"
 	},
+	"preservedFiles": [
+		{
+			"kind": "原始文件",
+			"fileName": "支那南部会話-一名・南京官話-869359-0001.pdf",
+			"mediaType": "application/pdf",
+			"byteLength": 53465061,
+			"sha256": "7a39e3b301877c8633321f8f00b70a6a5254b3e721ca8057ecfc5e1940965d71",
+			"sourceUrl": "https://dl.ndl.go.jp/pid/869359/1/4",
+			"preservedAt": "2026-07-17",
+			"storage": "编辑研究副本，存放于 Git 仓库之外；未向公网再分发",
+			"publicAccess": false,
+			"rightsBasis": "NDL 页面允许生成下载，但以日本著作权法第 67 条第 1 项裁定公开；本站未取得再分发许可"
+		}
+	],
 	"citations": [
 		{
 			"role": "主要来源",

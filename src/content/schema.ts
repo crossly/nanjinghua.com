@@ -70,6 +70,29 @@ const preservedFileSchema = z
 		}
 	});
 
+const preservedFilesSchema = z
+	.array(preservedFileSchema)
+	.min(1)
+	.superRefine((files, context) => {
+		const originalHashes = new Set(
+			files.filter((file) => file.kind === "原始文件").map((file) => file.sha256),
+		);
+
+		for (const [index, file] of files.entries()) {
+			if (
+				file.kind === "派生文件" &&
+				file.derivedFromSha256 &&
+				!originalHashes.has(file.derivedFromSha256)
+			) {
+				context.addIssue({
+					code: "custom",
+					message: "派生文件必须指向同一档案中已保存的原始文件",
+					path: [index, "derivedFromSha256"],
+				});
+			}
+		}
+	});
+
 const archiveTimeSchema = z
 	.object({
 		materialDate: requiredText,
@@ -110,9 +133,10 @@ export const archiveEntrySchema = z
 				historicalJurisdiction: requiredText,
 				currentLocation: requiredText.optional(),
 				collectionLocation: requiredText.optional(),
+				uncertainty: requiredText.optional(),
 			})
 			.strict(),
-		preservedFiles: z.array(preservedFileSchema).min(1).optional(),
+		preservedFiles: preservedFilesSchema.optional(),
 		citations: z.array(citationSchema).min(1, "档案条目至少需要一条引用记录"),
 		review: z
 			.object({
