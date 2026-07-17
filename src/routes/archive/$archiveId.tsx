@@ -83,13 +83,31 @@ function ArchiveEntryPage() {
 							<dd>{entry.rightsStatus}</dd>
 						</div>
 						<div>
-							<dt>材料时间</dt>
+							<dt>材料日期</dt>
 							<dd>{entry.archiveTime.materialDate}</dd>
 						</div>
 						<div>
 							<dt>所述时期</dt>
 							<dd>{entry.archiveTime.describedPeriod}</dd>
 						</div>
+						{entry.archiveTime.inferredPeriod ? (
+							<div>
+								<dt>推定时期</dt>
+								<dd>{entry.archiveTime.inferredPeriod}</dd>
+							</div>
+						) : null}
+						{entry.archiveTime.inferenceBasis ? (
+							<div>
+								<dt>推定依据</dt>
+								<dd>{entry.archiveTime.inferenceBasis}</dd>
+							</div>
+						) : null}
+						{entry.archiveTime.uncertainty ? (
+							<div>
+								<dt>推定不确定性</dt>
+								<dd>{entry.archiveTime.uncertainty}</dd>
+							</div>
+						) : null}
 						<div>
 							<dt>档案地点</dt>
 							<dd>{entry.archivePlace.recordedName}</dd>

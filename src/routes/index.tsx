@@ -1,18 +1,26 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowDown, ArrowRight, ArrowUpRight, MessageSquarePlus } from "lucide-react";
 
-import { getArchiveEntry, getArticle } from "../content/registry";
+import {
+	getArchiveEntry,
+	getArticle,
+	getArticlesForCollection,
+	getCollection,
+} from "../content/registry";
 
 export const Route = createFileRoute("/")({ component: Home });
 
 function Home() {
-	const openingArticle = getArticle("what-is-nanjinghua");
+	const openingCollection = getCollection("what-is-nanjinghua");
+	const [openingArticle, ...continuingArticles] = openingCollection
+		? getArticlesForCollection(openingCollection)
+		: [];
 	const featuredArticle = getArticle("what-a-review-can-tell-us");
 	const featuredArchive = featuredArticle
 		? getArchiveEntry(featuredArticle.archiveIds[0] ?? "")
 		: undefined;
 
-	if (!openingArticle || !featuredArticle || !featuredArchive) {
+	if (!openingCollection || !openingArticle || !featuredArticle || !featuredArchive) {
 		throw new Error("首页证据处理示例缺少对应专题或档案条目");
 	}
 
@@ -69,20 +77,33 @@ function Home() {
 				aria-labelledby="opening-title"
 			>
 				<div className="opening-collection__index" aria-hidden="true">
-					<span>第一辑</span>
-					<strong>01</strong>
+					<span>{openingCollection.sequenceLabel}</span>
+					<strong>{openingCollection.sequenceNumber}</strong>
 				</div>
 
 				<div className="opening-collection__intro">
 					<p className="section-label">首发专题集合</p>
-					<h2 id="opening-title">南京话是什么？</h2>
-					<p>
-						先辨清地域、年代与证据，再谈一种语言从何而来。第一辑将从南京主城区地方话出发，连接历史记录与当代声音。
-					</p>
+					<h2 id="opening-title">{openingCollection.title}</h2>
+					<p>{openingCollection.summary}</p>
 					<a className="opening-collection__link" href={`/articles/${openingArticle.slug}`}>
-						<span>进入“南京话是什么？”专题</span>
+						<span>进入“{openingArticle.title}”专题</span>
 						<ArrowRight aria-hidden="true" strokeWidth={1.5} />
 					</a>
+					{continuingArticles.length > 0 ? (
+						<div className="opening-collection__published">
+							<p>继续阅读</p>
+							<ol>
+								{continuingArticles.map((article) => (
+									<li key={article.slug}>
+										<a href={`/articles/${article.slug}`}>
+											<span>{article.title}</span>
+											<ArrowRight aria-hidden="true" strokeWidth={1.5} />
+										</a>
+									</li>
+								))}
+							</ol>
+						</div>
+					) : null}
 				</div>
 
 				<dl className="opening-collection__dimensions">

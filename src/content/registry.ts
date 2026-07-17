@@ -1,12 +1,15 @@
 import {
 	type ArchiveEntryMetadata,
 	type ArticleMetadata,
+	type CollectionMetadata,
 	parseArchiveEntries,
 	parseArticles,
+	parseCollections,
 } from "./schema";
 
 export type ArchiveEntry = ArchiveEntryMetadata & { body: string };
 export type Article = ArticleMetadata & { body: string };
+export type Collection = CollectionMetadata;
 
 const archiveMetadataModules = import.meta.glob("/content/archive/*.meta.json", {
 	eager: true,
@@ -26,6 +29,10 @@ const articleBodyModules = import.meta.glob("/content/articles/*.md", {
 	query: "?raw",
 	import: "default",
 }) as Record<string, string>;
+const collectionMetadataModules = import.meta.glob("/content/collections/*.meta.json", {
+	eager: true,
+	import: "default",
+}) as Record<string, unknown>;
 
 function contentBodyFor(metadataPath: string, bodies: Record<string, string>): string {
 	const bodyPath = metadataPath.replace(/\.meta\.json$/, ".md");
@@ -75,6 +82,17 @@ export const articles: Article[] = articleMetadata.map((metadata) => {
 	};
 });
 
+export const collections: Collection[] = parseCollections(Object.values(collectionMetadataModules));
+const articleSlugs = new Set(articles.map((article) => article.slug));
+
+for (const collection of collections) {
+	for (const articleSlug of collection.articleSlugs) {
+		if (!articleSlugs.has(articleSlug)) {
+			throw new Error(`专题集合 ${collection.slug} 引用了不存在的专题文章 ${articleSlug}`);
+		}
+	}
+}
+
 export function getArchiveEntry(id: string): ArchiveEntry | undefined {
 	return archiveEntries.find((entry) => entry.id === id);
 }
@@ -87,6 +105,17 @@ export function getPrimaryCitation(entry: ArchiveEntry) {
 
 export function getArticle(slug: string): Article | undefined {
 	return articles.find((article) => article.slug === slug);
+}
+
+export function getCollection(slug: string): Collection | undefined {
+	return collections.find((collection) => collection.slug === slug);
+}
+
+export function getArticlesForCollection(collection: Collection): Article[] {
+	return collection.articleSlugs.flatMap((articleSlug) => {
+		const article = getArticle(articleSlug);
+		return article ? [article] : [];
+	});
 }
 
 export function getArchiveEntriesForArticle(article: Article): ArchiveEntry[] {

@@ -1,0 +1,56 @@
+{
+	"id": "NJH000006",
+	"title": "陈宗霞关于城南家庭白局与老南京话的口述记忆（2020 年报道）",
+	"summary": "陈宗霞在南京日报报道中讲述童年家庭演唱南京白局、学习老南京话的个人记忆；它能保存讲述者经验，不能单独代表南京全城。",
+	"evidenceIdentity": "口述记忆",
+	"languageScope": ["南京话"],
+	"rightsStatus": "仅引文与目录信息",
+	"archiveTime": {
+		"materialDate": "2020-10-21",
+		"describedPeriod": "讲述者童年时期的城南家庭生活，以及 2010—2020 年的方言采集与建档经历",
+		"inferredPeriod": "约 1950—1960 年代的童年记忆",
+		"inferenceBasis": "报道写明陈宗霞 2020 年 72 岁，并把四合院生活表述为童年记忆",
+		"uncertainty": "原话没有给出具体年份，年龄也来自新闻报道而非出生记录"
+	},
+	"archivePlace": {
+		"recordedName": "南京市鼓楼区档案馆（报道所述 2020 年 10 月 19 日活动）",
+		"historicalJurisdiction": "江苏省南京市鼓楼区",
+		"currentLocation": "江苏省南京市鼓楼区",
+		"collectionLocation": "江苏国际在线转载的南京日报报道"
+	},
+	"citations": [
+		{
+			"role": "主要来源",
+			"responsibleParties": ["陈宗霞（讲述）", "刘珲（通讯员）", "王聪（融媒体记者）"],
+			"title": "好消息！“老南京话”首次有了档案",
+			"publication": "《南京日报》；江苏国际在线转载",
+			"publicationDate": "2020-10-21",
+			"locator": "正文第 2—9 段，尤其第 3—5 段讲述者背景与童年记忆",
+			"stableIdentifier": "江苏国际在线 contentid 6841131",
+			"url": "https://gjzx.jschina.com.cn/20372/202010/t20201021_6841131.shtml",
+			"accessedAt": "2026-07-17",
+			"language": "zh-CN"
+		},
+		{
+			"role": "补充来源",
+			"responsibleParties": ["Oral History Association"],
+			"title": "OHA Principles and Best Practices",
+			"publication": "Oral History Association",
+			"publicationDate": "2018-08-30",
+			"locator": "Principles for Oral History；Best Practices for Oral History",
+			"stableIdentifier": "OHA webpage 8350",
+			"url": "https://oralhistory.org/principles-and-best-practices-revised-2018/",
+			"accessedAt": "2026-07-17",
+			"language": "en"
+		}
+	],
+	"review": {
+		"status": "编辑核对后发布",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17",
+		"scope": "核对公开报道的署名、日期、活动地点、讲述者背景与直接引语；未取得采访录音和鼓楼区档案馆原始采集文件"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-17",
+	"updatedAt": "2026-07-17"
+}

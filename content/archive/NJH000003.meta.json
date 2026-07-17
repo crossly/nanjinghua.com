@@ -9,7 +9,8 @@
 		"materialDate": "1997",
 		"describedPeriod": "1997 年出版前采录的南京话",
 		"inferredPeriod": "20 世纪 90 年代",
-		"inferenceBasis": "仅据出版日期推定；准确采录日期须以原书和录音说明为准"
+		"inferenceBasis": "仅据 1997 年出版日期推定采录时间上限",
+		"uncertainty": "出版日期不是采录日期；准确时间须以原书和录音说明为准"
 	},
 	"archivePlace": {
 		"recordedName": "南京（具体采录地点待原件核对）",

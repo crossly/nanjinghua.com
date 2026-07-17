@@ -1,0 +1,18 @@
+{
+	"slug": "how-we-know-nanjinghua-history",
+	"title": "我们怎样知道南京话的历史？",
+	"summary": "用四个真实案例说明原始材料、研究观点、口述记忆和待考说法各能回答什么，以及三种时间为何必须分开。",
+	"author": {
+		"name": "Ricky",
+		"role": "主编与内容责任人"
+	},
+	"archiveIds": ["NJH000003", "NJH000001", "NJH000006", "NJH000007"],
+	"review": {
+		"status": "编辑核对后发布",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-17",
+	"updatedAt": "2026-07-17"
+}

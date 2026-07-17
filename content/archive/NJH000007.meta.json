@@ -1,0 +1,56 @@
+{
+	"id": "NJH000007",
+	"title": "“南京话自公元 311 年起成为官话”说法（2016 年传播记录）",
+	"summary": "2016 年一篇暑期实践文章把公元 311 年、明代和近代串成连续的南京话历史，却未列出历史语言材料或参考文献；本站只保存该说法的传播记录。",
+	"evidenceIdentity": "待考说法",
+	"languageScope": ["历史南京语音"],
+	"rightsStatus": "仅引文与目录信息",
+	"archiveTime": {
+		"materialDate": "2016-08-18",
+		"describedPeriod": "文章所述公元 311 年、西晋末、明代至近代的历史南京语音与官话",
+		"inferredPeriod": "文章推定公元 311 年至近代存在一条连续的南京话—南京官话传承线",
+		"inferenceBasis": "2016 年文章的开篇叙述把多个历史阶段连接为连续传承线",
+		"uncertainty": "页面未列出支撑该推定的原始文献、历史语音材料或参考文献；本站未采信"
+	},
+	"archivePlace": {
+		"recordedName": "南京（文章讨论对象；具体历史空间范围未定义）",
+		"historicalJurisdiction": "文章跨越西晋末、明代与近代，未分别界定行政范围",
+		"currentLocation": "江苏省南京市",
+		"collectionLocation": "搜狐号“新财经报”公开文章页"
+	},
+	"citations": [
+		{
+			"role": "主要来源",
+			"responsibleParties": ["王艺霖（署名）", "南京大学蓝鲸方言小队（署名团队）"],
+			"title": "消失中的南京话——蓝鲸方言小队暑期实践记",
+			"publication": "搜狐号“新财经报”",
+			"publicationDate": "2016-08-18",
+			"locator": "正文第 1 段：关于公元 311 年、金陵雅音、明代基础音系与南京官话的连续叙述",
+			"stableIdentifier": "搜狐内容号 111122591_267471",
+			"url": "https://www.sohu.com/a/111122591_267471",
+			"accessedAt": "2026-07-17",
+			"language": "zh-CN"
+		},
+		{
+			"role": "补充来源",
+			"responsibleParties": ["刘顺"],
+			"title": "三十年来的南京方言研究",
+			"publication": "《南京审计学院学报》2011 年第 8 卷第 1 期",
+			"publicationDate": "2011-01",
+			"locator": "第 92—97 页，尤其第 92 页研究史概述与第 97 页参考文献",
+			"stableIdentifier": "文章编号 1672-8750(2011)01-0092-06",
+			"url": "https://xbbjb.nau.edu.cn/sjxyxb/article/abstract/20110101015",
+			"accessedAt": "2026-07-17",
+			"language": "zh-CN"
+		}
+	],
+	"review": {
+		"status": "待专家复核",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17",
+		"scope": "核对网页署名、发布日期和原文表述；只确认说法曾被发布，不确认其历史结论，相关历史语言问题待原始文献和专家复核"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-17",
+	"updatedAt": "2026-07-17"
+}

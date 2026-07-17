@@ -9,7 +9,8 @@
 		"materialDate": "1993-07",
 		"describedPeriod": "编纂前后所调查的南京市区方言，个别章节涉及郊区",
 		"inferredPeriod": "以 20 世纪后期材料为主",
-		"inferenceBasis": "据 1993 年版次和官方内容提要；具体调查年份仍需逐章核对"
+		"inferenceBasis": "据 1993 年版次和官方内容提要推定材料时间范围",
+		"uncertainty": "具体调查年份、各章材料日期和覆盖范围仍需逐章核对"
 	},
 	"archivePlace": {
 		"recordedName": "南京市区，个别章节涉及郊区",

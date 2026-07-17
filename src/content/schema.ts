@@ -2,6 +2,7 @@ import { z } from "zod";
 
 const isoDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "日期必须使用 YYYY-MM-DD 格式");
 const requiredText = z.string().trim().min(1, "字段不能为空");
+const slugSchema = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "slug 格式无效");
 
 export const evidenceIdentitySchema = z.enum(["原始材料", "研究观点", "口述记忆", "待考说法"], {
 	error: "证据身份必须使用受控词汇",
@@ -35,6 +36,31 @@ export const citationSchema = z
 	})
 	.strict();
 
+const archiveTimeSchema = z
+	.object({
+		materialDate: requiredText,
+		describedPeriod: requiredText,
+		inferredPeriod: requiredText.optional(),
+		inferenceBasis: requiredText.optional(),
+		uncertainty: requiredText.optional(),
+	})
+	.strict()
+	.superRefine((archiveTime, context) => {
+		const inferenceFields = [
+			archiveTime.inferredPeriod,
+			archiveTime.inferenceBasis,
+			archiveTime.uncertainty,
+		];
+		const hasInference = inferenceFields.some((field) => field !== undefined);
+
+		if (hasInference && inferenceFields.some((field) => field === undefined)) {
+			context.addIssue({
+				code: "custom",
+				message: "推定时期必须同时提供推定依据和不确定性",
+			});
+		}
+	});
+
 export const archiveEntrySchema = z
 	.object({
 		id: z.string().regex(/^NJH\d{6}$/, "档案编号必须使用 NJH 加六位数字"),
@@ -43,14 +69,7 @@ export const archiveEntrySchema = z
 		evidenceIdentity: evidenceIdentitySchema,
 		languageScope: z.array(languageScopeSchema).min(1, "档案条目至少需要一个语言对象"),
 		rightsStatus: rightsStatusSchema,
-		archiveTime: z
-			.object({
-				materialDate: requiredText,
-				describedPeriod: requiredText,
-				inferredPeriod: requiredText.optional(),
-				inferenceBasis: requiredText.optional(),
-			})
-			.strict(),
+		archiveTime: archiveTimeSchema,
 		archivePlace: z
 			.object({
 				recordedName: requiredText,
@@ -76,7 +95,7 @@ export const archiveEntrySchema = z
 
 export const articleSchema = z
 	.object({
-		slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "专题文章 slug 格式无效"),
+		slug: slugSchema,
 		title: requiredText,
 		summary: requiredText,
 		author: z
@@ -99,8 +118,22 @@ export const articleSchema = z
 	})
 	.strict();
 
+export const collectionSchema = z
+	.object({
+		slug: slugSchema,
+		title: requiredText,
+		summary: requiredText,
+		sequenceLabel: requiredText,
+		sequenceNumber: z.string().regex(/^\d{2}$/, "专题集合序号必须使用两位数字"),
+		articleSlugs: z.array(slugSchema).min(1, "专题集合至少需要一篇专题文章"),
+		publishedAt: isoDateSchema,
+		updatedAt: isoDateSchema,
+	})
+	.strict();
+
 export type ArchiveEntryMetadata = z.infer<typeof archiveEntrySchema>;
 export type ArticleMetadata = z.infer<typeof articleSchema>;
+export type CollectionMetadata = z.infer<typeof collectionSchema>;
 
 export function parseArchiveEntries(input: unknown[]): ArchiveEntryMetadata[] {
 	const entries = z.array(archiveEntrySchema).parse(input);
@@ -131,4 +164,21 @@ export function parseArticles(input: unknown[]): ArticleMetadata[] {
 	}
 
 	return articles;
+}
+
+export function parseCollections(input: unknown[]): CollectionMetadata[] {
+	const collections = z.array(collectionSchema).parse(input);
+	const seenSlugs = new Set<string>();
+
+	for (const collection of collections) {
+		if (seenSlugs.has(collection.slug)) {
+			throw new Error(`重复专题集合 slug ${collection.slug}`);
+		}
+		if (new Set(collection.articleSlugs).size !== collection.articleSlugs.length) {
+			throw new Error(`专题集合 ${collection.slug} 包含重复专题文章`);
+		}
+		seenSlugs.add(collection.slug);
+	}
+
+	return collections;
 }
