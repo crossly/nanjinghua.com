@@ -1,0 +1,55 @@
+{
+	"id": "NJH000004",
+	"title": "《江苏省和上海市方言概况》（1960 年调查成果）",
+	"summary": "江苏省和上海市方言调查指导组编纂的区域方言调查成果，为把南京放回更大的区域比较中提供书目入口。",
+	"evidenceIdentity": "研究观点",
+	"languageScope": ["南京地区方言"],
+	"rightsStatus": "仅引文与目录信息",
+	"archiveTime": {
+		"materialDate": "1960",
+		"describedPeriod": "20 世纪 50 年代江苏省和上海市方言调查",
+		"inferredPeriod": "1950—1960 年",
+		"inferenceBasis": "刘顺 2011 年综述称该书发表 20 世纪 50 年代方言普查成果；具体南京调查日期待原书核对"
+	},
+	"archivePlace": {
+		"recordedName": "江苏省和上海市，含南京调查材料",
+		"historicalJurisdiction": "20 世纪 50 年代江苏省、上海市相关调查区域",
+		"currentLocation": "江苏省与上海市",
+		"collectionLocation": "Harvard-Yenching Library 馆藏记录为后出重印本"
+	},
+	"citations": [
+		{
+			"role": "主要来源",
+			"responsibleParties": ["江苏省和上海市方言调查指导组"],
+			"title": "江苏省和上海市方言概况",
+			"publication": "江苏人民出版社",
+			"publicationDate": "1960",
+			"locator": "原版出版说明；馆藏记录所述重印本为 813 页并含地图",
+			"stableIdentifier": "HOLLIS 990044155140203941；OCLC 30637211",
+			"url": "https://id.lib.harvard.edu/alma/990044155140203941/catalog",
+			"accessedAt": "2026-07-17",
+			"language": "zh-CN"
+		},
+		{
+			"role": "补充来源",
+			"responsibleParties": ["刘顺"],
+			"title": "三十年来的南京方言研究",
+			"publication": "《南京审计学院学报》2011 年第 8 卷第 1 期",
+			"publicationDate": "2011-01",
+			"locator": "第 92 页及第 97 页参考文献 [2]",
+			"stableIdentifier": "文章编号 1672-8750(2011)01-0092-06",
+			"url": "https://xbbjb.nau.edu.cn/sjxyxb/article/abstract/20110101015",
+			"accessedAt": "2026-07-17",
+			"language": "zh-CN"
+		}
+	],
+	"review": {
+		"status": "待专家复核",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17",
+		"scope": "核对原版书目信息、馆藏记录和综述中的引用；未取得原书，未据此发布具体分区结论"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-17",
+	"updatedAt": "2026-07-17"
+}

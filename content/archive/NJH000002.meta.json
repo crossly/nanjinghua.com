@@ -1,0 +1,55 @@
+{
+	"id": "NJH000002",
+	"title": "南京市地方志编纂委员会《南京方言志》（1993 年专志）",
+	"summary": "南京市地方志官方页面公开的一部方言专志；官方内容提要说明它主要记录南京市区方言，个别章节涉及郊区。",
+	"evidenceIdentity": "研究观点",
+	"languageScope": ["南京话", "南京地区方言"],
+	"rightsStatus": "仅引文与目录信息",
+	"archiveTime": {
+		"materialDate": "1993-07",
+		"describedPeriod": "编纂前后所调查的南京市区方言，个别章节涉及郊区",
+		"inferredPeriod": "以 20 世纪后期材料为主",
+		"inferenceBasis": "据 1993 年版次和官方内容提要；具体调查年份仍需逐章核对"
+	},
+	"archivePlace": {
+		"recordedName": "南京市区，个别章节涉及郊区",
+		"historicalJurisdiction": "1993 年南京市行政区域",
+		"currentLocation": "江苏省南京市",
+		"collectionLocation": "南京市地方志工作办公室网站；哈佛燕京图书馆有馆藏记录"
+	},
+	"citations": [
+		{
+			"role": "主要来源",
+			"responsibleParties": ["南京市地方志编纂委员会", "方言志编纂委员会"],
+			"title": "南京方言志",
+			"publication": "南京市地方志工作办公室“市志丛书”",
+			"publicationDate": "1993-07",
+			"locator": "内容提要、出版信息及官方 PDF 附件入口",
+			"stableIdentifier": "ISBN 7-80560-796-6/H·2；官方稿件 699860",
+			"url": "https://dfz.nanjing.gov.cn/ztzl/njzj/szcs/201003/t20100311_699860.html",
+			"accessedAt": "2026-07-17",
+			"language": "zh-CN"
+		},
+		{
+			"role": "补充来源",
+			"responsibleParties": ["Harvard-Yenching Library"],
+			"title": "Nanjing fang yan zhi / 南京方言志",
+			"publication": "Harvard Library HOLLIS",
+			"publicationDate": "1993",
+			"locator": "馆藏目录：4、298 页，含插图及地图",
+			"stableIdentifier": "HOLLIS 990072280420203941；OCLC 34964269",
+			"url": "https://id.lib.harvard.edu/alma/990072280420203941/catalog",
+			"accessedAt": "2026-07-17",
+			"language": "en"
+		}
+	],
+	"review": {
+		"status": "编辑核对后发布",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17",
+		"scope": "核对官方内容提要、出版信息、PDF 附件存在性与馆藏书目；具体音系和分区结论待专家复核"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-17",
+	"updatedAt": "2026-07-17"
+}

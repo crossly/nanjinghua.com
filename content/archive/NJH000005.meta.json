@@ -1,0 +1,55 @@
+{
+	"id": "NJH000005",
+	"title": "赵元任《南京音系》（20 世纪 20 年代论文的书目线索）",
+	"summary": "一项关于 20 世纪 20 年代南京语音的早期研究线索；二级记录存在 1928/1929 年份冲突，本站尚未核到原文。",
+	"evidenceIdentity": "研究观点",
+	"languageScope": ["历史南京语音"],
+	"rightsStatus": "仅引文与目录信息",
+	"archiveTime": {
+		"materialDate": "1928/1929（待原刊核对）",
+		"describedPeriod": "20 世纪 20 年代的南京语音",
+		"inferredPeriod": "约 1920—1929 年",
+		"inferenceBasis": "刘顺 2011 年综述参考文献记 1929 年；孙华先 2008 年摘要称 1928 年，待原刊裁定"
+	},
+	"archivePlace": {
+		"recordedName": "南京（发音人及具体片区待原文核对）",
+		"historicalJurisdiction": "中华民国时期南京市",
+		"currentLocation": "江苏省南京市",
+		"collectionLocation": "原刊《科学》卷期与馆藏待继续核查"
+	},
+	"citations": [
+		{
+			"role": "主要来源",
+			"responsibleParties": ["刘顺"],
+			"title": "三十年来的南京方言研究",
+			"publication": "《南京审计学院学报》2011 年第 8 卷第 1 期",
+			"publicationDate": "2011-01",
+			"locator": "第 92 页及第 97 页参考文献 [1]：赵元任《南京音系》，《科学》1929(9)，1005—1036；年份待原刊核对",
+			"stableIdentifier": "文章编号 1672-8750(2011)01-0092-06",
+			"url": "https://xbbjb.nau.edu.cn/sjxyxb/article/abstract/20110101015",
+			"accessedAt": "2026-07-17",
+			"language": "zh-CN"
+		},
+		{
+			"role": "补充来源",
+			"responsibleParties": ["孙华先"],
+			"title": "赵元任《南京音系》研读",
+			"publication": "《语文研究》2008 年第 1 期",
+			"publicationDate": "2008",
+			"locator": "第 49—53 页；摘要称原文发表于 1928 年，与刘顺所记 1929 年冲突",
+			"stableIdentifier": "OpenAlex W1573474922；维普记录 26934282",
+			"url": "https://openalex.org/W1573474922",
+			"accessedAt": "2026-07-17",
+			"language": "zh-CN"
+		}
+	],
+	"review": {
+		"status": "待专家复核",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17",
+		"scope": "只核对二级引文与聚合书目；原文、调查对象、分析方法和页码尚待馆藏原件复核"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-17",
+	"updatedAt": "2026-07-17"
+}

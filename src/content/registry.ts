@@ -89,6 +89,13 @@ export function getArticle(slug: string): Article | undefined {
 	return articles.find((article) => article.slug === slug);
 }
 
+export function getArchiveEntriesForArticle(article: Article): ArchiveEntry[] {
+	return article.archiveIds.flatMap((archiveId) => {
+		const entry = getArchiveEntry(archiveId);
+		return entry ? [entry] : [];
+	});
+}
+
 export function getArticlesForArchive(archiveId: string): Article[] {
 	return articles.filter((article) => article.archiveIds.includes(archiveId));
 }

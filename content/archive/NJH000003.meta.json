@@ -1,0 +1,55 @@
+{
+	"id": "NJH000003",
+	"title": "《南京话音档》（1997 年图书及录音带）",
+	"summary": "一套由图书与录音带组成的南京话记录材料；当前仅核到书目记录，未取得可公开复核的录音原件。",
+	"evidenceIdentity": "原始材料",
+	"languageScope": ["南京话"],
+	"rightsStatus": "仅引文与目录信息",
+	"archiveTime": {
+		"materialDate": "1997",
+		"describedPeriod": "1997 年出版前采录的南京话",
+		"inferredPeriod": "20 世纪 90 年代",
+		"inferenceBasis": "仅据出版日期推定；准确采录日期须以原书和录音说明为准"
+	},
+	"archivePlace": {
+		"recordedName": "南京（具体采录地点待原件核对）",
+		"historicalJurisdiction": "1997 年南京市",
+		"currentLocation": "江苏省南京市",
+		"collectionLocation": "Open Library 书目记录；实体原件馆藏待继续核查"
+	},
+	"citations": [
+		{
+			"role": "主要来源",
+			"responsibleParties": ["侯精一（主编）", "刘丹青（编写）", "沈超（发音）", "方舟（解说）"],
+			"title": "南京话音档",
+			"publication": "上海教育出版社",
+			"publicationDate": "1997",
+			"locator": "4、145 页；随书 1 盒录音带；参考文献见第 141—142 页",
+			"stableIdentifier": "ISBN 7-5320-4852-7；Open Library OL61982994M",
+			"url": "https://openlibrary.org/books/OL61982994M",
+			"accessedAt": "2026-07-17",
+			"language": "zh-CN"
+		},
+		{
+			"role": "补充来源",
+			"responsibleParties": ["刘顺"],
+			"title": "三十年来的南京方言研究",
+			"publication": "《南京审计学院学报》2011 年第 8 卷第 1 期",
+			"publicationDate": "2011-01",
+			"locator": "第 92 页及第 97 页参考文献 [5]",
+			"stableIdentifier": "文章编号 1672-8750(2011)01-0092-06",
+			"url": "https://xbbjb.nau.edu.cn/sjxyxb/article/abstract/20110101015",
+			"accessedAt": "2026-07-17",
+			"language": "zh-CN"
+		}
+	],
+	"review": {
+		"status": "待专家复核",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17",
+		"scope": "仅核对书目、责任者、载体和出版信息；未听取录音，也未核对发音人及采录说明"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-17",
+	"updatedAt": "2026-07-17"
+}

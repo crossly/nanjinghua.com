@@ -75,6 +75,10 @@ function ArchiveEntryPage() {
 							<dd>{entry.evidenceIdentity}</dd>
 						</div>
 						<div>
+							<dt>语言对象</dt>
+							<dd>{entry.languageScope.join("、")}</dd>
+						</div>
+						<div>
 							<dt>权利状态</dt>
 							<dd>{entry.rightsStatus}</dd>
 						</div>
@@ -134,10 +138,12 @@ function ArchiveEntryPage() {
 							<li key={citation.url}>
 								<p>{citation.title}</p>
 								<span>
-									{citation.role} · {citation.publication} · {citation.locator}
+									{citation.role} · {citation.responsibleParties.join("、")} ·{" "}
+									{citation.publication} ·{citation.publicationDate} · {citation.locator} ·{" "}
+									{citation.stableIdentifier} · 访问日期 {citation.accessedAt}
 								</span>
 								<a href={citation.url} target="_blank" rel="noreferrer">
-									打开官方记录
+									打开来源记录
 									<ArrowUpRight aria-hidden="true" strokeWidth={1.5} />
 								</a>
 							</li>

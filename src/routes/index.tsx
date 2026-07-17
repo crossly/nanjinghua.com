@@ -6,12 +6,13 @@ import { getArchiveEntry, getArticle } from "../content/registry";
 export const Route = createFileRoute("/")({ component: Home });
 
 function Home() {
+	const openingArticle = getArticle("what-is-nanjinghua");
 	const featuredArticle = getArticle("what-a-review-can-tell-us");
 	const featuredArchive = featuredArticle
 		? getArchiveEntry(featuredArticle.archiveIds[0] ?? "")
 		: undefined;
 
-	if (!featuredArticle || !featuredArchive) {
+	if (!openingArticle || !featuredArticle || !featuredArchive) {
 		throw new Error("首页证据处理示例缺少对应专题或档案条目");
 	}
 
@@ -78,6 +79,10 @@ function Home() {
 					<p>
 						先辨清地域、年代与证据，再谈一种语言从何而来。第一辑将从南京主城区地方话出发，连接历史记录与当代声音。
 					</p>
+					<a className="opening-collection__link" href={`/articles/${openingArticle.slug}`}>
+						<span>进入“南京话是什么？”专题</span>
+						<ArrowRight aria-hidden="true" strokeWidth={1.5} />
+					</a>
 				</div>
 
 				<dl className="opening-collection__dimensions">

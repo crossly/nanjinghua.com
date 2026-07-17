@@ -12,6 +12,7 @@ const validEntry = {
 	title: "测试档案",
 	summary: "用于验证档案内容模式的完整记录。",
 	evidenceIdentity: "原始材料",
+	languageScope: ["南京话"],
 	rightsStatus: "仅引文与目录信息",
 	archiveTime: {
 		materialDate: "1930",
@@ -53,6 +54,13 @@ test("非法证据身份会被拒绝", () => {
 	assert.throws(
 		() => parseArchiveEntries([{ ...validEntry, evidenceIdentity: "确定史实" }]),
 		/证据身份/,
+	);
+});
+
+test("无效语言对象会被拒绝", () => {
+	assert.throws(
+		() => parseArchiveEntries([{ ...validEntry, languageScope: ["泛南京方言"] }]),
+		/语言对象/,
 	);
 });
 

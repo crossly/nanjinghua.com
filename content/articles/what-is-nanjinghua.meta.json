@@ -1,0 +1,18 @@
+{
+	"slug": "what-is-nanjinghua",
+	"title": "南京话是什么？",
+	"summary": "从一组可核查材料出发，区分南京主城区地方话、南京地区方言和历史南京语音，并保留内部差异与研究分歧。",
+	"author": {
+		"name": "Ricky",
+		"role": "主编与内容责任人"
+	},
+	"archiveIds": ["NJH000001", "NJH000002", "NJH000003", "NJH000004", "NJH000005"],
+	"review": {
+		"status": "编辑核对后发布",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-17",
+	"updatedAt": "2026-07-17"
+}

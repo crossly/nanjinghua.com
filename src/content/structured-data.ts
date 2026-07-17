@@ -25,6 +25,7 @@ export function toArchiveExport(entry: ArchiveEntry) {
 		"dcterms:spatial": entry.archivePlace,
 		"dc:source": entry.citations,
 		"nanjinghua:evidenceIdentity": entry.evidenceIdentity,
+		"nanjinghua:languageScope": entry.languageScope,
 		"nanjinghua:sourceRights": entry.rightsStatus,
 		"nanjinghua:review": entry.review,
 		"nanjinghua:aiAssistance": entry.aiAssistance,
@@ -47,6 +48,7 @@ export function toArchiveJsonLd(entry: ArchiveEntry) {
 		spatialCoverage: entry.archivePlace.currentLocation ?? entry.archivePlace.recordedName,
 		license: metadataLicenseUrl,
 		conditionsOfAccess: entry.rightsStatus,
+		about: entry.languageScope,
 		isPartOf: {
 			"@type": "ArchiveOrganization",
 			name: "南京话",

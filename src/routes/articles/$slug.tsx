@@ -2,19 +2,22 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 
 import { ArchiveHeader } from "../../components/archive-header";
 import { MarkdownContent } from "../../components/markdown-content";
-import { getArticle } from "../../content/registry";
+import { getArchiveEntriesForArticle, getArticle } from "../../content/registry";
 
 export const Route = createFileRoute("/articles/$slug")({
 	loader: ({ params }) => {
 		const article = getArticle(params.slug);
 		if (!article) throw notFound();
-		return article;
+		return {
+			article,
+			archiveEntries: getArchiveEntriesForArticle(article),
+		};
 	},
 	head: ({ loaderData }) => ({
 		meta: loaderData
 			? [
-					{ title: `${loaderData.title}｜南京话` },
-					{ name: "description", content: loaderData.summary },
+					{ title: `${loaderData.article.title}｜南京话` },
+					{ name: "description", content: loaderData.article.summary },
 				]
 			: [],
 	}),
@@ -22,14 +25,14 @@ export const Route = createFileRoute("/articles/$slug")({
 });
 
 function ArticlePage() {
-	const article = Route.useLoaderData();
+	const { article, archiveEntries } = Route.useLoaderData();
 
 	return (
 		<main className="interior-page">
 			<ArchiveHeader />
 			<article className="editorial-article">
 				<header className="editorial-article__lead">
-					<p className="section-label">证据处理示例</p>
+					<p className="section-label">专题文章</p>
 					<h1>{article.title}</h1>
 					<p className="editorial-article__summary">{article.summary}</p>
 					<dl className="article-byline">
@@ -67,6 +70,38 @@ function ArticlePage() {
 				<div className="editorial-article__body">
 					<MarkdownContent>{article.body}</MarkdownContent>
 				</div>
+
+				<section className="article-archives" aria-labelledby="article-archives-title">
+					<header>
+						<p className="section-label">证据链</p>
+						<h2 id="article-archives-title">本篇关联档案</h2>
+					</header>
+					<ol>
+						{archiveEntries.map((entry) => (
+							<li key={entry.id}>
+								<a href={`/archive/${entry.id}`}>
+									<span className="article-archives__id">{entry.id}</span>
+									<strong>{entry.title}</strong>
+								</a>
+								<p>{entry.summary}</p>
+								<dl>
+									<div>
+										<dt>证据身份</dt>
+										<dd>{entry.evidenceIdentity}</dd>
+									</div>
+									<div>
+										<dt>语言对象</dt>
+										<dd>{entry.languageScope.join("、")}</dd>
+									</div>
+									<div>
+										<dt>权利</dt>
+										<dd>{entry.rightsStatus}</dd>
+									</div>
+								</dl>
+							</li>
+						))}
+					</ol>
+				</section>
 			</article>
 		</main>
 	);

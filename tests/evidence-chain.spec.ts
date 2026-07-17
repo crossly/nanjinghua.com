@@ -28,7 +28,7 @@ test("读者可以从专题文章追到档案条目和来源", async ({ page, re
 	const primarySource = sources.getByRole("listitem").first();
 	await expect(primarySource).toContainText("三十年来的南京方言研究");
 	await expect(primarySource).toContainText("第 92—97 页");
-	await expect(primarySource.getByRole("link", { name: "打开官方记录" })).toHaveAttribute(
+	await expect(primarySource.getByRole("link", { name: "打开来源记录" })).toHaveAttribute(
 		"href",
 		/^https:\/\//,
 	);
