@@ -1,0 +1,64 @@
+{
+	"id": "NJH000001",
+	"title": "刘顺《三十年来的南京方言研究》（2011 年论文）",
+	"summary": "一篇回顾约三十年南京方言语音、词汇与语法研究的期刊论文，可作为继续追查原研究的书目入口。",
+	"evidenceIdentity": "研究观点",
+	"rightsStatus": "仅引文与目录信息",
+	"archiveTime": {
+		"materialDate": "2011-01",
+		"describedPeriod": "约 1980—2010 年的南京方言研究；兼及 1929 年和 20 世纪 50 年代先行研究"
+	},
+	"archivePlace": {
+		"recordedName": "南京市（作者单位与出版机构所在地）",
+		"historicalJurisdiction": "江苏省南京市",
+		"currentLocation": "江苏省南京市",
+		"collectionLocation": "南京审计大学学报官方期刊站"
+	},
+	"citations": [
+		{
+			"role": "主要来源",
+			"responsibleParties": ["刘顺"],
+			"title": "三十年来的南京方言研究",
+			"publication": "《南京审计学院学报》2011 年第 8 卷第 1 期",
+			"publicationDate": "2011-01",
+			"locator": "第 92—97 页",
+			"stableIdentifier": "文章编号 1672-8750(2011)01-0092-06；官方站内部号 20110101015",
+			"url": "https://xbbjb.nau.edu.cn/sjxyxb/article/abstract/20110101015",
+			"accessedAt": "2026-07-17",
+			"language": "zh-CN"
+		},
+		{
+			"role": "补充来源",
+			"responsibleParties": ["南京审计大学学报编辑部"],
+			"title": "2011 年第 8 卷第 1 期过刊目录",
+			"publication": "南京审计大学学报官方期刊站",
+			"publicationDate": "2011",
+			"locator": "文章目录",
+			"stableIdentifier": "2011_8_1",
+			"url": "https://xbbjb.nau.edu.cn/sjxyxb/article/issue/2011_8_1",
+			"accessedAt": "2026-07-17",
+			"language": "zh-CN"
+		},
+		{
+			"role": "补充来源",
+			"responsibleParties": ["南京审计大学学报编辑部"],
+			"title": "南京审计大学学报介绍",
+			"publication": "南京审计大学学报官方期刊站",
+			"publicationDate": "2026",
+			"locator": "本刊介绍",
+			"stableIdentifier": "menu-20100522141520001",
+			"url": "https://xbbjb.nau.edu.cn/sjxyxb/site/menu/20100522141520001",
+			"accessedAt": "2026-07-17",
+			"language": "zh-CN"
+		}
+	],
+	"review": {
+		"status": "编辑核对后发布",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17",
+		"scope": "核对出版信息、文章结构、作者明确表述与官方来源；具体音系结论待专家复核"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-17",
+	"updatedAt": "2026-07-17"
+}

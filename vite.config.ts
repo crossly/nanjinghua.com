@@ -5,7 +5,23 @@ import { defineConfig } from "vite";
 
 const config = defineConfig({
 	resolve: { tsconfigPaths: true },
-	plugins: [cloudflare({ viteEnvironment: { name: "ssr" } }), tanstackStart(), viteReact()],
+	plugins: [
+		cloudflare({ viteEnvironment: { name: "ssr" } }),
+		tanstackStart({
+			pages: [
+				{ path: "/" },
+				{ path: "/articles/what-a-review-can-tell-us" },
+				{ path: "/archive/NJH000001" },
+			],
+			prerender: {
+				enabled: true,
+				failOnError: true,
+				crawlLinks: true,
+				filter: (page) => !page.path.startsWith("/api/"),
+			},
+		}),
+		viteReact(),
+	],
 });
 
 export default config;

@@ -1,9 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowDown, ArrowUpRight } from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUpRight } from "lucide-react";
+
+import { getArchiveEntry, getArticle } from "../content/registry";
 
 export const Route = createFileRoute("/")({ component: Home });
 
 function Home() {
+	const featuredArticle = getArticle("what-a-review-can-tell-us");
+	const featuredArchive = featuredArticle
+		? getArchiveEntry(featuredArticle.archiveIds[0] ?? "")
+		: undefined;
+
+	if (!featuredArticle || !featuredArchive) {
+		throw new Error("首页证据处理示例缺少对应专题或档案条目");
+	}
+
 	return (
 		<main>
 			<section className="hero" aria-labelledby="site-title">
@@ -81,6 +92,37 @@ function Home() {
 					<div>
 						<dt>立场</dt>
 						<dd>呈现差异，不定正宗</dd>
+					</div>
+				</dl>
+			</section>
+
+			<section className="evidence-example" aria-labelledby="evidence-example-title">
+				<div className="evidence-example__heading">
+					<p className="section-label">方法公开</p>
+					<p className="evidence-example__number" aria-hidden="true">
+						{featuredArchive.id.slice(0, 3)} · {featuredArchive.id.slice(3)}
+					</p>
+				</div>
+				<div className="evidence-example__content">
+					<h2 id="evidence-example-title">{featuredArticle.title}</h2>
+					<p>{featuredArticle.summary}</p>
+					<a href={`/articles/${featuredArticle.slug}`}>
+						<span>查看证据处理示例</span>
+						<ArrowRight aria-hidden="true" strokeWidth={1.5} />
+					</a>
+				</div>
+				<dl className="evidence-example__status">
+					<div>
+						<dt>证据身份</dt>
+						<dd>{featuredArchive.evidenceIdentity}</dd>
+					</div>
+					<div>
+						<dt>来源</dt>
+						<dd>官方期刊记录</dd>
+					</div>
+					<div>
+						<dt>权利</dt>
+						<dd>{featuredArchive.rightsStatus}</dd>
 					</div>
 				</dl>
 			</section>

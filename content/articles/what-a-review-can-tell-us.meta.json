@@ -1,0 +1,18 @@
+{
+	"slug": "what-a-review-can-tell-us",
+	"title": "一篇综述能告诉我们什么？",
+	"summary": "用一篇南京方言研究综述，演示怎样区分作者观点、书目线索与仍需继续核对的原始研究。",
+	"author": {
+		"name": "Ricky",
+		"role": "主编与内容责任人"
+	},
+	"archiveIds": ["NJH000001"],
+	"review": {
+		"status": "编辑核对后发布",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-17",
+	"updatedAt": "2026-07-17"
+}

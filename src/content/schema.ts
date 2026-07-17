@@ -1,0 +1,129 @@
+import { z } from "zod";
+
+const isoDateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "日期必须使用 YYYY-MM-DD 格式");
+const requiredText = z.string().trim().min(1, "字段不能为空");
+
+export const evidenceIdentitySchema = z.enum(["原始材料", "研究观点", "口述记忆", "待考说法"], {
+	error: "证据身份必须使用受控词汇",
+});
+
+export const rightsStatusSchema = z.enum(
+	["公版", "CC0", "CC BY 4.0", "已获授权", "仅引文与目录信息", "不公开媒体"],
+	{ error: "权利状态必须使用受控词汇" },
+);
+
+export const reviewStatusSchema = z.enum(["编辑核对后发布", "待专家复核", "专家复核"], {
+	error: "审核状态必须使用受控词汇",
+});
+
+export const citationSchema = z
+	.object({
+		role: z.enum(["主要来源", "补充来源"]),
+		responsibleParties: z.array(requiredText).min(1, "引用记录至少需要一位责任者"),
+		title: requiredText,
+		publication: requiredText,
+		publicationDate: requiredText,
+		locator: requiredText,
+		stableIdentifier: requiredText,
+		url: z.url("引用记录必须提供有效来源网址"),
+		accessedAt: isoDateSchema,
+		language: requiredText.optional(),
+	})
+	.strict();
+
+export const archiveEntrySchema = z
+	.object({
+		id: z.string().regex(/^NJH\d{6}$/, "档案编号必须使用 NJH 加六位数字"),
+		title: requiredText,
+		summary: requiredText,
+		evidenceIdentity: evidenceIdentitySchema,
+		rightsStatus: rightsStatusSchema,
+		archiveTime: z
+			.object({
+				materialDate: requiredText,
+				describedPeriod: requiredText,
+				inferredPeriod: requiredText.optional(),
+				inferenceBasis: requiredText.optional(),
+			})
+			.strict(),
+		archivePlace: z
+			.object({
+				recordedName: requiredText,
+				historicalJurisdiction: requiredText,
+				currentLocation: requiredText.optional(),
+				collectionLocation: requiredText.optional(),
+			})
+			.strict(),
+		citations: z.array(citationSchema).min(1, "档案条目至少需要一条引用记录"),
+		review: z
+			.object({
+				status: reviewStatusSchema,
+				reviewer: requiredText,
+				reviewedAt: isoDateSchema,
+				scope: requiredText.optional(),
+			})
+			.strict(),
+		aiAssistance: z.boolean(),
+		publishedAt: isoDateSchema,
+		updatedAt: isoDateSchema,
+	})
+	.strict();
+
+export const articleSchema = z
+	.object({
+		slug: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "专题文章 slug 格式无效"),
+		title: requiredText,
+		summary: requiredText,
+		author: z
+			.object({
+				name: requiredText,
+				role: requiredText,
+			})
+			.strict(),
+		archiveIds: z.array(z.string().regex(/^NJH\d{6}$/)).min(1),
+		review: z
+			.object({
+				status: reviewStatusSchema,
+				reviewer: requiredText,
+				reviewedAt: isoDateSchema,
+			})
+			.strict(),
+		aiAssistance: z.boolean(),
+		publishedAt: isoDateSchema,
+		updatedAt: isoDateSchema,
+	})
+	.strict();
+
+export type ArchiveEntryMetadata = z.infer<typeof archiveEntrySchema>;
+export type ArticleMetadata = z.infer<typeof articleSchema>;
+
+export function parseArchiveEntries(input: unknown[]): ArchiveEntryMetadata[] {
+	const entries = z.array(archiveEntrySchema).parse(input);
+	const seenIds = new Set<string>();
+
+	for (const entry of entries) {
+		if (seenIds.has(entry.id)) {
+			throw new Error(`重复档案编号 ${entry.id}`);
+		}
+		if (entry.citations.filter((citation) => citation.role === "主要来源").length !== 1) {
+			throw new Error(`档案条目 ${entry.id} 必须且只能有一条主要来源`);
+		}
+		seenIds.add(entry.id);
+	}
+
+	return entries;
+}
+
+export function parseArticles(input: unknown[]): ArticleMetadata[] {
+	const articles = z.array(articleSchema).parse(input);
+	const seenSlugs = new Set<string>();
+
+	for (const article of articles) {
+		if (seenSlugs.has(article.slug)) {
+			throw new Error(`重复专题文章 slug ${article.slug}`);
+		}
+		seenSlugs.add(article.slug);
+	}
+
+	return articles;
+}
