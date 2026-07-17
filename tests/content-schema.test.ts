@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { test } from "node:test";
 
 import { validateContentDirectory } from "../scripts/validate-content.ts";
-import { parseArchiveEntries, parseCollections } from "../src/content/schema.ts";
+import { parseArchiveEntries, parseArticles, parseCollections } from "../src/content/schema.ts";
 
 const validEntry = {
 	id: "NJH000001",
@@ -141,6 +141,22 @@ test("推定时期必须同时提供依据和不确定性", () => {
 	);
 });
 
+test("说话者成长地点与材料采集地点分别保存", () => {
+	const [entry] = parseArchiveEntries([
+		{
+			...validEntry,
+			archivePlace: {
+				...validEntry.archivePlace,
+				speakerUpbringingPlace: "南京出生、来自不同城区",
+				materialCollectionPlace: "调查地点未公开",
+			},
+		},
+	]);
+
+	assert.equal(entry?.archivePlace.speakerUpbringingPlace, "南京出生、来自不同城区");
+	assert.equal(entry?.archivePlace.materialCollectionPlace, "调查地点未公开");
+});
+
 test("可保存的原始文件记录校验值、来源和访问状态", () => {
 	const [entry] = parseArchiveEntries([
 		{
@@ -222,6 +238,23 @@ test("派生文件不能把另一派生文件作为原始来源", () => {
 
 test("专题集合元数据可以声明有序专题文章", () => {
 	assert.deepEqual(parseCollections([validCollection])[0]?.articleSlugs, ["test-article"]);
+});
+
+test("专题文章可以预留待关联档案位置", () => {
+	const [article] = parseArticles([
+		{
+			...validArticle,
+			plannedArchiveRelations: [
+				{
+					label: "首批原创语音样本",
+					status: "等待授权材料",
+					description: "取得授权后关联正式档案编号。",
+				},
+			],
+		},
+	]);
+
+	assert.equal(article?.plannedArchiveRelations?.[0]?.status, "等待授权材料");
 });
 
 async function createContentFixture(

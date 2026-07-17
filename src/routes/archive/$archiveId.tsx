@@ -128,6 +128,18 @@ function ArchiveEntryPage() {
 								<dd>{entry.archivePlace.collectionLocation}</dd>
 							</div>
 						) : null}
+						{entry.archivePlace.speakerUpbringingPlace ? (
+							<div>
+								<dt>说话者成长地点</dt>
+								<dd>{entry.archivePlace.speakerUpbringingPlace}</dd>
+							</div>
+						) : null}
+						{entry.archivePlace.materialCollectionPlace ? (
+							<div>
+								<dt>材料采集地点</dt>
+								<dd>{entry.archivePlace.materialCollectionPlace}</dd>
+							</div>
+						) : null}
 						{entry.archivePlace.uncertainty ? (
 							<div>
 								<dt>地点不确定性</dt>

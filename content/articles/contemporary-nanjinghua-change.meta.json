@@ -1,0 +1,25 @@
+{
+	"slug": "contemporary-nanjinghua-change",
+	"title": "今天的南京话怎样变化？",
+	"summary": "把 39 份学生样本、67 人分龄调查和一篇四片区调查报道放回各自范围，观察年龄、成长经历、片区与使用场景怎样共同影响当代南京话。",
+	"author": {
+		"name": "Ricky",
+		"role": "主编与内容责任人"
+	},
+	"archiveIds": ["NJH000012", "NJH000013", "NJH000014"],
+	"plannedArchiveRelations": [
+		{
+			"label": "首批原创语音样本",
+			"status": "等待授权材料",
+			"description": "取得说话者授权并完成采录说明、地点分离和权利核对后，再关联永久档案编号；本站不使用合成或未经授权的音频。"
+		}
+	],
+	"review": {
+		"status": "编辑核对后发布",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-17",
+	"updatedAt": "2026-07-17"
+}

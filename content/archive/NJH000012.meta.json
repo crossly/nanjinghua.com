@@ -1,0 +1,58 @@
+{
+	"id": "NJH000012",
+	"title": "吴波《二十多年来南京话语音演变的调查》（2006 年学生样本）",
+	"summary": "一项以 39 份南京出生的高二学生有效样本和两名记音合作人为范围的语音调查；问卷、单字音与语流音呈现出不同结果。",
+	"evidenceIdentity": "研究观点",
+	"languageScope": ["南京话"],
+	"rightsStatus": "仅引文与目录信息",
+	"archiveTime": {
+		"materialDate": "2006",
+		"describedPeriod": "论文作者所称最近二十多年的南京话语音变化；调查具体日期未公开"
+	},
+	"archivePlace": {
+		"recordedName": "南京",
+		"historicalJurisdiction": "论文发表时的南京市",
+		"currentLocation": "江苏省南京市",
+		"collectionLocation": "香港中文大学《中国语文研究》公开 PDF",
+		"speakerUpbringingPlace": "39 名有效样本均在南京出生、来自不同城区；两名记音合作人祖籍、三代均为南京人",
+		"materialCollectionPlace": "论文未公开具体学校或录音房间，也未写明明确调查日期",
+		"uncertainty": "论文称不同城区内部语音差别反映不明显，但未列各城区人数，不能据此比较片区"
+	},
+	"preservedFiles": [
+		{
+			"kind": "原始文件",
+			"fileName": "wu-2006.pdf",
+			"mediaType": "application/pdf",
+			"byteLength": 1048359,
+			"sha256": "b489b8b2852811bffe63424eeec37dce2cad7f6fd7b988d2529d0a3e83a7ba70",
+			"sourceUrl": "https://www.cuhk.edu.hk/ics/clrc/scl_22/wu.pdf",
+			"preservedAt": "2026-07-17",
+			"storage": "编辑研究副本，存放于 Git 仓库之外；未向公网再分发",
+			"publicAccess": false,
+			"rightsBasis": "仅为逐页核对保存研究副本；本站未取得论文全文再分发许可"
+		}
+	],
+	"citations": [
+		{
+			"role": "主要来源",
+			"responsibleParties": ["吴波"],
+			"title": "二十多年来南京话语音演变的调查",
+			"publication": "《中国语文研究》2006 年第 2 期（总第 22 期）",
+			"publicationDate": "2006",
+			"locator": "第 83—91 页；调查方法与对象见第 84 页；任务差异见第 90—91 页",
+			"stableIdentifier": "SCL 第 22 期 wu.pdf",
+			"url": "https://www.cuhk.edu.hk/ics/clrc/scl_22/wu.pdf",
+			"accessedAt": "2026-07-17",
+			"language": "zh-Hant"
+		}
+	],
+	"review": {
+		"status": "待专家复核",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17",
+		"scope": "核对论文全文、39 份样本范围及问卷与语流音表格；扫描 OCR 只辅助定位，正文结论按影印页复核"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-17",
+	"updatedAt": "2026-07-17"
+}

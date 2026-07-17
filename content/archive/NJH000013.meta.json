@@ -1,0 +1,70 @@
+{
+	"id": "NJH000013",
+	"title": "顾黔《南京方言宕江两摄入声韵的共时变异及历时演变研究》（2015）",
+	"summary": "一项 2013 年对 67 名老、中、青、少说话者开展的入声韵调查；若干项目中青年组比中年组保留更多，显示年龄差异并非单调直线。",
+	"evidenceIdentity": "研究观点",
+	"languageScope": ["南京话"],
+	"rightsStatus": "仅引文与目录信息",
+	"archiveTime": {
+		"materialDate": "2015-07",
+		"describedPeriod": "2013 年 2—3 月的南京方言宕江两摄入声韵共时调查"
+	},
+	"archivePlace": {
+		"recordedName": "南京主城区及近郊",
+		"historicalJurisdiction": "2013 年南京市",
+		"currentLocation": "江苏省南京市",
+		"collectionLocation": "《语言科学》期刊网站公开摘要与 PDF",
+		"speakerUpbringingPlace": "老、中、青年组至少三代世居南京；少年本人须在南京出生、成长，另分三类父母背景",
+		"materialCollectionPlace": "南京主城区及近郊；2013 年 2—3 月",
+		"uncertainty": "论文未在地点字段中列出每位说话者的具体采集点，不能按城区重算分布"
+	},
+	"preservedFiles": [
+		{
+			"kind": "原始文件",
+			"fileName": "yykx-929.pdf",
+			"mediaType": "application/pdf",
+			"byteLength": 500566,
+			"sha256": "97f39ac9b94423014f2d7a426b2c995a848ad02dbf18c059bcc1caad428375a2",
+			"sourceUrl": "https://journal15.magtechjournal.com/Jwk_yykx/CN/article/downloadArticleFile.do?attachType=PDF&id=929",
+			"preservedAt": "2026-07-17",
+			"storage": "编辑研究副本，存放于 Git 仓库之外；未向公网再分发",
+			"publicAccess": false,
+			"rightsBasis": "仅为逐页核对保存研究副本；本站未取得论文全文再分发许可"
+		}
+	],
+	"citations": [
+		{
+			"role": "主要来源",
+			"responsibleParties": ["顾黔"],
+			"title": "南京方言宕江两摄入声韵的共时变异及历时演变研究",
+			"publication": "《语言科学》2015 年第 14 卷第 4 期",
+			"publicationDate": "2015-07",
+			"locator": "第 384—393 页；调查对象见第 385 页；年龄差异见第 386—387 页",
+			"stableIdentifier": "DOI 10.7509/j.linsci.201502.029722；文章编号 1671-9484(2015)04-0384-10",
+			"url": "https://journal15.magtechjournal.com/Jwk_yykx/CN/abstract/abstract929.shtml",
+			"accessedAt": "2026-07-17",
+			"language": "zh-CN"
+		},
+		{
+			"role": "补充来源",
+			"responsibleParties": ["《语言科学》编辑部"],
+			"title": "文章 PDF（附件 id 929）",
+			"publication": "《语言科学》期刊网站",
+			"publicationDate": "2015-07",
+			"locator": "PDF 首页至第 10 页；首页另印 DOI 10.7509/j.linsci.201401.028662，与正式摘要页元数据冲突",
+			"stableIdentifier": "附件 id 929；SHA-256 97f39ac9b94423014f2d7a426b2c995a848ad02dbf18c059bcc1caad428375a2",
+			"url": "https://journal15.magtechjournal.com/Jwk_yykx/CN/article/downloadArticleFile.do?attachType=PDF&id=929",
+			"accessedAt": "2026-07-17",
+			"language": "zh-CN"
+		}
+	],
+	"review": {
+		"status": "待专家复核",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17",
+		"scope": "核对期刊正式摘要页、论文全文、67 人分组与表 2—3；DOI 冲突以当前期刊元数据为主要标识并保留异文"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-17",
+	"updatedAt": "2026-07-17"
+}

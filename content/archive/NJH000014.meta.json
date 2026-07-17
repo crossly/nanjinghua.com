@@ -1,0 +1,58 @@
+{
+	"id": "NJH000014",
+	"title": "南京大学转载《南京话状况调查》报道（2013 年四片区材料）",
+	"summary": "一篇南京大学官方转载的调查报道，涉及秦淮、鼓楼、原下关、仙林和家庭、学校、邻里等场景；完整样本数与各项分母未公开。",
+	"evidenceIdentity": "原始材料",
+	"languageScope": ["南京话"],
+	"rightsStatus": "仅引文与目录信息",
+	"archiveTime": {
+		"materialDate": "2013-07-08",
+		"describedPeriod": "2013 年 5—6 月开展的四份南京市民语言生活调查"
+	},
+	"archivePlace": {
+		"recordedName": "秦淮、鼓楼、原下关、栖霞区仙林",
+		"historicalJurisdiction": "2013 年南京市相关城区",
+		"currentLocation": "江苏省南京市",
+		"collectionLocation": "南京大学网站转载页；原载《金陵晚报》",
+		"speakerUpbringingPlace": "报道涉及父母为南京人、父母来自外地及在南京求学等不同经历，但未公布可逐一核对的成长地点字段",
+		"materialCollectionPlace": "秦淮、鼓楼、原下关、栖霞区仙林；报道记为 2013 年 5—6 月",
+		"uncertainty": "页面未公开四份问卷的完整样本数、抽样方法、各项分母及逐人地点，不能据报道百分比推断全市人口"
+	},
+	"preservedFiles": [
+		{
+			"kind": "原始文件",
+			"fileName": "nju-language-life.html",
+			"mediaType": "text/html",
+			"byteLength": 52279,
+			"sha256": "0d71db88621de758995a949d2f2218349b5fda4da60473d66b25fface3928f9e",
+			"sourceUrl": "https://www.nju.edu.cn/info/3191/161221.htm",
+			"preservedAt": "2026-07-17",
+			"storage": "编辑研究快照，存放于 Git 仓库之外；未向公网再分发",
+			"publicAccess": false,
+			"rightsBasis": "仅为核对页面版本保存快照；原文著作权状态未授权本站全文再分发"
+		}
+	],
+	"citations": [
+		{
+			"role": "主要来源",
+			"responsibleParties": ["朱丽娟", "金陵晚报", "南京大学（转载）"],
+			"title": "南大文学院“南京话状况调查”报告出炉仙林的人说南京话最不来斯",
+			"publication": "南京大学网站“媒体传真”；来源标注为《金陵晚报》",
+			"publicationDate": "2013-07-08",
+			"locator": "正文全文；四片区、家庭语言、中学生与社会环境段落",
+			"stableIdentifier": "南京大学信息页 161221",
+			"url": "https://www.nju.edu.cn/info/3191/161221.htm",
+			"accessedAt": "2026-07-17",
+			"language": "zh-CN"
+		}
+	],
+	"review": {
+		"status": "待专家复核",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17",
+		"scope": "核对南京大学当前转载页的日期、作者、来源、片区和场景；四份原始调查报告、问卷及完整分母尚未取得"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-17",
+	"updatedAt": "2026-07-17"
+}

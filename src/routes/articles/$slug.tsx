@@ -102,6 +102,26 @@ function ArticlePage() {
 						))}
 					</ol>
 				</section>
+
+				{article.plannedArchiveRelations ? (
+					<section className="planned-archives" aria-labelledby="planned-archives-title">
+						<header>
+							<p className="section-label">后续采集</p>
+							<h2 id="planned-archives-title">待关联档案</h2>
+						</header>
+						<ul>
+							{article.plannedArchiveRelations.map((relation) => (
+								<li key={relation.label}>
+									<div>
+										<h3>{relation.label}</h3>
+										<span>{relation.status}</span>
+									</div>
+									<p>{relation.description}</p>
+								</li>
+							))}
+						</ul>
+					</section>
+				) : null}
 			</article>
 		</main>
 	);

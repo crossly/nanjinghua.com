@@ -133,6 +133,8 @@ export const archiveEntrySchema = z
 				historicalJurisdiction: requiredText,
 				currentLocation: requiredText.optional(),
 				collectionLocation: requiredText.optional(),
+				speakerUpbringingPlace: requiredText.optional(),
+				materialCollectionPlace: requiredText.optional(),
 				uncertainty: requiredText.optional(),
 			})
 			.strict(),
@@ -164,6 +166,18 @@ export const articleSchema = z
 			})
 			.strict(),
 		archiveIds: z.array(z.string().regex(/^NJH\d{6}$/)).min(1),
+		plannedArchiveRelations: z
+			.array(
+				z
+					.object({
+						label: requiredText,
+						status: z.literal("等待授权材料"),
+						description: requiredText,
+					})
+					.strict(),
+			)
+			.min(1)
+			.optional(),
 		review: z
 			.object({
 				status: reviewStatusSchema,
