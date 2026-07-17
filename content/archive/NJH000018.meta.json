@@ -1,0 +1,70 @@
+{
+	"id": "NJH000018",
+	"title": "Augoustoshai《南京金陵风白局曲艺团伴奏》照片（2019 年）",
+	"summary": "一张获得 CC BY-SA 4.0 许可的南京白局伴奏现场照片，记录四位表演者使用打击、拉弦与弹拨乐器的舞台关系；它不包含可听声音。",
+	"evidenceIdentity": "原始材料",
+	"languageScope": ["南京话"],
+	"culturalForms": ["白局", "曲艺", "音像记录"],
+	"rightsStatus": "CC BY-SA 4.0",
+	"archiveTime": {
+		"materialDate": "2019-08-01",
+		"describedPeriod": "2019 年 8 月 1 日记录的南京白局伴奏现场"
+	},
+	"archivePlace": {
+		"recordedName": "南京市（Wikimedia Commons 坐标约 32.040619, 118.824910）",
+		"historicalJurisdiction": "2019 年江苏省南京市",
+		"currentLocation": "江苏省南京市",
+		"collectionLocation": "Wikimedia Commons 文件页 80938514",
+		"materialCollectionPlace": "Commons 提供南京市内坐标，文件说明写“南京金陵风白局曲艺团 伴奏”，但未写出演出场馆",
+		"uncertainty": "本站不据画面识别人物姓名，也不在缺少节目单时认定具体曲目或每件乐器型号"
+	},
+	"preservedFiles": [
+		{
+			"kind": "原始文件",
+			"fileName": "白局伴奏151942 mix03.jpg",
+			"mediaType": "image/jpeg",
+			"byteLength": 1251773,
+			"sha256": "699c61d8b259299aee1b19440fc5b973090b8f256a88030b5b54d6e3c71d42ed",
+			"sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/8/87/%E7%99%BD%E5%B1%80%E4%BC%B4%E5%A5%8F151942_mix03.jpg",
+			"preservedAt": "2026-07-17",
+			"storage": "编辑保存原件，存放于 Git 仓库之外；公开原件由 Wikimedia Commons 提供",
+			"publicAccess": true,
+			"rightsBasis": "作者 Augoustoshai 以 CC BY-SA 4.0 发布；使用时须署名并以相同许可分享改编"
+		}
+	],
+	"citations": [
+		{
+			"role": "主要来源",
+			"responsibleParties": ["Augoustoshai（摄影）", "Wikimedia Commons（托管）"],
+			"title": "白局伴奏151942 mix03.jpg",
+			"publication": "Wikimedia Commons",
+			"publicationDate": "2019-08-01",
+			"locator": "文件页、原始文件元数据及图片；1605×902 像素",
+			"stableIdentifier": "Commons page ID 80938514",
+			"url": "https://commons.wikimedia.org/wiki/File:%E7%99%BD%E5%B1%80%E4%BC%B4%E5%A5%8F151942_mix03.jpg",
+			"accessedAt": "2026-07-17",
+			"language": "zh-CN"
+		},
+		{
+			"role": "补充来源",
+			"responsibleParties": ["中国非物质文化遗产网·中国非物质文化遗产数字博物馆"],
+			"title": "南京白局",
+			"publication": "国家级非物质文化遗产代表性项目名录",
+			"publicationDate": "2008",
+			"locator": "项目详情页对南京方言、坐唱和器乐伴奏的说明",
+			"stableIdentifier": "项目编号 Ⅴ-81；页面 ID 13721",
+			"url": "https://www.ihchina.cn/project_details/13721.html",
+			"accessedAt": "2026-07-17",
+			"language": "zh-CN"
+		}
+	],
+	"review": {
+		"status": "编辑核对后发布",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17",
+		"scope": "核对 Commons 作者、日期、说明、尺寸、坐标、许可、原件字节数与校验值；以国家非遗名录核对伴奏在南京白局演出形式中的位置"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-17",
+	"updatedAt": "2026-07-17"
+}

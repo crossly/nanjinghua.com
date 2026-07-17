@@ -27,6 +27,7 @@ export function toArchiveExport(entry: ArchiveEntry) {
 		"dc:source": entry.citations,
 		"nanjinghua:evidenceIdentity": entry.evidenceIdentity,
 		"nanjinghua:languageScope": entry.languageScope,
+		"nanjinghua:culturalForms": entry.culturalForms,
 		"nanjinghua:sourceRights": entry.rightsStatus,
 		"nanjinghua:archiveTime": entry.archiveTime,
 		"nanjinghua:preservedFiles": entry.preservedFiles,
@@ -51,7 +52,7 @@ export function toArchiveJsonLd(entry: ArchiveEntry) {
 		spatialCoverage: entry.archivePlace.currentLocation ?? entry.archivePlace.recordedName,
 		license: metadataLicenseUrl,
 		conditionsOfAccess: entry.rightsStatus,
-		about: entry.languageScope,
+		about: [...entry.languageScope, ...(entry.culturalForms ?? [])],
 		isPartOf: {
 			"@type": "ArchiveOrganization",
 			name: "南京话",

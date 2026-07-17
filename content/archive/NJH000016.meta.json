@@ -1,0 +1,87 @@
+{
+	"id": "NJH000016",
+	"title": "五空间《南京白局》演出照片（2019 年）",
+	"summary": "一张获得 CC BY 2.5 许可的南京白局演出现场照片，记录演唱者、器乐伴奏与围坐观众；照片没有声音，不能替代语音材料。",
+	"evidenceIdentity": "原始材料",
+	"languageScope": ["南京话"],
+	"culturalForms": ["白局", "曲艺", "音像记录"],
+	"rightsStatus": "CC BY 2.5",
+	"archiveTime": {
+		"materialDate": "2019-12-22",
+		"describedPeriod": "2019 年 12 月 22 日记录的一场南京白局演出"
+	},
+	"archivePlace": {
+		"recordedName": "南京市（Wikimedia Commons 坐标约 32.028056, 118.776667）",
+		"historicalJurisdiction": "2019 年江苏省南京市",
+		"currentLocation": "江苏省南京市",
+		"collectionLocation": "Wikimedia Commons 文件页 95782121",
+		"materialCollectionPlace": "Commons 提供南京市内坐标，但未写出演出场馆名称",
+		"uncertainty": "坐标来自文件元数据；本站未取得拍摄者的场馆说明，也不据画面识别具体表演者"
+	},
+	"preservedFiles": [
+		{
+			"kind": "原始文件",
+			"fileName": "南京白局.jpg",
+			"mediaType": "image/jpeg",
+			"byteLength": 2087881,
+			"sha256": "936168d8440f7955fe39656a4ddb7916d87f30e60d5cb0c75b4b137062b7c646",
+			"sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/e/ee/%E5%8D%97%E4%BA%AC%E7%99%BD%E5%B1%80.jpg",
+			"preservedAt": "2026-07-17",
+			"storage": "编辑保存原件，存放于 Git 仓库之外；公开原件由 Wikimedia Commons 提供",
+			"publicAccess": true,
+			"rightsBasis": "作者五空间以 CC BY 2.5 发布；使用时必须署名并链接许可或来源"
+		},
+		{
+			"kind": "派生文件",
+			"fileName": "nanjing-baiju-performance.webp",
+			"mediaType": "image/webp",
+			"byteLength": 170806,
+			"sha256": "355a2d361a341a436b63c9161cc7315c1623ca29d76ba1ab4b9bd5397b007abb",
+			"sourceUrl": "https://nanjinghua.com/images/nanjing-baiju-performance.webp",
+			"preservedAt": "2026-07-17",
+			"storage": "本站 public/images；随应用部署",
+			"publicAccess": true,
+			"rightsBasis": "沿用原图 CC BY 2.5；页面显示作者、许可与 Commons 来源",
+			"derivedFromSha256": "936168d8440f7955fe39656a4ddb7916d87f30e60d5cb0c75b4b137062b7c646",
+			"processing": [
+				"使用 cwebp 1.6.0 将 3000×1091 JPEG 缩放为 1800×655 WebP",
+				"质量参数 q=82；未裁切；未改变画面内容"
+			]
+		}
+	],
+	"citations": [
+		{
+			"role": "主要来源",
+			"responsibleParties": ["五空间（摄影）", "Wikimedia Commons（托管）"],
+			"title": "南京白局.jpg",
+			"publication": "Wikimedia Commons",
+			"publicationDate": "2019-12-22",
+			"locator": "文件页及原始文件元数据；3000×1091 像素",
+			"stableIdentifier": "Commons page ID 95782121",
+			"url": "https://commons.wikimedia.org/wiki/File:%E5%8D%97%E4%BA%AC%E7%99%BD%E5%B1%80.jpg",
+			"accessedAt": "2026-07-17",
+			"language": "zh-CN"
+		},
+		{
+			"role": "补充来源",
+			"responsibleParties": ["中国非物质文化遗产网·中国非物质文化遗产数字博物馆"],
+			"title": "南京白局",
+			"publication": "国家级非物质文化遗产代表性项目名录",
+			"publicationDate": "2008",
+			"locator": "项目详情页对南京方言、坐唱与器乐伴奏的说明",
+			"stableIdentifier": "项目编号 Ⅴ-81；页面 ID 13721",
+			"url": "https://www.ihchina.cn/project_details/13721.html",
+			"accessedAt": "2026-07-17",
+			"language": "zh-CN"
+		}
+	],
+	"review": {
+		"status": "编辑核对后发布",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17",
+		"scope": "核对 Commons 作者、日期、尺寸、坐标、许可、原件字节数与校验值；以国家非遗名录核对南京白局和南京方言的关系，不识别照片人物"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-17",
+	"updatedAt": "2026-07-17"
+}

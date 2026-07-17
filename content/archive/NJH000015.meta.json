@@ -1,0 +1,58 @@
+{
+	"id": "NJH000015",
+	"title": "国家级非物质文化遗产代表性项目“南京白局”（项目 Ⅴ-81）",
+	"summary": "国家非遗名录中的南京白局项目记录，明确把它编入曲艺，并写明“南京白局系用南京方言演唱牌子曲”。",
+	"evidenceIdentity": "原始材料",
+	"languageScope": ["南京话"],
+	"culturalForms": ["白局", "曲艺"],
+	"rightsStatus": "仅引文与目录信息",
+	"archiveTime": {
+		"materialDate": "2008",
+		"describedPeriod": "2008 年公布的第二批国家级非物质文化遗产代表性项目名录及当前项目说明"
+	},
+	"archivePlace": {
+		"recordedName": "江苏省南京市秦淮区",
+		"historicalJurisdiction": "2008 年江苏省南京市秦淮区",
+		"currentLocation": "江苏省南京市秦淮区",
+		"collectionLocation": "中国非物质文化遗产网·中国非物质文化遗产数字博物馆",
+		"materialCollectionPlace": "项目申报地区为江苏省南京市秦淮区；网页未交代项目说明文字的具体采集地点",
+		"uncertainty": "名录记录的是申报与保护单位，不等同于每一位表演者的成长地点或每场演出的发生地点"
+	},
+	"preservedFiles": [
+		{
+			"kind": "原始文件",
+			"fileName": "ihchina-nanjing-baiju.html",
+			"mediaType": "text/html",
+			"byteLength": 36048,
+			"sha256": "b081b4f06246400dc1789d10c6bbb09a343304246f9c86d274302741f2f0b11f",
+			"sourceUrl": "https://www.ihchina.cn/project_details/13721.html",
+			"preservedAt": "2026-07-17",
+			"storage": "编辑研究快照，存放于 Git 仓库之外；未向公网再分发",
+			"publicAccess": false,
+			"rightsBasis": "仅为核对当前名录页面保存快照；本站未取得页面全文再分发许可"
+		}
+	],
+	"citations": [
+		{
+			"role": "主要来源",
+			"responsibleParties": ["中国非物质文化遗产网·中国非物质文化遗产数字博物馆"],
+			"title": "南京白局",
+			"publication": "国家级非物质文化遗产代表性项目名录",
+			"publicationDate": "2008",
+			"locator": "项目详情页；项目类别、编号、申报地区及正文第 1—3 段",
+			"stableIdentifier": "项目序号 774；项目编号 Ⅴ-81；页面 ID 13721",
+			"url": "https://www.ihchina.cn/project_details/13721.html",
+			"accessedAt": "2026-07-17",
+			"language": "zh-CN"
+		}
+	],
+	"review": {
+		"status": "编辑核对后发布",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17",
+		"scope": "核对当前国家非遗名录 API 与详情页中的项目名称、类别、编号、公布批次、申报地区、保护单位和南京方言关系；未据网页复原具体历史演出"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-17",
+	"updatedAt": "2026-07-17"
+}

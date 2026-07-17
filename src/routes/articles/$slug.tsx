@@ -67,6 +67,31 @@ function ArticlePage() {
 					</dl>
 				</header>
 
+				{article.visual ? (
+					<figure className="editorial-article__visual">
+						<img
+							src={article.visual.src}
+							width={article.visual.width}
+							height={article.visual.height}
+							alt={article.visual.alt}
+							style={{ width: "100%", height: "auto" }}
+						/>
+						<figcaption>
+							<span>{article.visual.caption}</span>
+							<span>
+								图：{article.visual.credit} ·{" "}
+								<a href={article.visual.licenseUrl} target="_blank" rel="license noreferrer">
+									{article.visual.license}
+								</a>{" "}
+								·{" "}
+								<a href={article.visual.sourceUrl} target="_blank" rel="noreferrer">
+									查看来源
+								</a>
+							</span>
+						</figcaption>
+					</figure>
+				) : null}
+
 				<div className="editorial-article__body">
 					<MarkdownContent>{article.body}</MarkdownContent>
 				</div>
@@ -93,6 +118,12 @@ function ArticlePage() {
 										<dt>语言对象</dt>
 										<dd>{entry.languageScope.join("、")}</dd>
 									</div>
+									{entry.culturalForms ? (
+										<div>
+											<dt>文化形式</dt>
+											<dd>{entry.culturalForms.join("、")}</dd>
+										</div>
+									) : null}
 									<div>
 										<dt>权利</dt>
 										<dd>{entry.rightsStatus}</dd>

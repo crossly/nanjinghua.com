@@ -1,0 +1,61 @@
+{
+	"id": "NJH000017",
+	"title": "李家瑞《十盏酒》的南京刻本线索（1937 年）",
+	"summary": "李家瑞在《歌谣》周刊比较各地《十盏酒》唱本，记下一种南京文竹斋刻本及可供校勘的字词差异；这是南京方言书写的研究线索，不是已证实的口语转写。",
+	"evidenceIdentity": "研究观点",
+	"languageScope": ["南京地区方言"],
+	"culturalForms": ["方言书写"],
+	"rightsStatus": "公版",
+	"archiveTime": {
+		"materialDate": "1937-12-04",
+		"describedPeriod": "1937 年对各地《十盏酒》俗曲刻本的比较，涉及一部年代未详的南京文竹斋刻本",
+		"inferredPeriod": "1937 年以前",
+		"inferenceBasis": "南京刻本已被 1937 年 12 月 4 日刊发的文章引用",
+		"uncertainty": "文章没有给出南京刻本的刊刻年份、完整书目或演唱者，不能进一步确定其形成时期"
+	},
+	"archivePlace": {
+		"recordedName": "南京（文竹斋刻本）；北平（《歌谣》刊行）",
+		"historicalJurisdiction": "1937 年南京市与北平市",
+		"currentLocation": "江苏省南京市；北京市",
+		"collectionLocation": "Wikimedia Commons 公版扫描，源自 CADAL／武汉大学",
+		"materialCollectionPlace": "文章没有说明南京刻本由何处、何人取得",
+		"uncertainty": "“南京本”是作者用于版本比较的标签，不等于已确认的南京说话者口语采录"
+	},
+	"preservedFiles": [
+		{
+			"kind": "原始文件",
+			"fileName": "CADAL09012771 歌謠.djvu",
+			"mediaType": "image/vnd.djvu",
+			"byteLength": 33160135,
+			"sha256": "2a1bb86c419d5c787a858e233f7213a5417493475298a5043d06ce69a68968dd",
+			"sourceUrl": "https://upload.wikimedia.org/wikipedia/commons/9/93/CADAL09012771_%E6%AD%8C%E8%AC%A0.djvu",
+			"preservedAt": "2026-07-17",
+			"storage": "编辑研究副本，存放于 Git 仓库之外；公开原件由 Wikimedia Commons 提供",
+			"publicAccess": true,
+			"rightsBasis": "Wikimedia Commons 文件页标为 Public domain；本站不提交 33 MB 研究副本"
+		}
+	],
+	"citations": [
+		{
+			"role": "主要来源",
+			"responsibleParties": ["李家瑞"],
+			"title": "十盏酒",
+			"publication": "北京大学文科研究所歌谣研究会《歌谣》第三卷第四期",
+			"publicationDate": "1937-12-04",
+			"locator": "本期第 1—6 页；合订本扫描页 125—130，尤其第 1 页版本概述与第 6 页南京本比较",
+			"stableIdentifier": "CADAL 09012771；Commons page ID 126195467",
+			"url": "https://commons.wikimedia.org/wiki/File:CADAL09012771_%E6%AD%8C%E8%AC%A0.djvu",
+			"accessedAt": "2026-07-17",
+			"language": "zh-Hant"
+		}
+	],
+	"review": {
+		"status": "待专家复核",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17",
+		"scope": "逐页核对扫描页 125—130 的题名、作者、日期、南京文竹斋刻本和南京本校勘段落；未取得被比较的南京刻本原件，未把 OCR 当作引文底本"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-17",
+	"updatedAt": "2026-07-17"
+}

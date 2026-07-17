@@ -78,6 +78,12 @@ function ArchiveEntryPage() {
 							<dt>语言对象</dt>
 							<dd>{entry.languageScope.join("、")}</dd>
 						</div>
+						{entry.culturalForms ? (
+							<div>
+								<dt>文化形式</dt>
+								<dd>{entry.culturalForms.join("、")}</dd>
+							</div>
+						) : null}
 						<div>
 							<dt>权利状态</dt>
 							<dd>{entry.rightsStatus}</dd>

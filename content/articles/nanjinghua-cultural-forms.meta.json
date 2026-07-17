@@ -1,0 +1,29 @@
+{
+	"slug": "nanjinghua-cultural-forms",
+	"title": "南京话活在什么文化里？",
+	"summary": "从白局演唱、家庭口述、演出与伴奏照片、南京刻本线索出发，辨清南京话怎样进入表演、记忆与文字，也标出目前没有材料可以证明的部分。",
+	"author": {
+		"name": "Ricky",
+		"role": "主编与内容责任人"
+	},
+	"archiveIds": ["NJH000006", "NJH000015", "NJH000016", "NJH000017", "NJH000018"],
+	"visual": {
+		"src": "/images/nanjing-baiju-performance.webp",
+		"width": 1800,
+		"height": 655,
+		"alt": "室内南京白局演出现场，舞台上有演唱者和乐器伴奏，观众围坐观看",
+		"caption": "南京白局演出现场。照片记录表演关系，不记录当场声音。",
+		"credit": "五空间",
+		"license": "CC BY 2.5",
+		"licenseUrl": "https://creativecommons.org/licenses/by/2.5/",
+		"sourceUrl": "https://commons.wikimedia.org/wiki/File:%E5%8D%97%E4%BA%AC%E7%99%BD%E5%B1%80.jpg"
+	},
+	"review": {
+		"status": "编辑核对后发布",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-17",
+	"updatedAt": "2026-07-17"
+}
