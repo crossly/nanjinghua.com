@@ -1,0 +1,41 @@
+{
+	"id": "NJH000008",
+	"title": "Edkins《A Grammar of the Chinese Colloquial Language》（1864 年南京、北京官话记录）",
+	"summary": "一部英文官话语法原著，区分 19 世纪中叶的 Nanking、Peking 与西部发音系统，并明确反对把 14 世纪南京宫廷发音直接等同近代官话。",
+	"evidenceIdentity": "原始材料",
+	"languageScope": ["历史南京语音"],
+	"rightsStatus": "公版",
+	"archiveTime": {
+		"materialDate": "1864",
+		"describedPeriod": "19 世纪中叶的南京、北京及西部官话发音；兼论 14 世纪南京宫廷发音"
+	},
+	"archivePlace": {
+		"recordedName": "Nanking",
+		"historicalJurisdiction": "清代江宁府",
+		"currentLocation": "江苏省南京市",
+		"collectionLocation": "Internet Archive（加州大学图书馆藏本数字化）"
+	},
+	"citations": [
+		{
+			"role": "主要来源",
+			"responsibleParties": ["Joseph Edkins"],
+			"title": "A Grammar of the Chinese Colloquial Language Commonly Called the Mandarin Dialect",
+			"publication": "Second edition, Shanghai: Presbyterian Mission Press",
+			"publicationDate": "1864",
+			"locator": "Chapter II, pp. 8–10；Chapter VII, p. 82；Internet Archive 全文影印与 OCR",
+			"stableIdentifier": "Internet Archive grammarofchinese00edkirich",
+			"url": "https://archive.org/details/grammarofchinese00edkirich",
+			"accessedAt": "2026-07-17",
+			"language": "en"
+		}
+	],
+	"review": {
+		"status": "编辑核对后发布",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17",
+		"scope": "核对 1864 年影印本题名页、第 8—10 页和第 82 页；中文说明不复原原书未明确交代的调查对象"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-17",
+	"updatedAt": "2026-07-17"
+}

@@ -1,0 +1,53 @@
+{
+	"id": "NJH000009",
+	"title": "《支那南部會話 : 一名・南京官話》（1895 年日文教材）",
+	"summary": "一部以“南京官话”为副题的日文会话教材；序文所称“南部之语”覆盖多地，显示题名不能直接当作纯南京地方音的证明。",
+	"evidenceIdentity": "原始材料",
+	"languageScope": ["历史南京语音"],
+	"rightsStatus": "仅引文与目录信息",
+	"archiveTime": {
+		"materialDate": "1895-09",
+		"describedPeriod": "19 世纪末日本编者所称的“南京官话”与“南部会话”"
+	},
+	"archivePlace": {
+		"recordedName": "南京官話／支那南部會話",
+		"historicalJurisdiction": "清代中国；编印于日本东京",
+		"currentLocation": "题名所指地域需逐页考证，不能只定位为今日南京",
+		"collectionLocation": "国立国会图书馆数字馆藏"
+	},
+	"citations": [
+		{
+			"role": "主要来源",
+			"responsibleParties": ["小倉錦太", "金沢保胤", "岸田吟香（序）"],
+			"title": "支那南部會話 : 一名・南京官話",
+			"publication": "東京：博文館",
+			"publicationDate": "1895-09",
+			"locator": "コマ 2 标题页；コマ 3–4 序文；正文 318 页、附录 19 页",
+			"stableIdentifier": "DOI 10.11501/869359；NDLBibID 000000500122；JPNO 40082700",
+			"url": "https://dl.ndl.go.jp/pid/869359/1/4",
+			"accessedAt": "2026-07-17",
+			"language": "ja"
+		},
+		{
+			"role": "补充来源",
+			"responsibleParties": ["国立国会图书馆"],
+			"title": "支那南部会話 : 一名・南京官話",
+			"publication": "NDLサーチ馆藏记录",
+			"publicationDate": "1895",
+			"locator": "责任表示、出版者、明治 28 年 9 月、318+19 页及数字馆藏链接",
+			"stableIdentifier": "NDLBibID 000000500122",
+			"url": "https://ndlsearch.ndl.go.jp/books/R100000002-I000000500122",
+			"accessedAt": "2026-07-17",
+			"language": "ja"
+		}
+	],
+	"review": {
+		"status": "待专家复核",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17",
+		"scope": "核对 NDL 原书标题页、序文与目录元数据；尚未逐页分析全书标音体系、编纂来源和教材实际使用情况"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-17",
+	"updatedAt": "2026-07-17"
+}

@@ -4,7 +4,11 @@
 	"summary": "先辨清地域、年代与证据，再谈一种语言从何而来。第一辑从南京主城区地方话出发，连接历史记录与当代声音。",
 	"sequenceLabel": "第一辑",
 	"sequenceNumber": "01",
-	"articleSlugs": ["what-is-nanjinghua", "how-we-know-nanjinghua-history"],
+	"articleSlugs": [
+		"what-is-nanjinghua",
+		"how-we-know-nanjinghua-history",
+		"historical-nanjing-speech"
+	],
 	"publishedAt": "2026-07-17",
 	"updatedAt": "2026-07-17"
 }

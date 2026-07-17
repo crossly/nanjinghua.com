@@ -1,0 +1,53 @@
+{
+	"id": "NJH000010",
+	"title": "Coblin《Retroflex initials in the history of Southern Guanhua phonology》（2009）",
+	"summary": "一项以早期字母记录研究南方官话卷舌声母史的英文论文；摘要同时呈现南京地区的北方迁入影响与后来增强的南方影响。",
+	"evidenceIdentity": "研究观点",
+	"languageScope": ["历史南京语音"],
+	"rightsStatus": "仅引文与目录信息",
+	"archiveTime": {
+		"materialDate": "2009",
+		"describedPeriod": "15 世纪中叶起的官话共同语语音史，兼论元末明初南京地区迁移"
+	},
+	"archivePlace": {
+		"recordedName": "Nanking area／Southern Guanhua",
+		"historicalJurisdiction": "元末明初南京地区及后续南方官话共同语范围",
+		"currentLocation": "江苏省南京市及长江流域相关方言区",
+		"collectionLocation": "Cahiers de Linguistique Asie Orientale（Brill）"
+	},
+	"citations": [
+		{
+			"role": "主要来源",
+			"responsibleParties": ["W. South Coblin"],
+			"title": "Retroflex initials in the history of Southern Guanhua phonology",
+			"publication": "Cahiers de Linguistique Asie Orientale, 38(1)",
+			"publicationDate": "2009",
+			"locator": "pp. 125–162；出版者提交的英文摘要",
+			"stableIdentifier": "DOI 10.1163/1960602809X00081",
+			"url": "https://doi.org/10.1163/1960602809X00081",
+			"accessedAt": "2026-07-17",
+			"language": "en"
+		},
+		{
+			"role": "补充来源",
+			"responsibleParties": ["Crossref"],
+			"title": "Metadata record for DOI 10.1163/1960602809X00081",
+			"publication": "Crossref REST API",
+			"publicationDate": "2009",
+			"locator": "题名、责任者、期刊、卷期、页码与英文摘要",
+			"stableIdentifier": "DOI 10.1163/1960602809X00081",
+			"url": "https://api.crossref.org/works/10.1163/1960602809X00081",
+			"accessedAt": "2026-07-17",
+			"language": "en"
+		}
+	],
+	"review": {
+		"status": "待专家复核",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17",
+		"scope": "核对 DOI 元数据与出版者提交的英文摘要；尚未取得论文全文，具体材料、方法和页内论证不作转述"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-17",
+	"updatedAt": "2026-07-17"
+}

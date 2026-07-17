@@ -1,0 +1,68 @@
+{
+	"id": "NJH000011",
+	"title": "“明代官话以南京话为基础”假说及其限定（1985／2000）",
+	"summary": "鲁国尧提出明代官话以南京话为基础的假说；Coblin 承认历史正音与南京密切关联，同时反对把它视为南京本地方言的直接复制。",
+	"evidenceIdentity": "研究观点",
+	"languageScope": ["历史南京语音"],
+	"rightsStatus": "仅引文与目录信息",
+	"archiveTime": {
+		"materialDate": "1985／2000（观点发表年份）",
+		"describedPeriod": "明代至明清时期官话的基础方言、正音与南京地方读音关系",
+		"inferredPeriod": "1984—2007 年的假说提出与作者回顾",
+		"inferenceBasis": "鲁国尧 2007 年正式摘要称论文 1984 年写成、1985 年发表",
+		"uncertainty": "1985 年原刊扫描未取得，原文论证与限定语仍待逐页核对"
+	},
+	"archivePlace": {
+		"recordedName": "南京／Nanking／Nankingese",
+		"historicalJurisdiction": "明代南京与明清官话使用范围",
+		"currentLocation": "江苏省南京市；历史共同语的实际使用范围不限于南京",
+		"collectionLocation": "CNKI、万方、JSTOR 与爱荷华大学机构仓储的正式书目记录"
+	},
+	"citations": [
+		{
+			"role": "主要来源",
+			"responsibleParties": ["鲁国尧"],
+			"title": "明代官话及其基础方言问题——读《利玛窦中国札记》",
+			"publication": "《南京大学学报（哲学·人文科学·社会科学版）》1985 年第 4 期",
+			"publicationDate": "1985",
+			"locator": "第 47—52 页；原刊未取得，题名、期次和页码按万方与 OpenAlex 书目核对",
+			"stableIdentifier": "万方 NSSD201412290000094930；OpenAlex W961033778",
+			"url": "https://d.wanfangdata.com.cn/periodical/NSSD201412290000094930",
+			"accessedAt": "2026-07-17",
+			"language": "zh-CN"
+		},
+		{
+			"role": "补充来源",
+			"responsibleParties": ["鲁国尧"],
+			"title": "研究明末清初官话基础方言的廿三年历程——“从字缝里看”到“从字面上看”",
+			"publication": "《语言科学》2007 年第 2 期",
+			"publicationDate": "2007-03-01",
+			"locator": "第 5—24 页；CNKI 正式摘要对 1985 年假说的作者回顾",
+			"stableIdentifier": "CNKI YYKE200702000",
+			"url": "https://www.cnki.com.cn/Article/CJFDTotal-YYKE200702000.htm",
+			"accessedAt": "2026-07-17",
+			"language": "zh-CN"
+		},
+		{
+			"role": "补充来源",
+			"responsibleParties": ["W. South Coblin"],
+			"title": "A Brief History of Mandarin",
+			"publication": "Journal of the American Oriental Society, 120(4)",
+			"publicationDate": "2000-10",
+			"locator": "pp. 537–552；正式摘要及 pp. 540–541；正文短引页码经公开用户转写核对，正式全文当前受限",
+			"stableIdentifier": "DOI 10.2307/606615；JSTOR 606615；Iowa 9984095003302771",
+			"url": "https://iro.uiowa.edu/esploro/outputs/journalArticle/A-brief-history-of-mandarin/9984095003302771",
+			"accessedAt": "2026-07-17",
+			"language": "en"
+		}
+	],
+	"review": {
+		"status": "待专家复核",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17",
+		"scope": "核对鲁国尧 1985 书目、2007 正式摘要、Coblin 2000 正式书目与摘要；1985 原刊和 Coblin 正式全文尚未取得，正文页码只经公开转写复核"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-17",
+	"updatedAt": "2026-07-17"
+}

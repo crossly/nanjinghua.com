@@ -1,0 +1,18 @@
+{
+	"slug": "historical-nanjing-speech",
+	"title": "历史上的南京音与南京官话是什么？",
+	"summary": "从 1864 年英文原著、1895 年日文教材和鲁国尧、Coblin 的限定性冲突出发，辨清历史南京语音、南京官话与当代南京话的关系和边界。",
+	"author": {
+		"name": "Ricky",
+		"role": "主编与内容责任人"
+	},
+	"archiveIds": ["NJH000008", "NJH000009", "NJH000010", "NJH000011", "NJH000005"],
+	"review": {
+		"status": "编辑核对后发布",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-17",
+	"updatedAt": "2026-07-17"
+}
