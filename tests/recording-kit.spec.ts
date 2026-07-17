@@ -1,5 +1,7 @@
 import { expect, test } from "@playwright/test";
 
+import { RECORDING_KIT_DOWNLOAD_PATH } from "../src/recording-kit/config.ts";
+
 test("非专业采集者可以取得完整的成年说话者语音采集包", async ({ page, request }) => {
 	await page.goto("/contribute");
 	await page.getByRole("link", { name: "查看真人语音采集包" }).click();
@@ -26,8 +28,8 @@ test("非专业采集者可以取得完整的成年说话者语音采集包", as
 	await expect(separation).toContainText("公开元数据");
 
 	const download = page.getByRole("link", { name: "下载完整采集包" });
-	await expect(download).toHaveAttribute("href", "/downloads/nanjinghua-recording-kit-v1.0.0.zip");
-	const response = await request.get("/downloads/nanjinghua-recording-kit-v1.0.0.zip");
+	await expect(download).toHaveAttribute("href", RECORDING_KIT_DOWNLOAD_PATH);
+	const response = await request.get(RECORDING_KIT_DOWNLOAD_PATH);
 	expect(response.ok()).toBe(true);
 	expect(response.headers()["content-type"]).toContain("application/zip");
 	expect((await response.body()).subarray(0, 2).toString("ascii")).toBe("PK");

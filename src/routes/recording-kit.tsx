@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, Download, FileCheck2, FolderLock, Headphones, Mic2 } from "lucide-react";
 
 import { ArchiveHeader } from "../components/archive-header";
+import { RECORDING_KIT_DOWNLOAD_PATH, RECORDING_KIT_VERSION } from "../recording-kit/config";
 
 export const Route = createFileRoute("/recording-kit")({
 	head: () => ({
@@ -60,18 +61,14 @@ function RecordingKitPage() {
 
 			<section className="recording-kit-hero" aria-labelledby="recording-kit-title">
 				<div>
-					<p className="section-label">公众采集工具 · v1.0.0</p>
+					<p className="section-label">公众采集工具 · v{RECORDING_KIT_VERSION}</p>
 					<h1 id="recording-kit-title">真人语音采集包</h1>
 				</div>
 				<div className="recording-kit-hero__intro">
 					<p>
 						用常见手机或录音机，留下可追溯、可撤回且不表演化的南京话记录。先取得分项授权，再开始录音。
 					</p>
-					<a
-						className="recording-kit-download"
-						href="/downloads/nanjinghua-recording-kit-v1.0.0.zip"
-						download
-					>
+					<a className="recording-kit-download" href={RECORDING_KIT_DOWNLOAD_PATH} download>
 						<Download aria-hidden="true" strokeWidth={1.5} />
 						<span>下载完整采集包</span>
 					</a>
