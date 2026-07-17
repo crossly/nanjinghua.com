@@ -9,8 +9,8 @@ test("读者可以区分历史南京音、南京官话与当代南京话", async
 	).toBeVisible();
 	await expect(page.getByText(/历史南京语音.*不等于.*当代南京话/).first()).toBeVisible();
 	await expect(page.getByText(/城市地位.*不能.*证明.*语言连续/).first()).toBeVisible();
-	await expect(page.getByText(/鲁国尧.*1985.*南京话.*假说/).first()).toBeVisible();
-	await expect(page.getByText(/Coblin.*并不等同.*南京本地方言/).first()).toBeVisible();
+	await expect(page.getByText(/远藤光晓.*最可能占有标准音/).first()).toBeVisible();
+	await expect(page.getByText(/不能因为南京短暂.*标准音/).first()).toBeVisible();
 
 	const relatedArchives = page.getByRole("region", { name: "本篇关联档案" });
 	await expect(relatedArchives.getByRole("listitem")).toHaveCount(5);
@@ -42,10 +42,9 @@ test("读者可以区分历史南京音、南京官话与当代南京话", async
 
 	await page.goto("/archive/NJH000011");
 	const controversyRecord = page.getByRole("region", { name: "档案说明" });
-	await expect(controversyRecord).toContainText("首次提出明代官话的基础方言是南京话的假说");
-	await expect(controversyRecord).toContainText("although similar to Nankingese pronunciation");
-	await expect(controversyRecord).toContainText("并不完全互斥");
-	await expect(controversyRecord).toContainText("1985 年原刊扫描尚未取得");
+	await expect(controversyRecord).toContainText("支持侧");
+	await expect(controversyRecord).toContainText("质疑侧");
+	await expect(controversyRecord).toContainText("尚未独立取得");
 
 	const viewportMetrics = await page.evaluate(() => ({
 		clientWidth: document.documentElement.clientWidth,
