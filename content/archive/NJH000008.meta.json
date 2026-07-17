@@ -15,6 +15,20 @@
 		"currentLocation": "江苏省南京市",
 		"collectionLocation": "Internet Archive（加州大学图书馆藏本数字化）"
 	},
+	"preservedFiles": [
+		{
+			"kind": "原始文件",
+			"fileName": "grammarofchinese00edkirich.pdf",
+			"mediaType": "application/pdf",
+			"byteLength": 21093917,
+			"sha256": "c35d3c3d2930ecff67bd5d89143f612a8a98fa82f4e44ec018c8b72567df0f0c",
+			"sourceUrl": "https://archive.org/download/grammarofchinese00edkirich/grammarofchinese00edkirich.pdf",
+			"preservedAt": "2026-07-17",
+			"storage": "编辑研究副本，存放于 Git 仓库之外；未向公网再分发",
+			"publicAccess": false,
+			"rightsBasis": "1864 年原著为公版；Internet Archive 数字文件未声明 CC 许可，本站只作研究保存"
+		}
+	],
 	"citations": [
 		{
 			"role": "主要来源",

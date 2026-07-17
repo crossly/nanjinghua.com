@@ -29,6 +29,7 @@ export function toArchiveExport(entry: ArchiveEntry) {
 		"nanjinghua:languageScope": entry.languageScope,
 		"nanjinghua:sourceRights": entry.rightsStatus,
 		"nanjinghua:archiveTime": entry.archiveTime,
+		"nanjinghua:preservedFiles": entry.preservedFiles,
 		"nanjinghua:review": entry.review,
 		"nanjinghua:aiAssistance": entry.aiAssistance,
 		"nanjinghua:canonicalCitation": formatArchiveCitation(entry),

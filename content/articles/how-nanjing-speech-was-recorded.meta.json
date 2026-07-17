@@ -1,0 +1,18 @@
+{
+	"slug": "how-nanjing-speech-was-recorded",
+	"title": "南京话如何被记录下来？",
+	"summary": "从晚清语法书与教材、民国论文书目，到现代区域调查和图书录音带，说明每种记录怎样形成、留下什么，又遗漏什么。",
+	"author": {
+		"name": "Ricky",
+		"role": "主编与内容责任人"
+	},
+	"archiveIds": ["NJH000008", "NJH000009", "NJH000005", "NJH000004", "NJH000003"],
+	"review": {
+		"status": "编辑核对后发布",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-17",
+	"updatedAt": "2026-07-17"
+}

@@ -36,6 +36,40 @@ export const citationSchema = z
 	})
 	.strict();
 
+const sha256Schema = z.string().regex(/^[a-f0-9]{64}$/, "SHA-256 必须使用 64 位小写十六进制");
+
+const preservedFileSchema = z
+	.object({
+		kind: z.enum(["原始文件", "派生文件"]),
+		fileName: requiredText,
+		mediaType: requiredText,
+		byteLength: z.number().int().positive("文件字节数必须为正整数"),
+		sha256: sha256Schema,
+		sourceUrl: z.url("保存文件必须提供有效来源网址"),
+		preservedAt: isoDateSchema,
+		storage: requiredText,
+		publicAccess: z.boolean(),
+		rightsBasis: requiredText,
+		derivedFromSha256: sha256Schema.optional(),
+		processing: z.array(requiredText).min(1).optional(),
+	})
+	.strict()
+	.superRefine((file, context) => {
+		if (file.kind === "派生文件" && (!file.derivedFromSha256 || !file.processing)) {
+			context.addIssue({
+				code: "custom",
+				message: "派生文件必须记录原始文件校验值和处理过程",
+			});
+		}
+
+		if (file.kind === "原始文件" && (file.derivedFromSha256 || file.processing)) {
+			context.addIssue({
+				code: "custom",
+				message: "原始文件不能声明派生来源或处理过程",
+			});
+		}
+	});
+
 const archiveTimeSchema = z
 	.object({
 		materialDate: requiredText,
@@ -78,6 +112,7 @@ export const archiveEntrySchema = z
 				collectionLocation: requiredText.optional(),
 			})
 			.strict(),
+		preservedFiles: z.array(preservedFileSchema).min(1).optional(),
 		citations: z.array(citationSchema).min(1, "档案条目至少需要一条引用记录"),
 		review: z
 			.object({

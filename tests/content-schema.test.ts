@@ -113,6 +113,56 @@ test("推定时期必须同时提供依据和不确定性", () => {
 	);
 });
 
+test("可保存的原始文件记录校验值、来源和访问状态", () => {
+	const [entry] = parseArchiveEntries([
+		{
+			...validEntry,
+			preservedFiles: [
+				{
+					kind: "原始文件",
+					fileName: "source.pdf",
+					mediaType: "application/pdf",
+					byteLength: 1024,
+					sha256: "a".repeat(64),
+					sourceUrl: "https://example.com/source.pdf",
+					preservedAt: "2026-07-17",
+					storage: "编辑研究副本，未提交 Git",
+					publicAccess: false,
+					rightsBasis: "公版原著；数字文件不由本站再分发",
+				},
+			],
+		},
+	]);
+
+	assert.equal(entry?.preservedFiles?.[0]?.sha256, "a".repeat(64));
+});
+
+test("派生文件必须记录原始文件校验值和处理过程", () => {
+	assert.throws(
+		() =>
+			parseArchiveEntries([
+				{
+					...validEntry,
+					preservedFiles: [
+						{
+							kind: "派生文件",
+							fileName: "derived.mp3",
+							mediaType: "audio/mpeg",
+							byteLength: 1024,
+							sha256: "b".repeat(64),
+							sourceUrl: "https://example.com/derived.mp3",
+							preservedAt: "2026-07-17",
+							storage: "R2",
+							publicAccess: true,
+							rightsBasis: "已获授权",
+						},
+					],
+				},
+			]),
+		/派生文件必须记录原始文件校验值和处理过程/,
+	);
+});
+
 test("专题集合元数据可以声明有序专题文章", () => {
 	assert.deepEqual(parseCollections([validCollection])[0]?.articleSlugs, ["test-article"]);
 });

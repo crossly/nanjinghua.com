@@ -109,9 +109,34 @@ function ArchiveEntryPage() {
 							</div>
 						) : null}
 						<div>
-							<dt>档案地点</dt>
+							<dt>档案原载地名</dt>
 							<dd>{entry.archivePlace.recordedName}</dd>
 						</div>
+						<div>
+							<dt>历史行政归属</dt>
+							<dd>{entry.archivePlace.historicalJurisdiction}</dd>
+						</div>
+						{entry.archivePlace.currentLocation ? (
+							<div>
+								<dt>可确认的当代位置</dt>
+								<dd>{entry.archivePlace.currentLocation}</dd>
+							</div>
+						) : null}
+						{entry.archivePlace.collectionLocation ? (
+							<div>
+								<dt>馆藏位置</dt>
+								<dd>{entry.archivePlace.collectionLocation}</dd>
+							</div>
+						) : null}
+						{entry.preservedFiles?.map((file) => (
+							<div key={file.sha256}>
+								<dt>保存文件</dt>
+								<dd>
+									{file.kind} · {file.fileName} · SHA-256 <code>{file.sha256}</code> ·
+									{file.publicAccess ? "公开" : "不公开"}
+								</dd>
+							</div>
+						))}
 						<div>
 							<dt>审核状态</dt>
 							<dd>{entry.review.status}</dd>

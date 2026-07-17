@@ -476,6 +476,7 @@ img {
 	margin: 0;
 	font-family: var(--serif);
 	line-height: 1.55;
+	overflow-wrap: anywhere;
 }
 
 .interior-page {
@@ -753,6 +754,10 @@ img {
 .prose strong {
 	font-weight: 700;
 	color: var(--red);
+}
+
+.prose code {
+	overflow-wrap: anywhere;
 }
 
 .prose a {
