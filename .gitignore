@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.wrangler/
+.tanstack/
+test-results/
+playwright-report/
+.playwright-cli/
+output/playwright/
+.DS_Store
+.env
+.env.*
+!.env.example

@@ -1,0 +1,17 @@
+{
+	"short_name": "南京话",
+	"name": "南京话｜南京话的历史",
+	"icons": [
+		{
+			"src": "/favicon.svg",
+			"sizes": "any",
+			"type": "image/svg+xml",
+			"purpose": "any"
+		}
+	],
+	"start_url": "/",
+	"display": "standalone",
+	"theme_color": "#171714",
+	"background_color": "#f7f7f4",
+	"lang": "zh-CN"
+}
