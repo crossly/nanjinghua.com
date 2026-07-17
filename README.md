@@ -2,6 +2,12 @@
 
 “南京话的历史”是一个面向公众、证据优先的南京话数字档案。当前仓库正在按 [首发规格](./docs/specs/0001-public-archive-launch.md) 分阶段建设。
 
+## 已部署预览
+
+[https://nanjinghua-com.xflash.workers.dev](https://nanjinghua-com.xflash.workers.dev)
+
+该 Cloudflare Worker 预览于 2026-07-17 完成公网与真实浏览器验证。正式域名将在首发验收阶段接入。
+
 ## 环境
 
 - Node.js 24.18.0（见 `.node-version`）

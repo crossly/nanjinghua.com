@@ -25,12 +25,14 @@ function Home() {
 				</header>
 
 				<div className="hero__content">
-					<p className="hero__eyebrow">一座城市的声音档案</p>
+					<p className="hero__eyebrow">首发专题集合 · 01</p>
 					<h1 id="site-title">南京话</h1>
 					<p className="hero__subtitle">南京话的历史</p>
-					<p className="hero__lede">从一段声音、一页文献出发，追寻南京这座城市留下的语言。</p>
+					<p className="hero__lede">
+						从南京主城区地方话出发，辨清地域、年代与证据，连接历史记录与当代声音。
+					</p>
 					<a className="hero__action" href="#opening-collection">
-						<span>进入第一辑</span>
+						<span>进入首发专题集合</span>
 						<ArrowDown aria-hidden="true" strokeWidth={1.5} />
 					</a>
 				</div>
@@ -60,7 +62,7 @@ function Home() {
 				</div>
 
 				<div className="opening-collection__intro">
-					<p className="section-label">首发专题</p>
+					<p className="section-label">首发专题集合</p>
 					<h2 id="opening-title">南京话是什么？</h2>
 					<p>
 						先辨清地域、年代与证据，再谈一种语言从何而来。第一辑将从南京主城区地方话出发，连接历史记录与当代声音。

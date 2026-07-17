@@ -7,7 +7,7 @@ export default defineConfig({
 	retries: process.env.CI ? 2 : 0,
 	reporter: "list",
 	use: {
-		baseURL: "http://127.0.0.1:3000",
+		baseURL: "http://127.0.0.1:4173",
 		trace: "on-first-retry",
 	},
 	projects: [
@@ -21,8 +21,8 @@ export default defineConfig({
 		},
 	],
 	webServer: {
-		command: "pnpm dev --host 127.0.0.1",
-		url: "http://127.0.0.1:3000",
+		command: "pnpm preview:worker",
+		url: "http://127.0.0.1:4173",
 		reuseExistingServer: !process.env.CI,
 		stdout: "pipe",
 		stderr: "pipe",

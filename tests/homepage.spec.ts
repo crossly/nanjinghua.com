@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-test("访客可以从品牌首页进入第一辑", async ({ page }) => {
+test("访客可以从品牌首页进入首发专题集合", async ({ page }) => {
 	await page.goto("/");
 
 	await expect(page).toHaveTitle(/南京话/);
@@ -10,7 +10,7 @@ test("访客可以从品牌首页进入第一辑", async ({ page }) => {
 	await expect(page.getByRole("img", { name: /1940 年《南京市区图》/ })).toBeVisible();
 
 	const openingCollectionLink = page.getByRole("link", {
-		name: "进入第一辑",
+		name: "进入首发专题集合",
 	});
 	await expect(openingCollectionLink).toHaveAttribute("href", "#opening-collection");
 	await openingCollectionLink.click();
