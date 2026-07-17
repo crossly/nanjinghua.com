@@ -3,5 +3,20 @@
 	"name": "nanjinghua-com",
 	"compatibility_date": "2026-07-17",
 	"compatibility_flags": ["nodejs_compat"],
-	"main": "@tanstack/react-start/server-entry"
+	"main": "./src/server.ts",
+	"d1_databases": [
+		{
+			"binding": "SUBMISSIONS_DB",
+			"database_name": "nanjinghua-submissions",
+			"database_id": "1b8402bf-a88e-4d11-bd56-e06e6c70cfc1",
+			"migrations_dir": "migrations"
+		}
+	],
+	"vars": {
+		"TURNSTILE_MODE": "production",
+		"TURNSTILE_SITE_KEY": "0x4AAAAAAD3tFpmiB4jhX_8m"
+	},
+	"triggers": {
+		"crons": ["0 2 * * *"]
+	}
 }

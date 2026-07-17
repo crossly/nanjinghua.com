@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowDown, ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUpRight, MessageSquarePlus } from "lucide-react";
 
 import { getArchiveEntry, getArticle } from "../content/registry";
 
@@ -106,10 +106,16 @@ function Home() {
 				<div className="evidence-example__content">
 					<h2 id="evidence-example-title">{featuredArticle.title}</h2>
 					<p>{featuredArticle.summary}</p>
-					<a href={`/articles/${featuredArticle.slug}`}>
-						<span>查看证据处理示例</span>
-						<ArrowRight aria-hidden="true" strokeWidth={1.5} />
-					</a>
+					<div className="evidence-example__links">
+						<a href={`/articles/${featuredArticle.slug}`}>
+							<span>查看证据处理示例</span>
+							<ArrowRight aria-hidden="true" strokeWidth={1.5} />
+						</a>
+						<a href="/contribute">
+							<span>提供线索</span>
+							<MessageSquarePlus aria-hidden="true" strokeWidth={1.5} />
+						</a>
+					</div>
 				</div>
 				<dl className="evidence-example__status">
 					<div>

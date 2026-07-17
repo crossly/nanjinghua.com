@@ -8,6 +8,7 @@ const config = defineConfig({
 	plugins: [
 		cloudflare({ viteEnvironment: { name: "ssr" } }),
 		tanstackStart({
+			server: { entry: "server.ts" },
 			pages: [
 				{ path: "/" },
 				{ path: "/articles/what-a-review-can-tell-us" },

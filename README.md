@@ -36,12 +36,26 @@ pnpm build
 
 ## Cloudflare
 
+首次配置提交服务时，先创建 D1 数据库和 Turnstile Managed 组件，将公开 site key 写入
+`wrangler.jsonc`。Turnstile 组件需允许正式域名和 Worker 预览域名。两个私密值使用 Wrangler
+secret 保存，不写入仓库：
+
 ```bash
+wrangler secret put TURNSTILE_SECRET_KEY
+wrangler secret put EDITOR_API_KEY
+pnpm run db:migrate:remote
+pnpm run validate:secrets
 pnpm preview:worker
 pnpm run deploy
 ```
 
-应用使用 TanStack Start 的 Cloudflare Vite 适配器，Worker 入口和兼容日期由 `wrangler.jsonc` 管理。
+也可以把两个键写入被 Git 忽略、权限为 `0600` 的 `.env.production.local`，再执行
+`wrangler secret bulk .env.production.local`。`pnpm run deploy` 会先检查远端 secret 名称并应用 D1
+迁移，缺少配置时不会继续部署。
+
+应用使用 TanStack Start 的 Cloudflare Vite 适配器，Worker 入口、D1 绑定、Cron 和兼容日期由
+`wrangler.jsonc` 管理。每日 Cron 会执行联系方式保留与无处理提醒；提醒线索编号同时写入状态事件和
+Worker 日志。
 
 ## 领域与决策
 

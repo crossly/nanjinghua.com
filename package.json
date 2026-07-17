@@ -15,7 +15,10 @@
 		"build": "pnpm run validate:content && vite build",
 		"validate:content": "node scripts/validate-content.ts",
 		"preview": "vite preview --port 4173",
-		"preview:worker": "pnpm run build && wrangler dev --port 4173",
+		"preview:worker": "pnpm run db:migrate:local && pnpm run build && wrangler dev --port 4173 --var TURNSTILE_MODE:test --var TURNSTILE_SITE_KEY:1x00000000000000000000AA --var TURNSTILE_SECRET_KEY:test-only --var EDITOR_API_KEY:test-editor-key",
+		"db:migrate:local": "wrangler d1 migrations apply nanjinghua-submissions --local",
+		"db:migrate:remote": "wrangler d1 migrations apply nanjinghua-submissions --remote",
+		"validate:secrets": "wrangler secret list --format json | node scripts/validate-worker-secrets.ts",
 		"typecheck": "tsc --noEmit",
 		"test": "pnpm run test:unit && pnpm run test:e2e",
 		"test:unit": "node --test tests/content-schema.test.ts",
@@ -23,7 +26,7 @@
 		"format": "biome format --write .",
 		"lint": "biome lint .",
 		"check": "biome check .",
-		"deploy": "pnpm run build && wrangler deploy"
+		"deploy": "pnpm run build && pnpm run validate:secrets && pnpm run db:migrate:remote && wrangler deploy"
 	},
 	"dependencies": {
 		"@cloudflare/vite-plugin": "1.45.0",
