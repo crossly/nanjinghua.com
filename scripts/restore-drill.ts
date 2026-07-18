@@ -39,6 +39,7 @@ if (process.argv.includes("--help")) {
 	process.exit(0);
 }
 
+process.umask(0o077);
 const backupArgument = operationDirectoryArgument(process.argv.slice(2));
 if (!backupArgument) throw new Error("必须提供包含 manifest.json 的备份目录");
 const backupDirectory = resolve(backupArgument);

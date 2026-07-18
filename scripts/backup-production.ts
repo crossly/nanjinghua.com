@@ -62,7 +62,7 @@ const articleCount = readdirSync("content/articles").filter((file) =>
 	file.endsWith(".meta.json"),
 ).length;
 
-run("git", ["bundle", "create", bundlePath, "--all"]);
+run("git", ["bundle", "create", bundlePath, "--branches", "--tags"]);
 run("pnpm", [
 	"exec",
 	"wrangler",
