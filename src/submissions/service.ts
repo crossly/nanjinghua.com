@@ -1,4 +1,4 @@
-import type { SubmissionInput, SubmissionStatus } from "./schema";
+import type { DispositionInput, SubmissionInput, SubmissionStatus } from "./schema";
 import { prioritySubmissionTypes } from "./schema";
 
 const activeStatuses: SubmissionStatus[] = ["已收到", "待补充", "核验中"];
@@ -43,6 +43,19 @@ type StatusEvent = {
 	from_status: SubmissionStatus | null;
 	to_status: SubmissionStatus;
 	note: string | null;
+	actor: string;
+	created_at: string;
+};
+
+type DispositionEvent = {
+	id: number;
+	lead_id: string;
+	archive_id: string;
+	decision_type: DispositionInput["decisionType"];
+	public_catalog_action: DispositionInput["publicCatalogAction"];
+	stored_copy_action: DispositionInput["storedCopyAction"];
+	backup_action: DispositionInput["backupAction"];
+	note: string;
 	actor: string;
 	created_at: string;
 };
@@ -107,7 +120,7 @@ export async function createSubmission(db: D1Database, input: SubmissionInput, n
 }
 
 export async function getSubmissionForEditor(db: D1Database, id: string) {
-	const [lead, contact, events] = await Promise.all([
+	const [lead, contact, events, dispositions] = await Promise.all([
 		db.prepare("SELECT * FROM submission_leads WHERE id = ?").bind(id).first<SubmissionLead>(),
 		db
 			.prepare("SELECT * FROM submission_contacts WHERE lead_id = ?")
@@ -117,10 +130,114 @@ export async function getSubmissionForEditor(db: D1Database, id: string) {
 			.prepare("SELECT * FROM submission_status_events WHERE lead_id = ? ORDER BY id")
 			.bind(id)
 			.all<StatusEvent>(),
+		db
+			.prepare("SELECT * FROM submission_disposition_events WHERE lead_id = ? ORDER BY id")
+			.bind(id)
+			.all<DispositionEvent>(),
 	]);
 
 	if (!lead) return null;
-	return { lead, contact, events: events.results };
+	return { lead, contact, events: events.results, dispositions: dispositions.results };
+}
+
+export async function createSubmissionDisposition(
+	db: D1Database,
+	id: string,
+	input: DispositionInput,
+	now = new Date(),
+) {
+	const lead = await db
+		.prepare("SELECT id, type, archive_id, status FROM submission_leads WHERE id = ?")
+		.bind(id)
+		.first<Pick<SubmissionLead, "id" | "type" | "archive_id" | "status">>();
+	if (!lead) return { outcome: "not-found" as const };
+	if (!lead.archive_id) return { outcome: "missing-archive" as const };
+	if (lead.status !== "核验中") {
+		return { outcome: "invalid-state" as const, currentStatus: lead.status };
+	}
+
+	const allowedDecisionTypes: Record<string, DispositionInput["decisionType"][]> = {
+		纠错: ["事实修订", "证据身份变更"],
+		权利请求: ["目录撤回"],
+		隐私或安全请求: ["目录撤回", "隐私删除"],
+	};
+	if (!allowedDecisionTypes[lead.type]?.includes(input.decisionType)) {
+		return { outcome: "incompatible" as const };
+	}
+
+	const createdAt = now.toISOString();
+	const [disposition, , update] = await db.batch([
+		db
+			.prepare(
+				`INSERT INTO submission_disposition_events (
+					lead_id, archive_id, decision_type, public_catalog_action,
+					stored_copy_action, backup_action, note, actor, created_at
+				)
+				SELECT id, archive_id, ?, ?, ?, ?, ?, '编辑', ?
+				FROM submission_leads
+				WHERE id = ? AND status = '核验中'
+					AND NOT EXISTS (
+						SELECT 1 FROM submission_disposition_events WHERE lead_id = ?
+					)`,
+			)
+			.bind(
+				input.decisionType,
+				input.publicCatalogAction,
+				input.storedCopyAction,
+				input.backupAction,
+				input.note,
+				createdAt,
+				id,
+				id,
+			),
+		db
+			.prepare(
+				`INSERT INTO submission_status_events
+					(lead_id, from_status, to_status, note, actor, created_at)
+				SELECT id, status, '已采纳', ?, '编辑', ?
+				FROM submission_leads
+				WHERE id = ? AND status = '核验中'
+					AND EXISTS (
+						SELECT 1 FROM submission_disposition_events
+						WHERE lead_id = ? AND created_at = ?
+					)`,
+			)
+			.bind(`已记录${input.decisionType}最终处置`, createdAt, id, id, createdAt),
+		db
+			.prepare(
+				`UPDATE submission_leads
+				SET status = '已采纳', updated_at = ?, status_changed_at = ?,
+					last_reviewed_at = ?, terminal_at = COALESCE(terminal_at, ?)
+				WHERE id = ? AND status = '核验中'
+					AND EXISTS (
+						SELECT 1 FROM submission_disposition_events
+						WHERE lead_id = ? AND created_at = ?
+					)`,
+			)
+			.bind(createdAt, createdAt, createdAt, createdAt, id, id, createdAt),
+	]);
+
+	if (disposition.meta.changes === 0 || update.meta.changes === 0) {
+		const current = await db
+			.prepare(
+				`SELECT status,
+					EXISTS (SELECT 1 FROM submission_disposition_events WHERE lead_id = ?) AS decided
+				FROM submission_leads WHERE id = ?`,
+			)
+			.bind(id, id)
+			.first<{ status: SubmissionStatus; decided: number }>();
+		if (!current) return { outcome: "not-found" as const };
+		if (current.decided) return { outcome: "already-decided" as const };
+		return { outcome: "invalid-state" as const, currentStatus: current.status };
+	}
+
+	return {
+		outcome: "created" as const,
+		id: disposition.meta.last_row_id,
+		archiveId: lead.archive_id,
+		createdAt,
+		status: "已采纳" as const,
+	};
 }
 
 export async function updateSubmissionStatus(
@@ -131,13 +248,24 @@ export async function updateSubmissionStatus(
 	now = new Date(),
 ) {
 	const lead = await db
-		.prepare("SELECT id, status FROM submission_leads WHERE id = ?")
+		.prepare("SELECT id, type, archive_id, status FROM submission_leads WHERE id = ?")
 		.bind(id)
-		.first<Pick<SubmissionLead, "id" | "status">>();
+		.first<Pick<SubmissionLead, "id" | "type" | "archive_id" | "status">>();
 
 	if (!lead) return { outcome: "not-found" as const };
 	if (!allowedTransitions[lead.status].includes(nextStatus)) {
 		return { outcome: "invalid-transition" as const, currentStatus: lead.status };
+	}
+	if (
+		nextStatus === "已采纳" &&
+		lead.archive_id &&
+		["纠错", "权利请求", "隐私或安全请求"].includes(lead.type)
+	) {
+		const disposition = await db
+			.prepare("SELECT id FROM submission_disposition_events WHERE lead_id = ?")
+			.bind(id)
+			.first<{ id: number }>();
+		if (!disposition) return { outcome: "missing-disposition" as const };
 	}
 
 	const timestamp = now.toISOString();

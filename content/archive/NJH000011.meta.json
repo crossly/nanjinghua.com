@@ -15,6 +15,14 @@
 		"currentLocation": "论文作者单位为南京大学；出版平台为青岛大学",
 		"collectionLocation": "青岛大学《东方论坛》公开 PDF"
 	},
+	"revisions": [
+		{
+			"type": "事实修订",
+			"revisedAt": "2026-07-17",
+			"responsibleParty": "Ricky（主编）",
+			"summary": "替换此前未能逐页核对的来源组合，改用已取得全文的 2021 年争议论文作为主要来源，并明确支持侧仍是转引、两侧核验状态不对称。"
+		}
+	],
 	"citations": [
 		{
 			"role": "主要来源",

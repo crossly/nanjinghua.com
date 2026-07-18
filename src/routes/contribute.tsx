@@ -15,8 +15,19 @@ declare global {
 }
 
 type FormPhase = "idle" | "submitting" | "success" | "error";
+const prefillableTypes = new Set(["纠错", "权利请求", "隐私或安全请求"]);
 
 export const Route = createFileRoute("/contribute")({
+	validateSearch: (search: Record<string, unknown>) => ({
+		type:
+			typeof search.type === "string" && prefillableTypes.has(search.type)
+				? search.type
+				: undefined,
+		archiveId:
+			typeof search.archiveId === "string" && /^NJH\d{6}$/.test(search.archiveId)
+				? search.archiveId
+				: undefined,
+	}),
 	head: () => ({
 		meta: [
 			{ title: "提供线索｜南京话" },
@@ -30,6 +41,7 @@ export const Route = createFileRoute("/contribute")({
 });
 
 function ContributePage() {
+	const search = Route.useSearch();
 	const formRef = useRef<HTMLFormElement>(null);
 	const turnstileContainerRef = useRef<HTMLDivElement>(null);
 	const widgetIdRef = useRef<string | undefined>(undefined);
@@ -38,6 +50,8 @@ function ContributePage() {
 	const [phase, setPhase] = useState<FormPhase>("idle");
 	const [message, setMessage] = useState("");
 	const [referenceId, setReferenceId] = useState("");
+	const [submissionType, setSubmissionType] = useState(search.type ?? "");
+	const rightsRequest = submissionType === "权利请求" || submissionType === "隐私或安全请求";
 
 	useEffect(() => {
 		fetch("/api/submissions")
@@ -122,6 +136,7 @@ function ContributePage() {
 				setReferenceId(result.referenceId);
 				setMessage(result.message ?? "线索已收到。");
 				formRef.current?.reset();
+				setSubmissionType("");
 				return;
 			}
 
@@ -178,7 +193,12 @@ function ContributePage() {
 				<form className="contribute-form" ref={formRef} onSubmit={submit}>
 					<label>
 						<span>线索类型</span>
-						<select name="type" required defaultValue="">
+						<select
+							name="type"
+							required
+							value={submissionType}
+							onChange={(event) => setSubmissionType(event.currentTarget.value)}
+						>
 							<option value="" disabled>
 								选择类型
 							</option>
@@ -202,8 +222,14 @@ function ContributePage() {
 					</label>
 
 					<label>
-						<span>关联档案编号（可选）</span>
-						<input name="archiveId" pattern="NJH[0-9]{6}" placeholder="NJH000001" />
+						<span>{rightsRequest ? "关联档案编号（必填）" : "关联档案编号（可选）"}</span>
+						<input
+							name="archiveId"
+							pattern="NJH[0-9]{6}"
+							placeholder="NJH000001"
+							defaultValue={search.archiveId ?? ""}
+							required={rightsRequest}
+						/>
 					</label>
 
 					<label>

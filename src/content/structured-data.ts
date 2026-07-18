@@ -1,14 +1,14 @@
-import type { ArchiveEntry } from "./registry";
+import type { PublicArchiveEntry, PublishedArchiveEntry } from "./publication";
 
 const archiveBaseUrl = "https://nanjinghua.com/archive";
 const metadataLicenseUrl = "https://creativecommons.org/publicdomain/zero/1.0/";
 
-export function formatArchiveCitation(entry: ArchiveEntry): string {
+export function formatArchiveCitation(entry: PublishedArchiveEntry): string {
 	return `${entry.review.reviewer}整理：《${entry.title}》，南京话，档案编号 ${entry.id}，${entry.publishedAt}，${archiveBaseUrl}/${entry.id}。`;
 }
 
-export function toArchiveExport(entry: ArchiveEntry) {
-	return {
+export function toArchiveExport(entry: PublicArchiveEntry) {
+	const base = {
 		"@context": {
 			dc: "http://purl.org/dc/elements/1.1/",
 			dcterms: "http://purl.org/dc/terms/",
@@ -21,6 +21,16 @@ export function toArchiveExport(entry: ArchiveEntry) {
 		"dc:type": "档案条目",
 		"dc:rights": "CC0 1.0 Universal",
 		"dcterms:license": metadataLicenseUrl,
+		"nanjinghua:publicationStatus": entry.publicationStatus,
+		"nanjinghua:sourceRights": entry.rightsStatus,
+		"dcterms:issued": entry.publishedAt,
+		"dcterms:modified": entry.updatedAt,
+	};
+
+	if (entry.publicationStatus !== "公开") return base;
+
+	return {
+		...base,
 		"dcterms:created": entry.archiveTime.materialDate,
 		"dcterms:temporal": entry.archiveTime.describedPeriod,
 		"dcterms:spatial": entry.archivePlace,
@@ -28,36 +38,40 @@ export function toArchiveExport(entry: ArchiveEntry) {
 		"nanjinghua:evidenceIdentity": entry.evidenceIdentity,
 		"nanjinghua:languageScope": entry.languageScope,
 		"nanjinghua:culturalForms": entry.culturalForms,
-		"nanjinghua:sourceRights": entry.rightsStatus,
 		"nanjinghua:archiveTime": entry.archiveTime,
 		"nanjinghua:preservedFiles": entry.preservedFiles,
+		"nanjinghua:revisions": entry.revisions,
 		"nanjinghua:review": entry.review,
 		"nanjinghua:aiAssistance": entry.aiAssistance,
 		"nanjinghua:canonicalCitation": formatArchiveCitation(entry),
-		"dcterms:issued": entry.publishedAt,
-		"dcterms:modified": entry.updatedAt,
 	};
 }
 
-export function toArchiveJsonLd(entry: ArchiveEntry) {
-	return {
+export function toArchiveJsonLd(entry: PublicArchiveEntry) {
+	const base = {
 		"@context": "https://schema.org",
 		"@type": "ArchiveComponent",
 		identifier: entry.id,
 		name: entry.title,
 		description: entry.summary,
-		dateCreated: entry.archiveTime.materialDate,
 		datePublished: entry.publishedAt,
 		dateModified: entry.updatedAt,
-		spatialCoverage: entry.archivePlace.currentLocation ?? entry.archivePlace.recordedName,
 		license: metadataLicenseUrl,
 		conditionsOfAccess: entry.rightsStatus,
-		about: [...entry.languageScope, ...(entry.culturalForms ?? [])],
 		isPartOf: {
 			"@type": "ArchiveOrganization",
 			name: "南京话",
 			url: "https://nanjinghua.com",
 		},
+	};
+
+	if (entry.publicationStatus !== "公开") return base;
+
+	return {
+		...base,
+		dateCreated: entry.archiveTime.materialDate,
+		spatialCoverage: entry.archivePlace.currentLocation ?? entry.archivePlace.recordedName,
+		about: [...entry.languageScope, ...(entry.culturalForms ?? [])],
 		citation: entry.citations.map((citation) => ({
 			"@type": "CreativeWork",
 			name: citation.title,

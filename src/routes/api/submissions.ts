@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import "@tanstack/react-start";
 import { env } from "cloudflare:workers";
 
+import { isRegisteredArchiveIdentifier } from "../../content/registry";
 import { errorResponse } from "../../submissions/http";
 import { submissionInputSchema } from "../../submissions/schema";
 import { createSubmission } from "../../submissions/service";
@@ -34,6 +35,11 @@ export const Route = createFileRoute("/api/submissions")({
 						"提交内容未通过校验，请修改标出的字段。",
 						parsed.error.flatten().fieldErrors,
 					);
+				}
+				if (parsed.data.archiveId && !isRegisteredArchiveIdentifier(parsed.data.archiveId)) {
+					return errorResponse(422, "UNKNOWN_ARCHIVE_ID", "关联档案编号不存在，请核对后重试。", {
+						archiveId: ["未找到该永久档案编号"],
+					});
 				}
 
 				const turnstile = await verifyTurnstile(parsed.data.turnstileToken, request, environment);

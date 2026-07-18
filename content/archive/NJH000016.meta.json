@@ -29,7 +29,14 @@
 			"preservedAt": "2026-07-17",
 			"storage": "编辑保存原件，存放于 Git 仓库之外；公开原件由 Wikimedia Commons 提供",
 			"publicAccess": true,
-			"rightsBasis": "作者五空间以 CC BY 2.5 发布；使用时必须署名并链接许可或来源"
+			"rightsBasis": "作者五空间以 CC BY 2.5 发布；使用时必须署名并链接许可或来源",
+			"disposition": {
+				"storedCopy": "保留",
+				"backups": "无独立备份",
+				"decidedAt": "2026-07-18",
+				"decidedBy": "Ricky（主编）",
+				"basis": "依据 CC BY 2.5 保留原图核验副本；公开使用持续署名并链接许可与来源。"
+			}
 		},
 		{
 			"kind": "派生文件",
@@ -42,6 +49,13 @@
 			"storage": "本站 public/images；随应用部署",
 			"publicAccess": true,
 			"rightsBasis": "沿用原图 CC BY 2.5；页面显示作者、许可与 Commons 来源",
+			"disposition": {
+				"storedCopy": "保留",
+				"backups": "保留",
+				"decidedAt": "2026-07-18",
+				"decidedBy": "Ricky（主编）",
+				"basis": "依据 CC BY 2.5 在部署文件和 Git 远程副本中保留派生件，持续保留来源关系与署名。"
+			},
 			"derivedFromSha256": "936168d8440f7955fe39656a4ddb7916d87f30e60d5cb0c75b4b137062b7c646",
 			"processing": [
 				"使用 cwebp 1.6.0 将 3000×1091 JPEG 缩放为 1800×655 WebP",
@@ -83,5 +97,5 @@
 	},
 	"aiAssistance": true,
 	"publishedAt": "2026-07-17",
-	"updatedAt": "2026-07-17"
+	"updatedAt": "2026-07-18"
 }

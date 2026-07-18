@@ -26,7 +26,14 @@
 			"preservedAt": "2026-07-17",
 			"storage": "编辑研究副本，存放于 Git 仓库之外；未向公网再分发",
 			"publicAccess": false,
-			"rightsBasis": "NDL 页面允许生成下载，但以日本著作权法第 67 条第 1 项裁定公开；本站未取得再分发许可"
+			"rightsBasis": "NDL 页面允许生成下载，但以日本著作权法第 67 条第 1 项裁定公开；本站未取得再分发许可",
+			"disposition": {
+				"storedCopy": "保留",
+				"backups": "无独立备份",
+				"decidedAt": "2026-07-18",
+				"decidedBy": "Ricky（主编）",
+				"basis": "依据来源权利状态保留一份非公开核验副本；若发生权利或风险请求则重新评估或销毁。"
+			}
 		}
 	],
 	"citations": [
@@ -63,5 +70,5 @@
 	},
 	"aiAssistance": true,
 	"publishedAt": "2026-07-17",
-	"updatedAt": "2026-07-17"
+	"updatedAt": "2026-07-18"
 }

@@ -1,0 +1,114 @@
+{
+	"format": "NJH######",
+	"highWaterMark": 18,
+	"identifiers": [
+		{
+			"id": "NJH000001",
+			"status": "已发布",
+			"assignedAt": "2026-07-17",
+			"history": [{ "status": "已发布", "changedAt": "2026-07-17" }]
+		},
+		{
+			"id": "NJH000002",
+			"status": "已发布",
+			"assignedAt": "2026-07-17",
+			"history": [{ "status": "已发布", "changedAt": "2026-07-17" }]
+		},
+		{
+			"id": "NJH000003",
+			"status": "已发布",
+			"assignedAt": "2026-07-17",
+			"history": [{ "status": "已发布", "changedAt": "2026-07-17" }]
+		},
+		{
+			"id": "NJH000004",
+			"status": "已发布",
+			"assignedAt": "2026-07-17",
+			"history": [{ "status": "已发布", "changedAt": "2026-07-17" }]
+		},
+		{
+			"id": "NJH000005",
+			"status": "已发布",
+			"assignedAt": "2026-07-17",
+			"history": [{ "status": "已发布", "changedAt": "2026-07-17" }]
+		},
+		{
+			"id": "NJH000006",
+			"status": "已发布",
+			"assignedAt": "2026-07-17",
+			"history": [{ "status": "已发布", "changedAt": "2026-07-17" }]
+		},
+		{
+			"id": "NJH000007",
+			"status": "已发布",
+			"assignedAt": "2026-07-17",
+			"history": [{ "status": "已发布", "changedAt": "2026-07-17" }]
+		},
+		{
+			"id": "NJH000008",
+			"status": "已发布",
+			"assignedAt": "2026-07-17",
+			"history": [{ "status": "已发布", "changedAt": "2026-07-17" }]
+		},
+		{
+			"id": "NJH000009",
+			"status": "已发布",
+			"assignedAt": "2026-07-17",
+			"history": [{ "status": "已发布", "changedAt": "2026-07-17" }]
+		},
+		{
+			"id": "NJH000010",
+			"status": "已发布",
+			"assignedAt": "2026-07-17",
+			"history": [{ "status": "已发布", "changedAt": "2026-07-17" }]
+		},
+		{
+			"id": "NJH000011",
+			"status": "已发布",
+			"assignedAt": "2026-07-17",
+			"history": [{ "status": "已发布", "changedAt": "2026-07-17" }]
+		},
+		{
+			"id": "NJH000012",
+			"status": "已发布",
+			"assignedAt": "2026-07-17",
+			"history": [{ "status": "已发布", "changedAt": "2026-07-17" }]
+		},
+		{
+			"id": "NJH000013",
+			"status": "已发布",
+			"assignedAt": "2026-07-17",
+			"history": [{ "status": "已发布", "changedAt": "2026-07-17" }]
+		},
+		{
+			"id": "NJH000014",
+			"status": "已发布",
+			"assignedAt": "2026-07-17",
+			"history": [{ "status": "已发布", "changedAt": "2026-07-17" }]
+		},
+		{
+			"id": "NJH000015",
+			"status": "已发布",
+			"assignedAt": "2026-07-17",
+			"history": [{ "status": "已发布", "changedAt": "2026-07-17" }]
+		},
+		{
+			"id": "NJH000016",
+			"status": "已发布",
+			"assignedAt": "2026-07-17",
+			"history": [{ "status": "已发布", "changedAt": "2026-07-17" }]
+		},
+		{
+			"id": "NJH000017",
+			"status": "已发布",
+			"assignedAt": "2026-07-17",
+			"history": [{ "status": "已发布", "changedAt": "2026-07-17" }]
+		},
+		{
+			"id": "NJH000018",
+			"status": "已发布",
+			"assignedAt": "2026-07-17",
+			"history": [{ "status": "已发布", "changedAt": "2026-07-17" }]
+		}
+	]
+}

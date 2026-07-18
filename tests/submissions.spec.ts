@@ -82,20 +82,83 @@ test("Worker HTTP 边界执行验证、数据分离、状态转换和保留周�
 		contact_value: "reader@example.com",
 	});
 
+	const dispositionData = {
+		decisionType: "目录撤回",
+		publicCatalogAction: "保留",
+		storedCopyAction: "保留",
+		backupAction: "销毁",
+		note: "保留经确认可公开的最小目录，本站核验副本受限保留，删除既有备份。",
+	};
+	const unauthorizedDisposition = await request.post(
+		`/api/editor/submissions/${createdBody.referenceId}/dispositions`,
+		{ data: dispositionData },
+	);
+	expect(unauthorizedDisposition.status()).toBe(401);
+
+	const unverifiedDisposition = await request.post(
+		`/api/editor/submissions/${createdBody.referenceId}/dispositions`,
+		{ headers: editorHeaders, data: dispositionData },
+	);
+	expect(unverifiedDisposition.status()).toBe(409);
+
+	const verification = await request.patch(`/api/editor/submissions/${createdBody.referenceId}`, {
+		headers: editorHeaders,
+		data: { status: "核验中", note: "已核验请求人与所述权利关系" },
+	});
+	expect(verification.ok()).toBe(true);
+	const bypassDisposition = await request.patch(
+		`/api/editor/submissions/${createdBody.referenceId}`,
+		{
+			headers: editorHeaders,
+			data: { status: "已采纳", note: "不能绕过最终处置" },
+		},
+	);
+	expect(bypassDisposition.status()).toBe(409);
+
+	const contradictoryDisposition = await request.post(
+		`/api/editor/submissions/${createdBody.referenceId}/dispositions`,
+		{
+			headers: editorHeaders,
+			data: { ...dispositionData, publicCatalogAction: "移除" },
+		},
+	);
+	expect(contradictoryDisposition.status()).toBe(422);
+
+	const acceptedAt = new Date(Date.now() + 60_000);
+	const disposition = await request.post(
+		`/api/editor/submissions/${createdBody.referenceId}/dispositions`,
+		{ headers: editorHeadersAt(acceptedAt), data: dispositionData },
+	);
+	expect(disposition.status()).toBe(201);
+	await expect(disposition.json()).resolves.toMatchObject({ status: "已采纳" });
+	const afterDisposition = await request.get(`/api/editor/submissions/${createdBody.referenceId}`, {
+		headers: editorHeaders,
+	});
+	const afterDispositionBody = await afterDisposition.json();
+	expect(afterDispositionBody.lead).toMatchObject({
+		status: "已采纳",
+		terminal_at: acceptedAt.toISOString(),
+	});
+	expect(afterDispositionBody.dispositions).toEqual([
+		expect.objectContaining({
+			archive_id: "NJH000001",
+			decision_type: "目录撤回",
+			public_catalog_action: "保留",
+			stored_copy_action: "保留",
+			backup_action: "销毁",
+		}),
+	]);
+	const repeatedDisposition = await request.post(
+		`/api/editor/submissions/${createdBody.referenceId}/dispositions`,
+		{ headers: editorHeaders, data: dispositionData },
+	);
+	expect(repeatedDisposition.status()).toBe(409);
+
 	const invalidTransition = await request.patch(
 		`/api/editor/submissions/${createdBody.referenceId}`,
 		{ headers: editorHeaders, data: { status: "已收到" } },
 	);
 	expect(invalidTransition.status()).toBe(409);
-
-	const acceptedAt = new Date(Date.now() + 60_000);
-	for (const status of ["核验中", "已采纳"]) {
-		const transition = await request.patch(`/api/editor/submissions/${createdBody.referenceId}`, {
-			headers: status === "已采纳" ? editorHeadersAt(acceptedAt) : editorHeaders,
-			data: { status, note: "集成测试状态转换" },
-		});
-		expect(transition.ok()).toBe(true);
-	}
 
 	const closedAt = new Date(acceptedAt.getTime() + 89 * 86_400_000);
 	const closed = await request.patch(`/api/editor/submissions/${createdBody.referenceId}`, {
@@ -141,6 +204,7 @@ test("Worker HTTP 边界执行验证、数据分离、状态转换和保留周�
 	const priority = await request.post("/api/submissions", {
 		data: validSubmission({
 			type: "隐私或安全请求",
+			archiveId: "NJH000001",
 			contactMethod: undefined,
 			contactValue: undefined,
 		}),

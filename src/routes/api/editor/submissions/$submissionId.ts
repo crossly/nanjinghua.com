@@ -71,6 +71,13 @@ export const Route = createFileRoute("/api/editor/submissions/$submissionId")({
 						`不能从“${result.currentStatus}”转为“${parsed.data.status}”。`,
 					);
 				}
+				if (result.outcome === "missing-disposition") {
+					return errorResponse(
+						409,
+						"MISSING_FINAL_DISPOSITION",
+						"关联档案的纠错、权利或隐私线索必须通过最终处置接口完成采纳。",
+					);
+				}
 
 				return Response.json({ status: result.status });
 			},

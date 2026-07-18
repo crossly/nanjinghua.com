@@ -109,26 +109,39 @@ function ArticlePage() {
 									<strong>{entry.title}</strong>
 								</a>
 								<p>{entry.summary}</p>
-								<dl>
-									<div>
-										<dt>证据身份</dt>
-										<dd>{entry.evidenceIdentity}</dd>
-									</div>
-									<div>
-										<dt>语言对象</dt>
-										<dd>{entry.languageScope.join("、")}</dd>
-									</div>
-									{entry.culturalForms ? (
+								{entry.publicationStatus === "公开" ? (
+									<dl>
 										<div>
-											<dt>文化形式</dt>
-											<dd>{entry.culturalForms.join("、")}</dd>
+											<dt>证据身份</dt>
+											<dd>{entry.evidenceIdentity}</dd>
 										</div>
-									) : null}
-									<div>
-										<dt>权利</dt>
-										<dd>{entry.rightsStatus}</dd>
-									</div>
-								</dl>
+										<div>
+											<dt>语言对象</dt>
+											<dd>{entry.languageScope.join("、")}</dd>
+										</div>
+										{entry.culturalForms ? (
+											<div>
+												<dt>文化形式</dt>
+												<dd>{entry.culturalForms.join("、")}</dd>
+											</div>
+										) : null}
+										<div>
+											<dt>权利</dt>
+											<dd>{entry.rightsStatus}</dd>
+										</div>
+									</dl>
+								) : (
+									<dl>
+										<div>
+											<dt>公开状态</dt>
+											<dd>{entry.publicationStatus}</dd>
+										</div>
+										<div>
+											<dt>权利</dt>
+											<dd>{entry.rightsStatus}</dd>
+										</div>
+									</dl>
+								)}
 							</li>
 						))}
 					</ol>

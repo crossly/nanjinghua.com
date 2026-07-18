@@ -29,7 +29,14 @@
 			"preservedAt": "2026-07-17",
 			"storage": "编辑保存原件，存放于 Git 仓库之外；公开原件由 Wikimedia Commons 提供",
 			"publicAccess": true,
-			"rightsBasis": "作者 Augoustoshai 以 CC BY-SA 4.0 发布；使用时须署名并以相同许可分享改编"
+			"rightsBasis": "作者 Augoustoshai 以 CC BY-SA 4.0 发布；使用时须署名并以相同许可分享改编",
+			"disposition": {
+				"storedCopy": "保留",
+				"backups": "无独立备份",
+				"decidedAt": "2026-07-18",
+				"decidedBy": "Ricky（主编）",
+				"basis": "依据 CC BY-SA 4.0 保留原图核验副本；公开使用持续署名、链接来源并遵守相同方式共享。"
+			}
 		}
 	],
 	"citations": [
@@ -66,5 +73,5 @@
 	},
 	"aiAssistance": true,
 	"publishedAt": "2026-07-17",
-	"updatedAt": "2026-07-17"
+	"updatedAt": "2026-07-18"
 }

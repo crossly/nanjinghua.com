@@ -1,22 +1,94 @@
+import { execFile } from "node:child_process";
 import { access, readdir, readFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
+import { promisify } from "node:util";
 
-import { parseArchiveEntries, parseArticles, parseCollections } from "../src/content/schema.ts";
+import {
+	parseArchiveEntries,
+	parseArchiveIdentifierRegistry,
+	parseArticles,
+	parseCollections,
+	validateArchiveIdentifierRegistryAppendOnly,
+	validateArchiveIdentifiers,
+} from "../src/content/schema.ts";
+
+const executeFile = promisify(execFile);
+
+async function readPriorIdentifierRegistries(projectRoot: string) {
+	const refs = ["HEAD", process.env.ARCHIVE_IDENTIFIER_BASE_REF].filter((ref): ref is string =>
+		Boolean(ref),
+	);
+	const commits = new Set<string>();
+
+	for (const ref of refs) {
+		try {
+			const { stdout } = await executeFile(
+				"git",
+				["log", "--format=%H", ref, "--", "content/archive-identifiers.json"],
+				{ cwd: projectRoot },
+			);
+			for (const commit of stdout.split("\n").filter(Boolean)) commits.add(commit);
+		} catch (error) {
+			if (ref === process.env.ARCHIVE_IDENTIFIER_BASE_REF) throw error;
+			return [];
+		}
+	}
+
+	return Promise.all(
+		[...commits].map(async (commit) => {
+			const { stdout } = await executeFile(
+				"git",
+				["show", `${commit}:content/archive-identifiers.json`],
+				{ cwd: projectRoot },
+			);
+			return parseArchiveIdentifierRegistry(JSON.parse(stdout) as unknown);
+		}),
+	);
+}
 
 async function readMetadata(directory: string, requiresBody = true) {
-	const fileNames = (await readdir(directory)).filter((fileName) =>
-		fileName.endsWith(".meta.json"),
+	const directoryFileNames = await readdir(directory);
+	const fileNames = directoryFileNames.filter((fileName) => fileName.endsWith(".meta.json"));
+	const metadataBaseNames = new Set(
+		fileNames.map((fileName) => fileName.replace(/\.meta\.json$/, "")),
 	);
+	if (requiresBody) {
+		for (const bodyFileName of directoryFileNames.filter((fileName) => fileName.endsWith(".md"))) {
+			const bodyBaseName = bodyFileName.replace(/\.md$/, "");
+			if (!metadataBaseNames.has(bodyBaseName)) {
+				throw new Error(`正文缺少对应内容元数据：${join(directory, bodyFileName)}`);
+			}
+		}
+	}
 
 	return Promise.all(
 		fileNames.map(async (fileName) => {
 			const metadataPath = join(directory, fileName);
-			if (requiresBody) {
-				const bodyPath = metadataPath.replace(/\.meta\.json$/, ".md");
+			const metadata = JSON.parse(await readFile(metadataPath, "utf8")) as unknown;
+			const bodyPath = metadataPath.replace(/\.meta\.json$/, ".md");
+			const bodyFileName = fileName.replace(/\.meta\.json$/, ".md");
+			const bodyExists = directoryFileNames.includes(bodyFileName);
+			if (
+				requiresBody &&
+				(!metadata ||
+					typeof metadata !== "object" ||
+					!("publicationStatus" in metadata) ||
+					metadata.publicationStatus === "公开")
+			) {
 				await access(bodyPath);
 			}
-			return JSON.parse(await readFile(metadataPath, "utf8")) as unknown;
+			if (
+				requiresBody &&
+				metadata &&
+				typeof metadata === "object" &&
+				"publicationStatus" in metadata &&
+				metadata.publicationStatus === "目录占位" &&
+				bodyExists
+			) {
+				throw new Error(`目录占位不能保留公开正文：${bodyPath}`);
+			}
+			return metadata;
 		}),
 	);
 }
@@ -24,10 +96,17 @@ async function readMetadata(directory: string, requiresBody = true) {
 export async function validateContentDirectory(projectRoot = process.cwd()) {
 	const contentRoot = join(resolve(projectRoot), "content");
 	const archives = parseArchiveEntries(await readMetadata(join(contentRoot, "archive")));
+	const identifierRegistry = parseArchiveIdentifierRegistry(
+		JSON.parse(await readFile(join(contentRoot, "archive-identifiers.json"), "utf8")),
+	);
+	for (const priorRegistry of await readPriorIdentifierRegistries(projectRoot)) {
+		validateArchiveIdentifierRegistryAppendOnly(priorRegistry, identifierRegistry);
+	}
 	const articles = parseArticles(await readMetadata(join(contentRoot, "articles")));
 	const collections = parseCollections(await readMetadata(join(contentRoot, "collections"), false));
 	const archiveIds = new Set(archives.map((entry) => entry.id));
 	const articleSlugs = new Set(articles.map((article) => article.slug));
+	validateArchiveIdentifiers(archives, identifierRegistry);
 
 	for (const article of articles) {
 		for (const archiveId of article.archiveIds) {

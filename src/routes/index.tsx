@@ -2,10 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { ArrowDown, ArrowRight, ArrowUpRight, MessageSquarePlus } from "lucide-react";
 
 import {
-	getArchiveEntry,
 	getArticle,
 	getArticlesForCollection,
 	getCollection,
+	getPublicArchiveEntry,
 } from "../content/registry";
 
 export const Route = createFileRoute("/")({ component: Home });
@@ -17,10 +17,16 @@ function Home() {
 		: [];
 	const featuredArticle = getArticle("what-a-review-can-tell-us");
 	const featuredArchive = featuredArticle
-		? getArchiveEntry(featuredArticle.archiveIds[0] ?? "")
+		? getPublicArchiveEntry(featuredArticle.archiveIds[0] ?? "")
 		: undefined;
 
-	if (!openingCollection || !openingArticle || !featuredArticle || !featuredArchive) {
+	if (
+		!openingCollection ||
+		!openingArticle ||
+		!featuredArticle ||
+		!featuredArchive ||
+		featuredArchive.publicationStatus !== "公开"
+	) {
 		throw new Error("首页证据处理示例缺少对应专题或档案条目");
 	}
 

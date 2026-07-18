@@ -18,6 +18,7 @@ import { Route as ApiSubmissionsRouteImport } from './routes/api/submissions'
 import { Route as ApiArchiveArchiveIdRouteImport } from './routes/api/archive/$archiveId'
 import { Route as ApiEditorSubmissionsMaintenanceRouteImport } from './routes/api/editor/submissions/maintenance'
 import { Route as ApiEditorSubmissionsSubmissionIdRouteImport } from './routes/api/editor/submissions/$submissionId'
+import { Route as ApiEditorSubmissionsSubmissionIdDispositionsRouteImport } from './routes/api/editor/submissions/$submissionId/dispositions'
 
 const RecordingKitRoute = RecordingKitRouteImport.update({
   id: '/recording-kit',
@@ -66,6 +67,12 @@ const ApiEditorSubmissionsSubmissionIdRoute =
     path: '/api/editor/submissions/$submissionId',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiEditorSubmissionsSubmissionIdDispositionsRoute =
+  ApiEditorSubmissionsSubmissionIdDispositionsRouteImport.update({
+    id: '/dispositions',
+    path: '/dispositions',
+    getParentRoute: () => ApiEditorSubmissionsSubmissionIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -75,8 +82,9 @@ export interface FileRoutesByFullPath {
   '/archive/$archiveId': typeof ArchiveArchiveIdRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/api/archive/$archiveId': typeof ApiArchiveArchiveIdRoute
-  '/api/editor/submissions/$submissionId': typeof ApiEditorSubmissionsSubmissionIdRoute
+  '/api/editor/submissions/$submissionId': typeof ApiEditorSubmissionsSubmissionIdRouteWithChildren
   '/api/editor/submissions/maintenance': typeof ApiEditorSubmissionsMaintenanceRoute
+  '/api/editor/submissions/$submissionId/dispositions': typeof ApiEditorSubmissionsSubmissionIdDispositionsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -86,8 +94,9 @@ export interface FileRoutesByTo {
   '/archive/$archiveId': typeof ArchiveArchiveIdRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/api/archive/$archiveId': typeof ApiArchiveArchiveIdRoute
-  '/api/editor/submissions/$submissionId': typeof ApiEditorSubmissionsSubmissionIdRoute
+  '/api/editor/submissions/$submissionId': typeof ApiEditorSubmissionsSubmissionIdRouteWithChildren
   '/api/editor/submissions/maintenance': typeof ApiEditorSubmissionsMaintenanceRoute
+  '/api/editor/submissions/$submissionId/dispositions': typeof ApiEditorSubmissionsSubmissionIdDispositionsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -98,8 +107,9 @@ export interface FileRoutesById {
   '/archive/$archiveId': typeof ArchiveArchiveIdRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/api/archive/$archiveId': typeof ApiArchiveArchiveIdRoute
-  '/api/editor/submissions/$submissionId': typeof ApiEditorSubmissionsSubmissionIdRoute
+  '/api/editor/submissions/$submissionId': typeof ApiEditorSubmissionsSubmissionIdRouteWithChildren
   '/api/editor/submissions/maintenance': typeof ApiEditorSubmissionsMaintenanceRoute
+  '/api/editor/submissions/$submissionId/dispositions': typeof ApiEditorSubmissionsSubmissionIdDispositionsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -113,6 +123,7 @@ export interface FileRouteTypes {
     | '/api/archive/$archiveId'
     | '/api/editor/submissions/$submissionId'
     | '/api/editor/submissions/maintenance'
+    | '/api/editor/submissions/$submissionId/dispositions'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -124,6 +135,7 @@ export interface FileRouteTypes {
     | '/api/archive/$archiveId'
     | '/api/editor/submissions/$submissionId'
     | '/api/editor/submissions/maintenance'
+    | '/api/editor/submissions/$submissionId/dispositions'
   id:
     | '__root__'
     | '/'
@@ -135,6 +147,7 @@ export interface FileRouteTypes {
     | '/api/archive/$archiveId'
     | '/api/editor/submissions/$submissionId'
     | '/api/editor/submissions/maintenance'
+    | '/api/editor/submissions/$submissionId/dispositions'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -145,7 +158,7 @@ export interface RootRouteChildren {
   ArchiveArchiveIdRoute: typeof ArchiveArchiveIdRoute
   ArticlesSlugRoute: typeof ArticlesSlugRoute
   ApiArchiveArchiveIdRoute: typeof ApiArchiveArchiveIdRoute
-  ApiEditorSubmissionsSubmissionIdRoute: typeof ApiEditorSubmissionsSubmissionIdRoute
+  ApiEditorSubmissionsSubmissionIdRoute: typeof ApiEditorSubmissionsSubmissionIdRouteWithChildren
   ApiEditorSubmissionsMaintenanceRoute: typeof ApiEditorSubmissionsMaintenanceRoute
 }
 
@@ -214,8 +227,30 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiEditorSubmissionsSubmissionIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/editor/submissions/$submissionId/dispositions': {
+      id: '/api/editor/submissions/$submissionId/dispositions'
+      path: '/dispositions'
+      fullPath: '/api/editor/submissions/$submissionId/dispositions'
+      preLoaderRoute: typeof ApiEditorSubmissionsSubmissionIdDispositionsRouteImport
+      parentRoute: typeof ApiEditorSubmissionsSubmissionIdRoute
+    }
   }
 }
+
+interface ApiEditorSubmissionsSubmissionIdRouteChildren {
+  ApiEditorSubmissionsSubmissionIdDispositionsRoute: typeof ApiEditorSubmissionsSubmissionIdDispositionsRoute
+}
+
+const ApiEditorSubmissionsSubmissionIdRouteChildren: ApiEditorSubmissionsSubmissionIdRouteChildren =
+  {
+    ApiEditorSubmissionsSubmissionIdDispositionsRoute:
+      ApiEditorSubmissionsSubmissionIdDispositionsRoute,
+  }
+
+const ApiEditorSubmissionsSubmissionIdRouteWithChildren =
+  ApiEditorSubmissionsSubmissionIdRoute._addFileChildren(
+    ApiEditorSubmissionsSubmissionIdRouteChildren,
+  )
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -225,7 +260,8 @@ const rootRouteChildren: RootRouteChildren = {
   ArchiveArchiveIdRoute: ArchiveArchiveIdRoute,
   ArticlesSlugRoute: ArticlesSlugRoute,
   ApiArchiveArchiveIdRoute: ApiArchiveArchiveIdRoute,
-  ApiEditorSubmissionsSubmissionIdRoute: ApiEditorSubmissionsSubmissionIdRoute,
+  ApiEditorSubmissionsSubmissionIdRoute:
+    ApiEditorSubmissionsSubmissionIdRouteWithChildren,
   ApiEditorSubmissionsMaintenanceRoute: ApiEditorSubmissionsMaintenanceRoute,
 }
 export const routeTree = rootRouteImport

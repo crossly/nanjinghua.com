@@ -1,14 +1,19 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
-import { ArrowDownToLine, ArrowUpRight } from "lucide-react";
+import { ArrowDownToLine, ArrowUpRight, MessageSquare } from "lucide-react";
 
 import { ArchiveHeader } from "../../components/archive-header";
 import { MarkdownContent } from "../../components/markdown-content";
-import { getArchiveEntry, getArticlesForArchive, getPrimaryCitation } from "../../content/registry";
+import {
+	getArticlesForArchive,
+	getPrimaryCitation,
+	getPublicArchiveEntry,
+} from "../../content/registry";
+import type { ArchiveEntryMetadata } from "../../content/schema";
 import { formatArchiveCitation, toArchiveJsonLd } from "../../content/structured-data";
 
 export const Route = createFileRoute("/archive/$archiveId")({
 	loader: ({ params }) => {
-		const entry = getArchiveEntry(params.archiveId);
+		const entry = getPublicArchiveEntry(params.archiveId);
 		if (!entry) throw notFound();
 		const relatedArticle = getArticlesForArchive(entry.id)[0];
 		return {
@@ -31,9 +36,18 @@ export const Route = createFileRoute("/archive/$archiveId")({
 
 function ArchiveEntryPage() {
 	const { entry, relatedArticle } = Route.useLoaderData();
-	const primaryCitation = getPrimaryCitation(entry);
 	const jsonLd = toArchiveJsonLd(entry);
 	const serializedJsonLd = JSON.stringify(jsonLd).replaceAll("<", "\\u003c");
+	if (entry.publicationStatus !== "公开") {
+		return (
+			<RestrictedArchiveEntryPage
+				entry={entry}
+				relatedArticle={relatedArticle}
+				serializedJsonLd={serializedJsonLd}
+			/>
+		);
+	}
+	const primaryCitation = getPrimaryCitation(entry);
 
 	return (
 		<main className="interior-page">
@@ -60,6 +74,10 @@ function ArchiveEntryPage() {
 						<a href={`/api/archive/${entry.id}`} download={`${entry.id}.json`}>
 							<span>导出元数据</span>
 							<ArrowDownToLine aria-hidden="true" strokeWidth={1.5} />
+						</a>
+						<a href={`/contribute?archiveId=${entry.id}&type=权利请求`}>
+							<span>纠错或权利申诉</span>
+							<MessageSquare aria-hidden="true" strokeWidth={1.5} />
 						</a>
 					</div>
 				</header>
@@ -158,6 +176,10 @@ function ArchiveEntryPage() {
 								<dd>
 									{file.kind} · {file.fileName} · SHA-256 <code>{file.sha256}</code> ·
 									{file.publicAccess ? "公开" : "不公开"}
+									<br />
+									处置：本站保存副本{file.disposition.storedCopy} · 备份
+									{file.disposition.backups} · {file.disposition.decidedAt} ·
+									{file.disposition.decidedBy}
 								</dd>
 							</div>
 						))}
@@ -183,6 +205,8 @@ function ArchiveEntryPage() {
 				<section className="archive-record__body" aria-label="档案说明">
 					<MarkdownContent>{entry.body}</MarkdownContent>
 				</section>
+
+				<RevisionHistory revisions={entry.revisions} />
 
 				<section className="citation-block" aria-labelledby="citation-title">
 					<div className="record-section-title">
@@ -219,5 +243,106 @@ function ArchiveEntryPage() {
 				</section>
 			</article>
 		</main>
+	);
+}
+
+type RestrictedEntry = Exclude<
+	ReturnType<typeof getPublicArchiveEntry>,
+	undefined | { publicationStatus: "公开" }
+>;
+
+function RestrictedArchiveEntryPage({
+	entry,
+	relatedArticle,
+	serializedJsonLd,
+}: {
+	entry: RestrictedEntry;
+	relatedArticle: { slug: string; title: string } | null;
+	serializedJsonLd: string;
+}) {
+	return (
+		<main className="interior-page">
+			{/* biome-ignore lint/security/noDangerouslySetInnerHtml: JSON-LD is serialized and script delimiters are escaped above. */}
+			<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: serializedJsonLd }} />
+			<ArchiveHeader
+				backHref={relatedArticle ? `/articles/${relatedArticle.slug}` : "/"}
+				backLabel={relatedArticle ? "返回专题" : "返回首页"}
+			/>
+			<article className="archive-record archive-record--restricted">
+				<header className="archive-record__lead">
+					<div className="archive-record__identity">
+						<p className="archive-record__id">{entry.id}</p>
+						<span>{entry.publicationStatus}</span>
+					</div>
+					<h1>{entry.title}</h1>
+					<p className="archive-record__summary">{entry.summary}</p>
+					<div className="archive-record__actions">
+						<a href={`/api/archive/${entry.id}`} download={`${entry.id}.json`}>
+							<span>导出公开元数据</span>
+							<ArrowDownToLine aria-hidden="true" strokeWidth={1.5} />
+						</a>
+						<a href={`/contribute?archiveId=${entry.id}&type=权利请求`}>
+							<span>纠错或权利申诉</span>
+							<MessageSquare aria-hidden="true" strokeWidth={1.5} />
+						</a>
+					</div>
+				</header>
+
+				<section className="withdrawal-notice" aria-labelledby="withdrawal-title">
+					<div className="record-section-title">
+						<p className="section-label">公开状态</p>
+						<h2 id="withdrawal-title">{entry.publicationStatus}</h2>
+					</div>
+					<div>
+						{entry.publicationStatus === "目录占位" ? (
+							<>
+								<p>{entry.withdrawal.publicNote}</p>
+								<p>
+									处置日期：{entry.withdrawal.decidedAt} · 责任人：
+									{entry.withdrawal.decidedBy}
+								</p>
+							</>
+						) : (
+							<p>本页不公开原题名、人物、地点、来源、修订历史或处置细节。</p>
+						)}
+						<p>永久编号继续保留，不会分配给其他材料。</p>
+					</div>
+				</section>
+
+				{entry.publicationStatus === "目录占位" ? (
+					<RevisionHistory revisions={entry.revisions} />
+				) : null}
+			</article>
+		</main>
+	);
+}
+
+function RevisionHistory({ revisions }: { revisions: ArchiveEntryMetadata["revisions"] }) {
+	if (!revisions?.length) return null;
+	return (
+		<section className="revision-history" aria-labelledby="revision-history-title">
+			<div className="record-section-title">
+				<p className="section-label">变更可追溯</p>
+				<h2 id="revision-history-title">修订记录</h2>
+			</div>
+			<ol>
+				{revisions.map((revision) => (
+					<li key={`${revision.revisedAt}-${revision.type}-${revision.summary}`}>
+						<div>
+							<strong>{revision.type}</strong>
+							<span>
+								{revision.revisedAt} · {revision.responsibleParty}
+							</span>
+						</div>
+						<p>{revision.summary}</p>
+						{revision.previousEvidenceIdentity && revision.newEvidenceIdentity ? (
+							<p className="revision-history__identity-change">
+								{revision.previousEvidenceIdentity} → {revision.newEvidenceIdentity}
+							</p>
+						) : null}
+					</li>
+				))}
+			</ol>
+		</section>
 	);
 }

@@ -1,8 +1,17 @@
+import archiveIdentifierData from "../../content/archive-identifiers.json";
+import { governanceCatalogFixture, governanceIdentifierFixtures } from "./governance-test-fixtures";
+import {
+	type PublicArchiveEntry,
+	type PublishedArchiveEntry,
+	toPrivacyDeletionEntry,
+	toPublicArchiveEntry,
+} from "./publication";
 import {
 	type ArchiveEntryMetadata,
 	type ArticleMetadata,
 	type CollectionMetadata,
 	parseArchiveEntries,
+	parseArchiveIdentifierRegistry,
 	parseArticles,
 	parseCollections,
 } from "./schema";
@@ -45,12 +54,19 @@ function contentBodyFor(metadataPath: string, bodies: Record<string, string>): s
 	return body;
 }
 
-const archiveMetadata = parseArchiveEntries(Object.values(archiveMetadataModules));
+const governanceFixturesEnabled = import.meta.env.MODE === "archive-governance-test";
+const archiveMetadata = parseArchiveEntries([
+	...Object.values(archiveMetadataModules),
+	...(governanceFixturesEnabled ? [governanceCatalogFixture] : []),
+]);
 const archiveBodyById = new Map(
 	Object.entries(archiveMetadataModules).map(([path, metadata]) => {
 		const parsed = parseArchiveEntries([metadata])[0];
 		if (!parsed) throw new Error(`无法解析档案元数据：${path}`);
-		return [parsed.id, contentBodyFor(path, archiveBodyModules)];
+		return [
+			parsed.id,
+			parsed.publicationStatus === "公开" ? contentBodyFor(path, archiveBodyModules) : "",
+		];
 	}),
 );
 
@@ -58,6 +74,18 @@ export const archiveEntries: ArchiveEntry[] = archiveMetadata.map((metadata) => 
 	...metadata,
 	body: archiveBodyById.get(metadata.id) ?? "",
 }));
+export const archiveIdentifierRegistry = parseArchiveIdentifierRegistry(
+	governanceFixturesEnabled
+		? {
+				...archiveIdentifierData,
+				highWaterMark: archiveIdentifierData.highWaterMark + governanceIdentifierFixtures.length,
+				identifiers: [...archiveIdentifierData.identifiers, ...governanceIdentifierFixtures],
+			}
+		: archiveIdentifierData,
+);
+const registeredArchiveIds = new Set(
+	archiveIdentifierRegistry.identifiers.map((record) => record.id),
+);
 
 const articleMetadata = parseArticles(Object.values(articleMetadataModules));
 const articleBodyBySlug = new Map(
@@ -97,7 +125,20 @@ export function getArchiveEntry(id: string): ArchiveEntry | undefined {
 	return archiveEntries.find((entry) => entry.id === id);
 }
 
-export function getPrimaryCitation(entry: ArchiveEntry) {
+export function getPublicArchiveEntry(id: string): PublicArchiveEntry | undefined {
+	const entry = getArchiveEntry(id);
+	if (entry) return toPublicArchiveEntry(entry);
+	const record = archiveIdentifierRegistry.identifiers.find((candidate) => candidate.id === id);
+	return record?.status === "隐私删除" && record.statusChangedAt
+		? toPrivacyDeletionEntry(record.id, record.assignedAt, record.statusChangedAt)
+		: undefined;
+}
+
+export function isRegisteredArchiveIdentifier(id: string): boolean {
+	return registeredArchiveIds.has(id);
+}
+
+export function getPrimaryCitation(entry: PublishedArchiveEntry) {
 	const citation = entry.citations.find((candidate) => candidate.role === "主要来源");
 	if (!citation) throw new Error(`档案条目 ${entry.id} 缺少主要来源`);
 	return citation;
@@ -118,9 +159,9 @@ export function getArticlesForCollection(collection: Collection): Article[] {
 	});
 }
 
-export function getArchiveEntriesForArticle(article: Article): ArchiveEntry[] {
+export function getArchiveEntriesForArticle(article: Article): PublicArchiveEntry[] {
 	return article.archiveIds.flatMap((archiveId) => {
-		const entry = getArchiveEntry(archiveId);
+		const entry = getPublicArchiveEntry(archiveId);
 		return entry ? [entry] : [];
 	});
 }

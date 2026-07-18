@@ -32,7 +32,14 @@
 			"preservedAt": "2026-07-17",
 			"storage": "编辑研究副本，存放于 Git 仓库之外；公开原件由 Wikimedia Commons 提供",
 			"publicAccess": true,
-			"rightsBasis": "Wikimedia Commons 文件页标为 Public domain；本站不提交 33 MB 研究副本"
+			"rightsBasis": "Wikimedia Commons 文件页标为 Public domain；本站不提交 33 MB 研究副本",
+			"disposition": {
+				"storedCopy": "保留",
+				"backups": "无独立备份",
+				"decidedAt": "2026-07-18",
+				"decidedBy": "Ricky（主编）",
+				"basis": "依据公版状态保留一份非 Git 研究副本，公开访问仍指向 Commons 来源记录。"
+			}
 		}
 	],
 	"citations": [
@@ -57,5 +64,5 @@
 	},
 	"aiAssistance": true,
 	"publishedAt": "2026-07-17",
-	"updatedAt": "2026-07-17"
+	"updatedAt": "2026-07-18"
 }

@@ -922,7 +922,9 @@ img {
 
 .record-facts,
 .citation-block,
-.source-list {
+.source-list,
+.revision-history,
+.withdrawal-notice {
 	display: grid;
 	grid-template-columns: minmax(10rem, 0.7fr) minmax(28rem, 1.5fr) minmax(15rem, 0.8fr);
 	gap: 4rem;
@@ -1016,6 +1018,67 @@ img {
 	line-height: 1.6;
 	color: rgba(23, 23, 20, 0.65);
 	overflow-wrap: anywhere;
+}
+
+.revision-history > ol,
+.withdrawal-notice > div:last-child {
+	grid-column: 2 / span 2;
+}
+
+.revision-history ol {
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	border-top: 1px solid rgba(23, 23, 20, 0.22);
+}
+
+.revision-history li {
+	padding-block: 1.35rem;
+	border-bottom: 1px solid rgba(23, 23, 20, 0.22);
+}
+
+.revision-history li > div {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: 2rem;
+}
+
+.revision-history strong {
+	font-family: var(--serif);
+	font-size: 1.1rem;
+	color: var(--blue);
+}
+
+.revision-history span {
+	font-size: 0.75rem;
+	font-weight: 700;
+	color: var(--red);
+}
+
+.revision-history li > p,
+.withdrawal-notice > div:last-child p {
+	max-width: 48rem;
+	margin: 0.8rem 0 0;
+	line-height: 1.8;
+}
+
+.revision-history__identity-change {
+	font-family: var(--mono);
+	font-size: 0.8rem;
+	font-weight: 700;
+	color: var(--red);
+}
+
+.withdrawal-notice > div:last-child {
+	padding-top: 1.25rem;
+	border-top: 1px solid rgba(23, 23, 20, 0.22);
+}
+
+.withdrawal-notice > div:last-child p:first-child {
+	margin-top: 0;
+	font-family: var(--serif);
+	font-size: 1.125rem;
 }
 
 .contribute {
@@ -1585,7 +1648,9 @@ img {
 	.planned-archives,
 	.record-facts,
 	.citation-block,
-	.source-list {
+	.source-list,
+	.revision-history,
+	.withdrawal-notice {
 		grid-template-columns: 7rem minmax(0, 1fr);
 		gap: 3rem;
 	}
@@ -1612,6 +1677,8 @@ img {
 	.record-facts > dl,
 	.citation-block > div:last-child,
 	.source-list > ol,
+	.revision-history > ol,
+	.withdrawal-notice > div:last-child,
 	.article-archives > ol,
 	.planned-archives > ul {
 		grid-column: 2;
@@ -1768,7 +1835,9 @@ img {
 	.planned-archives,
 	.record-facts,
 	.citation-block,
-	.source-list {
+	.source-list,
+	.revision-history,
+	.withdrawal-notice {
 		grid-template-columns: minmax(0, 1fr);
 		gap: 2rem;
 	}
@@ -1789,6 +1858,8 @@ img {
 	.record-facts > dl,
 	.citation-block > div:last-child,
 	.source-list > ol,
+	.revision-history > ol,
+	.withdrawal-notice > div:last-child,
 	.article-archives > header,
 	.article-archives > ol,
 	.planned-archives > header,
@@ -1839,6 +1910,12 @@ img {
 	.source-list li {
 		grid-template-columns: 1fr;
 		gap: 0.65rem;
+	}
+
+	.revision-history li > div {
+		align-items: flex-start;
+		flex-direction: column;
+		gap: 0.4rem;
 	}
 
 	.article-archives {
