@@ -5,6 +5,7 @@
 	"evidenceIdentity": "原始材料",
 	"languageScope": ["南京话"],
 	"culturalForms": ["白局", "曲艺"],
+	"searchAliases": [{ "term": "南京白局", "mandarinPinyin": "nanjing baiju" }],
 	"rightsStatus": "仅引文与目录信息",
 	"archiveTime": {
 		"materialDate": "2008",

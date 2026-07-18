@@ -51,7 +51,7 @@ test("权利与隐私申诉必须关联已登记的永久档案编号", async ({
 });
 
 test("目录撤回与隐私删除只向页面和 API 暴露允许保留的字段", async ({ page, request }) => {
-	await page.goto("/archive/NJH000019");
+	await page.goto("/archive/NJH000021");
 	await expect(
 		page.getByRole("heading", { level: 1, name: "已撤回材料的最小目录占位" }),
 	).toBeVisible();
@@ -63,23 +63,23 @@ test("目录撤回与隐私删除只向页面和 API 暴露允许保留的字段
 	await expect(catalogRevisions).toContainText("待考说法 → 研究观点");
 	await expect(page.getByRole("link", { name: "查看来源" })).toHaveCount(0);
 
-	const catalogResponse = await request.get("/api/archive/NJH000019");
+	const catalogResponse = await request.get("/api/archive/NJH000021");
 	const catalogExport = (await catalogResponse.json()) as Record<string, unknown>;
 	expect(catalogExport["nanjinghua:publicationStatus"]).toBe("目录占位");
 	expect(catalogExport).not.toHaveProperty("dc:source");
 	expect(catalogExport).not.toHaveProperty("nanjinghua:archiveTime");
 
-	await page.goto("/archive/NJH000020");
+	await page.goto("/archive/NJH000022");
 	await expect(page.getByRole("heading", { level: 1, name: "档案已因隐私请求移除" })).toBeVisible();
 	await expect(page.getByRole("region", { name: "隐私删除" })).toContainText(
 		"不公开原题名、人物、地点、来源、修订历史或处置细节",
 	);
 	await expect(page.getByText("已撤回材料的最小目录占位")).toHaveCount(0);
 
-	const privacyResponse = await request.get("/api/archive/NJH000020");
+	const privacyResponse = await request.get("/api/archive/NJH000022");
 	const privacyExport = (await privacyResponse.json()) as Record<string, unknown>;
 	expect(privacyExport).toMatchObject({
-		"dc:identifier": "NJH000020",
+		"dc:identifier": "NJH000022",
 		"dc:title": "档案已因隐私请求移除",
 		"nanjinghua:publicationStatus": "隐私删除",
 	});

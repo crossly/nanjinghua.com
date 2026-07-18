@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowDown, ArrowRight, ArrowUpRight, MessageSquarePlus } from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUpRight, MessageSquarePlus, Search } from "lucide-react";
 
 import {
+	archiveEntries,
+	articles,
 	getArticle,
 	getArticlesForCollection,
 	getCollection,
@@ -19,6 +21,9 @@ function Home() {
 	const featuredArchive = featuredArticle
 		? getPublicArchiveEntry(featuredArticle.archiveIds[0] ?? "")
 		: undefined;
+	const publicArchiveCount = archiveEntries.filter(
+		(entry) => entry.publicationStatus === "公开",
+	).length;
 
 	if (
 		!openingCollection ||
@@ -47,7 +52,13 @@ function Home() {
 					<a className="site-header__brand" href="/" aria-label="南京话首页">
 						南京话
 					</a>
-					<span className="site-header__edition">公共数字档案 · 预览</span>
+					<nav aria-label="首页导航">
+						<a href="/browse" aria-label="浏览与检索档案">
+							<Search aria-hidden="true" strokeWidth={1.5} />
+							<span>浏览档案</span>
+						</a>
+						<span className="site-header__edition">公共数字档案 · 预览</span>
+					</nav>
 				</header>
 
 				<div className="hero__content">
@@ -163,6 +174,20 @@ function Home() {
 						<dd>{featuredArchive.rightsStatus}</dd>
 					</div>
 				</dl>
+			</section>
+
+			<section className="browse-entry" aria-labelledby="browse-entry-title">
+				<div>
+					<p className="section-label">
+						{publicArchiveCount} 条正式档案 · {articles.length} 篇专题
+					</p>
+					<h2 id="browse-entry-title">从目录继续查找</h2>
+				</div>
+				<p>目录中的材料跨越历史记录、当代调查与文化现场，并分别保留来源和证据身份。</p>
+				<a href="/browse">
+					<Search aria-hidden="true" strokeWidth={1.5} />
+					<span>浏览全部公开内容</span>
+				</a>
 			</section>
 		</main>
 	);

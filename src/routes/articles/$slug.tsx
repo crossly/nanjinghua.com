@@ -20,6 +20,14 @@ export const Route = createFileRoute("/articles/$slug")({
 					{ name: "description", content: loaderData.article.summary },
 				]
 			: [],
+		links: loaderData
+			? [
+					{
+						rel: "canonical",
+						href: `https://nanjinghua.com/articles/${loaderData.article.slug}`,
+					},
+				]
+			: [],
 	}),
 	component: ArticlePage,
 });

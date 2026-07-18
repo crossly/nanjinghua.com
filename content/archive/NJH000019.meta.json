@@ -1,0 +1,70 @@
+{
+	"id": "NJH000019",
+	"title": "Johnson、Song《Gradient phonemic contrast in Nanjing Mandarin》（2016 年感知实验）",
+	"summary": "一项由南京师范大学招募 32 名南京话听者完成的伪词相似度实验，用有限样本比较年轻组与年长组对 [n]、[l]、[r] 的感知。",
+	"evidenceIdentity": "研究观点",
+	"languageScope": ["南京话"],
+	"searchAliases": [
+		{
+			"term": "南京话 n/l 感知实验",
+			"mandarinPinyin": "nanjinghua n l ganzhi shiyan"
+		}
+	],
+	"rightsStatus": "仅引文与目录信息",
+	"archiveTime": {
+		"materialDate": "2016",
+		"describedPeriod": "论文发表于 2016 年；实验具体日期未载，年龄为参与实验时年龄"
+	},
+	"archivePlace": {
+		"recordedName": "南京师范大学（南京话参与者实验地点）",
+		"historicalJurisdiction": "论文发表时的江苏省南京市",
+		"currentLocation": "江苏省南京市",
+		"collectionLocation": "California Digital Library eScholarship",
+		"materialCollectionPlace": "南京话参与者在南京师范大学完成实验；美国英语对照在加州大学伯克利分校完成",
+		"uncertainty": "论文没有报告南京话参与者的出生、成长片区、家庭语言和逐人普通话学习经历"
+	},
+	"preservedFiles": [
+		{
+			"kind": "原始文件",
+			"fileName": "qt6fk2m1sw.pdf",
+			"mediaType": "application/pdf",
+			"byteLength": 1351234,
+			"sha256": "93fabd551504c2018cd8a94f29f848da15170908ad9e710de0d671a58a56dc77",
+			"sourceUrl": "https://escholarship.org/content/qt6fk2m1sw/qt6fk2m1sw.pdf",
+			"preservedAt": "2026-07-17",
+			"storage": "编辑研究副本，存放于 Git 仓库之外；未向公网再分发",
+			"publicAccess": false,
+			"rightsBasis": "仅为逐页核对保存研究副本；原文标明除另有说明外权利保留",
+			"disposition": {
+				"storedCopy": "保留",
+				"backups": "无独立备份",
+				"decidedAt": "2026-07-18",
+				"decidedBy": "Ricky（主编）",
+				"basis": "依据研究核验需要保留一份非公开副本；若发生权利或风险请求则重新评估或销毁。"
+			}
+		}
+	],
+	"citations": [
+		{
+			"role": "主要来源",
+			"responsibleParties": ["Keith Johnson", "Yidan Song（宋一丹）"],
+			"title": "Gradient phonemic contrast in Nanjing Mandarin",
+			"publication": "UC Berkeley PhonLab Annual Report 12(1)",
+			"publicationDate": "2016",
+			"locator": "文章第 167—172 页；样本见第 167 页，刺激与任务见第 168—169 页",
+			"stableIdentifier": "DOI 10.5070/P7121040728；eScholarship item 6fk2m1sw",
+			"url": "https://escholarship.org/uc/item/6fk2m1sw",
+			"accessedAt": "2026-07-17",
+			"language": "en"
+		}
+	],
+	"review": {
+		"status": "待专家复核",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17",
+		"scope": "核对正式全文、32 名南京话听者的分组、441 个词对任务及论文报告的组间结果；音系解释待专家复核"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-18",
+	"updatedAt": "2026-07-18"
+}

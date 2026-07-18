@@ -38,6 +38,7 @@ export function toArchiveExport(entry: PublicArchiveEntry) {
 		"nanjinghua:evidenceIdentity": entry.evidenceIdentity,
 		"nanjinghua:languageScope": entry.languageScope,
 		"nanjinghua:culturalForms": entry.culturalForms,
+		"nanjinghua:searchAliases": entry.searchAliases,
 		"nanjinghua:archiveTime": entry.archiveTime,
 		"nanjinghua:preservedFiles": entry.preservedFiles,
 		"nanjinghua:revisions": entry.revisions,

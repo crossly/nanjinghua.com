@@ -16,8 +16,8 @@ test("读者可以在有限样本中理解今天的南京话怎样变化", async
 	}
 
 	const relatedArchives = page.getByRole("region", { name: "本篇关联档案" });
-	await expect(relatedArchives.getByRole("listitem")).toHaveCount(3);
-	for (const id of ["NJH000012", "NJH000013", "NJH000014"]) {
+	await expect(relatedArchives.getByRole("listitem")).toHaveCount(5);
+	for (const id of ["NJH000012", "NJH000013", "NJH000014", "NJH000019", "NJH000020"]) {
 		await expect(relatedArchives.getByRole("link", { name: new RegExp(id) })).toBeVisible();
 	}
 

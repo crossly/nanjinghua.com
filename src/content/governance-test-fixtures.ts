@@ -1,7 +1,7 @@
 import type { ArchiveEntryMetadata, ArchiveIdentifierRegistry } from "./schema";
 
 export const governanceCatalogFixture: ArchiveEntryMetadata = {
-	id: "NJH000019",
+	id: "NJH000021",
 	title: "已撤回材料的最小目录占位",
 	summary: "原正文、来源、地点与文件信息已经停止公开，仅保留经确认可展示的目录说明。",
 	publicationStatus: "目录占位",
@@ -28,7 +28,7 @@ export const governanceCatalogFixture: ArchiveEntryMetadata = {
 
 export const governanceIdentifierFixtures: ArchiveIdentifierRegistry["identifiers"] = [
 	{
-		id: "NJH000019",
+		id: "NJH000021",
 		status: "目录占位",
 		assignedAt: "2026-07-17",
 		statusChangedAt: "2026-07-18",
@@ -38,7 +38,7 @@ export const governanceIdentifierFixtures: ArchiveIdentifierRegistry["identifier
 		],
 	},
 	{
-		id: "NJH000020",
+		id: "NJH000022",
 		status: "隐私删除",
 		assignedAt: "2026-07-17",
 		statusChangedAt: "2026-07-18",

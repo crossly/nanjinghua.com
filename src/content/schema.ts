@@ -195,6 +195,20 @@ const publishedArchiveEntrySchema = z
 		evidenceIdentity: evidenceIdentitySchema,
 		languageScope: z.array(languageScopeSchema).min(1, "档案条目至少需要一个语言对象"),
 		culturalForms: z.array(culturalFormSchema).min(1, "文化形式不能为空").optional(),
+		searchAliases: z
+			.array(
+				z
+					.object({
+						term: requiredText,
+						mandarinPinyin: z
+							.string()
+							.trim()
+							.regex(/^[a-z0-9 ]+$/, "普通话拼音辅助字段只能使用小写拉丁字母、数字和空格"),
+					})
+					.strict(),
+			)
+			.min(1)
+			.optional(),
 		rightsStatus: rightsStatusSchema,
 		archiveTime: archiveTimeSchema,
 		archivePlace: z

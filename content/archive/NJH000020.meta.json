@@ -1,0 +1,70 @@
+{
+	"id": "NJH000020",
+	"title": "Chen 等《A quantitative analysis of tone sandhi...》（2019 年声调实验）",
+	"summary": "一项以 12 名 35—65 岁南京话说话者和受控读词任务为范围的声调、变调声学研究，提供明确设备、词表和分析方法。",
+	"evidenceIdentity": "研究观点",
+	"languageScope": ["南京话"],
+	"searchAliases": [
+		{
+			"term": "南京话声调与变调实验",
+			"mandarinPinyin": "nanjinghua shengdiao biandiao shiyan"
+		}
+	],
+	"rightsStatus": "仅引文与目录信息",
+	"archiveTime": {
+		"materialDate": "2019",
+		"describedPeriod": "论文发表于 2019 年；田野录音日期未载，样本年龄为采集时 35—65 岁"
+	},
+	"archivePlace": {
+		"recordedName": "南京（参与者大部分人生居住地）",
+		"historicalJurisdiction": "论文发表时的江苏省南京市",
+		"currentLocation": "江苏省南京市",
+		"collectionLocation": "香港理工大学机构知识库",
+		"materialCollectionPlace": "田野期间在安静房间录音；论文没有公开房间所在机构、地址或城市",
+		"uncertainty": "论文没有报告参与者出生、成长片区、普通话教育与外地居住经历；居住地不能替代成长地点"
+	},
+	"preservedFiles": [
+		{
+			"kind": "原始文件",
+			"fileName": "Chen_Sandhi_Standard_Nanjing.pdf",
+			"mediaType": "application/pdf",
+			"byteLength": 2840017,
+			"sha256": "cc51af1c5de84272afd941603201e781f533772588ab334123b15dd169932aa1",
+			"sourceUrl": "https://ira.lib.polyu.edu.hk/handle/10397/92460",
+			"preservedAt": "2026-07-17",
+			"storage": "编辑研究副本，存放于 Git 仓库之外；未向公网再分发",
+			"publicAccess": false,
+			"rightsBasis": "机构仓储开放 Accepted Manuscript，但出版者版权保留；仅为逐页核对保存研究副本",
+			"disposition": {
+				"storedCopy": "保留",
+				"backups": "无独立备份",
+				"decidedAt": "2026-07-18",
+				"decidedBy": "Ricky（主编）",
+				"basis": "依据研究核验需要保留一份非公开副本；若发生权利或风险请求则重新评估或销毁。"
+			}
+		}
+	],
+	"citations": [
+		{
+			"role": "主要来源",
+			"responsibleParties": ["Si Chen", "Caroline Wiltshire", "Bin Li", "Ratree Wayland"],
+			"title": "A quantitative analysis of tone sandhi in Standard Mandarin and Nanjing Mandarin based on surface pitch contours and underlying pitch targets",
+			"publication": "International Journal of Chinese Linguistics 6(2)",
+			"publicationDate": "2019-12",
+			"locator": "第 183—220 页；Accepted Manuscript 第 18—20 页载南京样本、刺激和声学方法",
+			"stableIdentifier": "DOI 10.1075/ijchl.18011.che；PolyU Handle 10397/92460",
+			"url": "https://ira.lib.polyu.edu.hk/handle/10397/92460",
+			"accessedAt": "2026-07-17",
+			"language": "en"
+		}
+	],
+	"review": {
+		"status": "待专家复核",
+		"reviewer": "Ricky（主编）",
+		"reviewedAt": "2026-07-17",
+		"scope": "核对机构仓储 Accepted Manuscript、12 人样本、读词设计、设备和声学分析；声调与变调解释待专家复核"
+	},
+	"aiAssistance": true,
+	"publishedAt": "2026-07-18",
+	"updatedAt": "2026-07-18"
+}

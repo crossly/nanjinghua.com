@@ -27,7 +27,8 @@ const config = defineConfig(({ mode }) => {
 					filter: (page) =>
 						!page.path.startsWith("/api/") &&
 						!page.path.startsWith("/downloads/") &&
-						!page.path.startsWith("/contribute"),
+						!page.path.startsWith("/contribute") &&
+						!page.path.startsWith("/browse"),
 				},
 			}),
 			viteReact(),

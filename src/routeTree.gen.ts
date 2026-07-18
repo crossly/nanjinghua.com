@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RecordingKitRouteImport } from './routes/recording-kit'
 import { Route as ContributeRouteImport } from './routes/contribute'
+import { Route as BrowseRouteImport } from './routes/browse'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ArticlesSlugRouteImport } from './routes/articles/$slug'
 import { Route as ArchiveArchiveIdRouteImport } from './routes/archive/$archiveId'
@@ -28,6 +29,11 @@ const RecordingKitRoute = RecordingKitRouteImport.update({
 const ContributeRoute = ContributeRouteImport.update({
   id: '/contribute',
   path: '/contribute',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BrowseRoute = BrowseRouteImport.update({
+  id: '/browse',
+  path: '/browse',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -76,6 +82,7 @@ const ApiEditorSubmissionsSubmissionIdDispositionsRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/browse': typeof BrowseRoute
   '/contribute': typeof ContributeRoute
   '/recording-kit': typeof RecordingKitRoute
   '/api/submissions': typeof ApiSubmissionsRoute
@@ -88,6 +95,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/browse': typeof BrowseRoute
   '/contribute': typeof ContributeRoute
   '/recording-kit': typeof RecordingKitRoute
   '/api/submissions': typeof ApiSubmissionsRoute
@@ -101,6 +109,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/browse': typeof BrowseRoute
   '/contribute': typeof ContributeRoute
   '/recording-kit': typeof RecordingKitRoute
   '/api/submissions': typeof ApiSubmissionsRoute
@@ -115,6 +124,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/browse'
     | '/contribute'
     | '/recording-kit'
     | '/api/submissions'
@@ -127,6 +137,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/browse'
     | '/contribute'
     | '/recording-kit'
     | '/api/submissions'
@@ -139,6 +150,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/browse'
     | '/contribute'
     | '/recording-kit'
     | '/api/submissions'
@@ -152,6 +164,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BrowseRoute: typeof BrowseRoute
   ContributeRoute: typeof ContributeRoute
   RecordingKitRoute: typeof RecordingKitRoute
   ApiSubmissionsRoute: typeof ApiSubmissionsRoute
@@ -176,6 +189,13 @@ declare module '@tanstack/react-router' {
       path: '/contribute'
       fullPath: '/contribute'
       preLoaderRoute: typeof ContributeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/browse': {
+      id: '/browse'
+      path: '/browse'
+      fullPath: '/browse'
+      preLoaderRoute: typeof BrowseRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -254,6 +274,7 @@ const ApiEditorSubmissionsSubmissionIdRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BrowseRoute: BrowseRoute,
   ContributeRoute: ContributeRoute,
   RecordingKitRoute: RecordingKitRoute,
   ApiSubmissionsRoute: ApiSubmissionsRoute,

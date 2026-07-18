@@ -1,6 +1,6 @@
 {
 	"format": "NJH######",
-	"highWaterMark": 18,
+	"highWaterMark": 20,
 	"identifiers": [
 		{
 			"id": "NJH000001",
@@ -109,6 +109,18 @@
 			"status": "已发布",
 			"assignedAt": "2026-07-17",
 			"history": [{ "status": "已发布", "changedAt": "2026-07-17" }]
+		},
+		{
+			"id": "NJH000019",
+			"status": "已发布",
+			"assignedAt": "2026-07-18",
+			"history": [{ "status": "已发布", "changedAt": "2026-07-18" }]
+		},
+		{
+			"id": "NJH000020",
+			"status": "已发布",
+			"assignedAt": "2026-07-18",
+			"history": [{ "status": "已发布", "changedAt": "2026-07-18" }]
 		}
 	]
 }

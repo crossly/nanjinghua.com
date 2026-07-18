@@ -30,6 +30,14 @@ export const Route = createFileRoute("/archive/$archiveId")({
 					{ name: "description", content: loaderData.entry.summary },
 				]
 			: [],
+		links: loaderData
+			? [
+					{
+						rel: "canonical",
+						href: `https://nanjinghua.com/archive/${loaderData.entry.id}`,
+					},
+				]
+			: [],
 	}),
 	component: ArchiveEntryPage,
 });

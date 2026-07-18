@@ -6,7 +6,7 @@
 		"name": "Ricky",
 		"role": "主编与内容责任人"
 	},
-	"archiveIds": ["NJH000012", "NJH000013", "NJH000014"],
+	"archiveIds": ["NJH000012", "NJH000013", "NJH000014", "NJH000019", "NJH000020"],
 	"plannedArchiveRelations": [
 		{
 			"label": "首批原创语音样本",
@@ -21,5 +21,5 @@
 	},
 	"aiAssistance": true,
 	"publishedAt": "2026-07-17",
-	"updatedAt": "2026-07-17"
+	"updatedAt": "2026-07-18"
 }
