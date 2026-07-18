@@ -1,12 +1,8 @@
 import type { ArchiveEntry, Article, Collection } from "./registry";
+import { culturalFormSchema, evidenceIdentitySchema } from "./schema.ts";
 
 export const discoveryContentTypes = ["档案条目", "专题文章", "专题集合"] as const;
-export const discoveryEvidenceIdentities = [
-	"原始材料",
-	"研究观点",
-	"口述记忆",
-	"待考说法",
-] as const;
+export const discoveryEvidenceIdentities = evidenceIdentitySchema.options;
 export const discoveryTimePeriods = [
 	"1900 年以前",
 	"1900—1948 年",
@@ -19,14 +15,7 @@ export const discoveryPlaces = [
 	"南京市（未细分）",
 	"南京市域外或地点未详",
 ] as const;
-export const discoveryCulturalForms = [
-	"白局",
-	"童谣",
-	"俗语",
-	"曲艺",
-	"方言书写",
-	"音像记录",
-] as const;
+export const discoveryCulturalForms = culturalFormSchema.options;
 
 export type DiscoveryContentType = (typeof discoveryContentTypes)[number];
 export type DiscoveryEvidenceIdentity = (typeof discoveryEvidenceIdentities)[number];
@@ -44,7 +33,7 @@ export type DiscoveryItem = {
 	details: string[];
 	evidenceIdentity?: DiscoveryEvidenceIdentity;
 	timePeriod?: DiscoveryTimePeriod;
-	place?: DiscoveryPlace;
+	places: DiscoveryPlace[];
 	culturalForms: DiscoveryCulturalForm[];
 	searchText: string;
 };
@@ -78,12 +67,14 @@ function timePeriodFor(value: string): DiscoveryTimePeriod | undefined {
 	return "2000 年至今";
 }
 
-function placeFor(parts: Array<string | undefined>): DiscoveryPlace {
+function placesFor(parts: Array<string | undefined>): DiscoveryPlace[] {
 	const location = parts.filter(Boolean).join(" ");
-	if (location.includes("秦淮区")) return "南京市秦淮区";
-	if (location.includes("鼓楼区")) return "南京市鼓楼区";
-	if (location.includes("南京")) return "南京市（未细分）";
-	return "南京市域外或地点未详";
+	const places: DiscoveryPlace[] = [];
+	if (location.includes("秦淮")) places.push("南京市秦淮区");
+	if (location.includes("鼓楼")) places.push("南京市鼓楼区");
+	if (places.length > 0) return places;
+	if (location.includes("南京")) return ["南京市（未细分）"];
+	return ["南京市域外或地点未详"];
 }
 
 function archiveDiscoveryItem(entry: ArchiveEntry): DiscoveryItem {
@@ -96,12 +87,13 @@ function archiveDiscoveryItem(entry: ArchiveEntry): DiscoveryItem {
 			href: `/archive/${entry.id}`,
 			label: entry.publicationStatus,
 			details: [entry.rightsStatus],
+			places: [],
 			culturalForms: [],
 			searchText: searchText([entry.id, entry.title, entry.summary]),
 		};
 	}
 
-	const place = placeFor([
+	const places = placesFor([
 		entry.archivePlace.recordedName,
 		entry.archivePlace.historicalJurisdiction,
 		entry.archivePlace.currentLocation,
@@ -123,10 +115,10 @@ function archiveDiscoveryItem(entry: ArchiveEntry): DiscoveryItem {
 		summary: entry.summary,
 		href: `/archive/${entry.id}`,
 		label: entry.id,
-		details: [entry.evidenceIdentity, entry.archiveTime.materialDate, place],
+		details: [entry.evidenceIdentity, entry.archiveTime.materialDate, places.join("、")],
 		evidenceIdentity: entry.evidenceIdentity,
 		timePeriod,
-		place,
+		places,
 		culturalForms: entry.culturalForms ?? [],
 		searchText: searchText([
 			entry.id,
@@ -155,6 +147,7 @@ function articleDiscoveryItem(article: Article): DiscoveryItem {
 			article.review.status,
 			`关联 ${article.archiveIds.length} 条档案`,
 		],
+		places: [],
 		culturalForms: [],
 		searchText: searchText([
 			article.slug,
@@ -177,6 +170,7 @@ function collectionDiscoveryItem(collection: Collection): DiscoveryItem {
 		href: "/#opening-collection",
 		label: `${collection.sequenceLabel} · ${collection.sequenceNumber}`,
 		details: [`包含 ${collection.articleSlugs.length} 篇专题文章`],
+		places: [],
 		culturalForms: [],
 		searchText: searchText([
 			collection.slug,
@@ -209,7 +203,7 @@ export function filterDiscoveryItems(
 		if (filters.type && item.type !== filters.type) return false;
 		if (filters.evidence && item.evidenceIdentity !== filters.evidence) return false;
 		if (filters.time && item.timePeriod !== filters.time) return false;
-		if (filters.place && item.place !== filters.place) return false;
+		if (filters.place && !item.places.includes(filters.place)) return false;
 		if (filters.culture && !item.culturalForms.includes(filters.culture)) return false;
 		return queryTokens.every((token) => item.searchText.includes(token));
 	});

@@ -524,6 +524,19 @@ test("生产构建使用的内容校验器会读取并接受完整文件", async
 	}
 });
 
+test("生产构建要求首发正式档案数量保持在 20 至 30 条", async () => {
+	const projectRoot = await createContentFixture([validEntry]);
+
+	try {
+		await assert.rejects(
+			validateContentDirectory(projectRoot, { enforceLaunchArchiveCount: true }),
+			/首发正式档案必须为 20 至 30 条，当前为 1 条/,
+		);
+	} finally {
+		await rm(projectRoot, { recursive: true, force: true });
+	}
+});
+
 test("生产构建拒绝专题集合引用不存在的专题文章", async () => {
 	const projectRoot = await createContentFixture([validEntry], {
 		articles: [validArticle],

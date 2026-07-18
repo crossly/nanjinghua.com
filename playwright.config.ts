@@ -14,11 +14,18 @@ export default defineConfig({
 	projects: [
 		{
 			name: "desktop-chromium",
+			testIgnore: "**/*.nojs.spec.ts",
 			use: { ...devices["Desktop Chrome"] },
 		},
 		{
 			name: "mobile-chromium",
+			testIgnore: "**/*.nojs.spec.ts",
 			use: { ...devices["Pixel 7"] },
+		},
+		{
+			name: "no-js-chromium",
+			testMatch: "**/*.nojs.spec.ts",
+			use: { ...devices["Desktop Chrome"], javaScriptEnabled: false },
 		},
 	],
 	webServer: {

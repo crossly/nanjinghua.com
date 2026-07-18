@@ -93,8 +93,12 @@ async function readMetadata(directory: string, requiresBody = true) {
 	);
 }
 
-export async function validateContentDirectory(projectRoot = process.cwd()) {
-	const contentRoot = join(resolve(projectRoot), "content");
+export async function validateContentDirectory(
+	projectRoot = process.cwd(),
+	options: { enforceLaunchArchiveCount?: boolean } = {},
+) {
+	const resolvedProjectRoot = resolve(projectRoot);
+	const contentRoot = join(resolvedProjectRoot, "content");
 	const archives = parseArchiveEntries(await readMetadata(join(contentRoot, "archive")));
 	const identifierRegistry = parseArchiveIdentifierRegistry(
 		JSON.parse(await readFile(join(contentRoot, "archive-identifiers.json"), "utf8")),
@@ -107,6 +111,12 @@ export async function validateContentDirectory(projectRoot = process.cwd()) {
 	const archiveIds = new Set(archives.map((entry) => entry.id));
 	const articleSlugs = new Set(articles.map((article) => article.slug));
 	validateArchiveIdentifiers(archives, identifierRegistry);
+	const publicArchiveCount = archives.filter((entry) => entry.publicationStatus === "公开").length;
+	const enforceLaunchArchiveCount =
+		options.enforceLaunchArchiveCount ?? resolvedProjectRoot === resolve(process.cwd());
+	if (enforceLaunchArchiveCount && (publicArchiveCount < 20 || publicArchiveCount > 30)) {
+		throw new Error(`首发正式档案必须为 20 至 30 条，当前为 ${publicArchiveCount} 条`);
+	}
 
 	for (const article of articles) {
 		for (const archiveId of article.archiveIds) {

@@ -17,7 +17,7 @@ function archiveEntry(id: string): ArchiveEntry {
 }
 
 const items = createDiscoveryItems({
-	archiveEntries: [archiveEntry("NJH000015"), archiveEntry("NJH000019")],
+	archiveEntries: [archiveEntry("NJH000014"), archiveEntry("NJH000015"), archiveEntry("NJH000019")],
 	articles: [],
 	collections: [],
 });
@@ -53,6 +53,16 @@ test("受控组合筛选只命中符合全部字段的档案", () => {
 		results.map((item) => item.id),
 		["NJH000015"],
 	);
+});
+
+test("跨片区档案保留全部受控地点分面", () => {
+	for (const place of ["南京市秦淮区", "南京市鼓楼区"] as const) {
+		assert.ok(
+			filterDiscoveryItems(items, { place })
+				.map((item) => item.id)
+				.includes("NJH000014"),
+		);
+	}
 });
 
 test("无匹配内容时返回空结果", () => {
