@@ -32,6 +32,18 @@ body {
 	background: var(--paper);
 }
 
+.visually-hidden {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
 body,
 button,
 a {
@@ -1524,14 +1536,21 @@ img {
 .contribute-form {
 	grid-column: 2;
 	grid-row: 1 / span 2;
-	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	gap: 1.5rem 2rem;
 	padding-top: 1.5rem;
 	border-top: 3px solid var(--blue);
 }
 
-.contribute-form > label:not(.contribute-form__consent) {
+.contribute-form__fields {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 1.5rem 2rem;
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.contribute-form__fields > label:not(.contribute-form__consent) {
 	display: grid;
 	gap: 0.65rem;
 }
@@ -2649,7 +2668,7 @@ img {
 		font-size: 2.75rem;
 	}
 
-	.contribute-form {
+	.contribute-form__fields {
 		grid-template-columns: minmax(0, 1fr);
 	}
 

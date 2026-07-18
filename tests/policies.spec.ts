@@ -51,3 +51,9 @@ test("专题文章公开真实编辑、日期、核对范围和 AI 辅助状态"
 	await expect(byline).toContainText("辅助资料发现、归纳与初稿整理");
 	await expect(byline).not.toContainText("专家复核");
 });
+
+test("档案页面逐项公开保存文件的权利依据和核对范围", async ({ page }) => {
+	await page.goto("/archive/NJH000008");
+	await expect(page.getByText(/权利依据：.*未声明 CC 许可/)).toBeVisible();
+	await expect(page.getByText("核对范围", { exact: true })).toBeVisible();
+});

@@ -49,6 +49,7 @@ const validEntry = {
 		status: "编辑核对后发布",
 		reviewer: "南京话编辑",
 		reviewedAt: "2026-07-17",
+		scope: "核对来源、权利、编目字段和档案正文",
 	},
 	aiAssistance: true,
 	publishedAt: "2026-07-17",
@@ -155,6 +156,23 @@ const validDerivedFile = {
 
 test("完整档案元数据可以通过模式校验", () => {
 	assert.equal(parseArchiveEntries([validEntry])[0]?.id, "NJH000001");
+});
+
+test("公开档案审核记录必须包含真实核对范围", () => {
+	assert.throws(
+		() =>
+			parseArchiveEntries([
+				{
+					...validEntry,
+					review: {
+						status: "专家复核",
+						reviewer: "测试专家",
+						reviewedAt: "2026-07-17",
+					},
+				},
+			]),
+		/核对范围|scope|expected string/i,
+	);
 });
 
 test("非法证据身份会被拒绝", () => {

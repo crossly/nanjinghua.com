@@ -1,3 +1,5 @@
+import { policyIdentity } from "./policy-index.ts";
+
 export type PolicyLink = {
 	label: string;
 	href: string;
@@ -23,8 +25,7 @@ export type PolicyDocument = {
 
 export const policyDocuments = [
 	{
-		slug: "about",
-		navLabel: "关于本站",
+		...policyIdentity("about"),
 		eyebrow: "项目说明",
 		title: "关于本站",
 		summary:
@@ -66,8 +67,7 @@ export const policyDocuments = [
 		],
 	},
 	{
-		slug: "editorial",
-		navLabel: "编辑与证据原则",
+		...policyIdentity("editorial"),
 		eyebrow: "编辑制度",
 		title: "编辑与证据原则",
 		summary: "先说明材料能证明什么，再说明我们怎样解释；让相互冲突的证据保持可见。",
@@ -113,8 +113,7 @@ export const policyDocuments = [
 		],
 	},
 	{
-		slug: "rights-and-licensing",
-		navLabel: "版权与开放许可",
+		...policyIdentity("rights-and-licensing"),
 		eyebrow: "权利制度",
 		title: "版权与开放许可",
 		summary: "档案元数据、本站原创文章和第三方媒体分别适用不同的权利规则。",
@@ -160,8 +159,7 @@ export const policyDocuments = [
 		],
 	},
 	{
-		slug: "privacy",
-		navLabel: "隐私政策",
+		...policyIdentity("privacy"),
 		eyebrow: "数据制度",
 		title: "隐私政策",
 		summary: "只收集核验线索与回复所需的信息，并把联系方式和线索正文分开保存。",
@@ -209,8 +207,7 @@ export const policyDocuments = [
 		],
 	},
 	{
-		slug: "corrections-and-rights",
-		navLabel: "纠错与权利申诉",
+		...policyIdentity("corrections-and-rights"),
 		eyebrow: "申诉制度",
 		title: "纠错、撤回与权利申诉",
 		summary: "事实纠错保留修订链；权利、隐私和安全请求按公开目录、保存副本与备份分别处置。",
@@ -243,7 +240,7 @@ export const policyDocuments = [
 			{
 				title: "处理状态",
 				paragraphs: [
-					"线索依次处于“已收到”“待补充”“核验中”“已采纳”或“已关闭”。与现有档案关联的纠错、权利和隐私请求只有进入“核验中”并记录最终处置后才能标为“已采纳”。",
+					"线索会处于“已收到”“待补充”“核验中”“已采纳”或“已关闭”之一。普通线索可根据核验结果从“已收到”直接进入后续状态；与现有档案关联的纠错、权利和隐私请求只有进入“核验中”并记录最终处置后才能标为“已采纳”。",
 					"权利与隐私请求优先于普通材料线索。为避免二次泄露，公开页面不会展示申诉人的联系方式、核验材料或受限处置说明。",
 				],
 			},
@@ -251,15 +248,15 @@ export const policyDocuments = [
 				title: "公开结果",
 				paragraphs: [
 					"事实修订会在仍可公开的档案页记录日期、责任人、理由和前后内容；证据身份改变也会留下同样的修订说明。",
-					"目录撤回只在仍可保留最小书目信息时使用，正文与不应公开字段会移除。隐私删除会从当前内容树移除元数据和正文，只保留不可复用的永久编号状态，避免旧编号指向另一份材料。",
+					"D1 处置记录不会自动改写 Git 内容或删除文件。编辑必须按记录执行内容变更、保存副本与备份处置，重新构建、发布并复验；公开页面状态在这套发布流程完成后才生效。",
+					"目录撤回只在仍可保留最小书目信息时使用，正文与不应公开字段会移除。隐私删除在发布流程中从当前内容树移除元数据和正文，只保留不可复用的永久编号状态，避免旧编号指向另一份材料。",
 					"本站保存副本和备份分别按最终决定保留或销毁。已经由第三方合法下载或再利用的副本可能无法追回，处理结果不会作超出实际控制范围的承诺。",
 				],
 			},
 		],
 	},
 	{
-		slug: "accessibility",
-		navLabel: "无障碍说明",
+		...policyIdentity("accessibility"),
 		eyebrow: "访问说明",
 		title: "无障碍说明",
 		summary: "本站以 WCAG 2.2 AA 为持续目标，公开当前做法、验证范围与仍需改进之处。",
@@ -294,8 +291,7 @@ export const policyDocuments = [
 		],
 	},
 	{
-		slug: "participate",
-		navLabel: "参与贡献",
+		...policyIdentity("participate"),
 		eyebrow: "公众参与",
 		title: "参与贡献",
 		summary: "提供可以追溯的词语、出处和纠错线索，让编辑判断过程可复核，而不是只收集结论。",
@@ -339,8 +335,7 @@ export const policyDocuments = [
 		],
 	},
 	{
-		slug: "transparency",
-		navLabel: "透明度与合作",
+		...policyIdentity("transparency"),
 		eyebrow: "责任边界",
 		title: "编辑、AI、资金与合作",
 		summary: "工具、资金和合作方可以支持工作，但不能替代可核查证据或购买编辑结论。",

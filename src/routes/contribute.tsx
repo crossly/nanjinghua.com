@@ -46,6 +46,7 @@ function ContributePage() {
 	const turnstileContainerRef = useRef<HTMLDivElement>(null);
 	const widgetIdRef = useRef<string | undefined>(undefined);
 	const [siteKey, setSiteKey] = useState<string>();
+	const [clientReady, setClientReady] = useState(false);
 	const [token, setToken] = useState("");
 	const [phase, setPhase] = useState<FormPhase>("idle");
 	const [message, setMessage] = useState("");
@@ -64,6 +65,12 @@ function ContributePage() {
 			})
 			.catch(() => setMessage("提交服务暂时不可用，请稍后再试。"));
 	}, []);
+
+	useEffect(() => {
+		if (!siteKey) return;
+		const frame = window.requestAnimationFrame(() => setClientReady(true));
+		return () => window.cancelAnimationFrame(frame);
+	}, [siteKey]);
 
 	useEffect(() => {
 		if (!siteKey || !turnstileContainerRef.current) return;
@@ -103,11 +110,10 @@ function ContributePage() {
 		};
 	}, [siteKey]);
 
-	async function submit(event: React.FormEvent<HTMLFormElement>) {
-		event.preventDefault();
+	async function submitForm(form: HTMLFormElement) {
 		setPhase("submitting");
 		setMessage("");
-		const formData = new FormData(event.currentTarget);
+		const formData = new FormData(form);
 		const localTest = ["127.0.0.1", "localhost"].includes(window.location.hostname);
 
 		try {
@@ -190,82 +196,101 @@ function ContributePage() {
 					</a>
 				</section>
 
-				<form className="contribute-form" ref={formRef} onSubmit={submit}>
-					<label>
-						<span>线索类型</span>
-						<select
-							name="type"
-							required
-							value={submissionType}
-							onChange={(event) => setSubmissionType(event.currentTarget.value)}
-						>
-							<option value="" disabled>
-								选择类型
-							</option>
-							<option>词语</option>
-							<option>材料出处</option>
-							<option>纠错</option>
-							<option>权利请求</option>
-							<option>隐私或安全请求</option>
-							<option>录音意愿</option>
-						</select>
-					</label>
+				<form
+					className="contribute-form"
+					ref={formRef}
+					onSubmit={(event) => {
+						event.preventDefault();
+						void submitForm(event.currentTarget);
+					}}
+				>
+					<fieldset
+						className="contribute-form__fields"
+						disabled={!clientReady || phase === "submitting"}
+					>
+						<legend className="visually-hidden">线索内容</legend>
+						<label>
+							<span>线索类型</span>
+							<select
+								name="type"
+								required
+								value={submissionType}
+								onChange={(event) => setSubmissionType(event.currentTarget.value)}
+							>
+								<option value="" disabled>
+									选择类型
+								</option>
+								<option>词语</option>
+								<option>材料出处</option>
+								<option>纠错</option>
+								<option>权利请求</option>
+								<option>隐私或安全请求</option>
+								<option>录音意愿</option>
+							</select>
+						</label>
 
-					<label className="contribute-form__wide">
-						<span>说明</span>
-						<textarea name="description" required minLength={20} maxLength={4000} rows={7} />
-					</label>
+						<label className="contribute-form__wide">
+							<span>说明</span>
+							<textarea name="description" required minLength={20} maxLength={4000} rows={7} />
+						</label>
 
-					<label>
-						<span>材料链接（可选）</span>
-						<input name="sourceUrl" type="url" inputMode="url" />
-					</label>
+						<label>
+							<span>材料链接（可选）</span>
+							<input name="sourceUrl" type="url" inputMode="url" />
+						</label>
 
-					<label>
-						<span>{rightsRequest ? "关联档案编号（必填）" : "关联档案编号（可选）"}</span>
-						<input
-							name="archiveId"
-							pattern="NJH[0-9]{6}"
-							placeholder="NJH000001"
-							defaultValue={search.archiveId ?? ""}
-							required={rightsRequest}
-						/>
-					</label>
+						<label>
+							<span>{rightsRequest ? "关联档案编号（必填）" : "关联档案编号（可选）"}</span>
+							<input
+								name="archiveId"
+								pattern="NJH[0-9]{6}"
+								placeholder="NJH000001"
+								defaultValue={search.archiveId ?? ""}
+								required={rightsRequest}
+							/>
+						</label>
 
-					<label>
-						<span>联系类型（可选）</span>
-						<select name="contactMethod" defaultValue="">
-							<option value="">不留联系方式</option>
-							<option>电子邮箱</option>
-							<option>手机</option>
-							<option>微信</option>
-						</select>
-					</label>
+						<label>
+							<span>联系类型（可选）</span>
+							<select name="contactMethod" defaultValue="">
+								<option value="">不留联系方式</option>
+								<option>电子邮箱</option>
+								<option>手机</option>
+								<option>微信</option>
+							</select>
+						</label>
 
-					<label>
-						<span>联系方式（可选）</span>
-						<input name="contactValue" autoComplete="off" maxLength={320} />
-					</label>
+						<label>
+							<span>联系方式（可选）</span>
+							<input name="contactValue" autoComplete="off" maxLength={320} />
+						</label>
 
-					<label className="contribute-form__consent contribute-form__wide">
-						<input name="policyAccepted" type="checkbox" required />
-						<span>我已了解上述信息用途、处理规则和保留周期。</span>
-					</label>
+						<label className="contribute-form__consent contribute-form__wide">
+							<input name="policyAccepted" type="checkbox" required />
+							<span>我已了解上述信息用途、处理规则和保留周期。</span>
+						</label>
 
-					<div className="contribute-form__verification contribute-form__wide">
-						<div ref={turnstileContainerRef} />
-					</div>
+						<div className="contribute-form__verification contribute-form__wide">
+							<div ref={turnstileContainerRef} />
+						</div>
 
-					<div className="contribute-form__submit contribute-form__wide">
-						<button type="submit" disabled={!siteKey || phase === "submitting"}>
-							<Send aria-hidden="true" strokeWidth={1.5} />
-							<span>{phase === "submitting" ? "正在提交" : "提交线索"}</span>
-						</button>
-						<p className={`form-message form-message--${phase}`} aria-live="polite">
-							{message}
-							{referenceId ? ` 编号：${referenceId}` : ""}
-						</p>
-					</div>
+						<div className="contribute-form__submit contribute-form__wide">
+							<button
+								type="button"
+								disabled={!siteKey || !clientReady || phase === "submitting"}
+								onClick={() => {
+									if (formRef.current) void submitForm(formRef.current);
+								}}
+							>
+								<Send aria-hidden="true" strokeWidth={1.5} />
+								<span>{phase === "submitting" ? "正在提交" : "提交线索"}</span>
+							</button>
+							<p className={`form-message form-message--${phase}`} aria-live="polite">
+								{message}
+								{referenceId ? ` 编号：${referenceId}` : ""}
+							</p>
+						</div>
+					</fieldset>
 				</form>
 			</section>
 		</main>

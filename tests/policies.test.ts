@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-
 import { getPolicyDocument, policyDocuments } from "../src/content/policies.ts";
+import { policyNavigation } from "../src/content/policy-index.ts";
 
 function policyText(slug: string): string {
 	const document = getPolicyDocument(slug);
@@ -22,6 +22,9 @@ test("非语音制度页面具有稳定且唯一的公开路径", () => {
 	assert.equal(new Set(policyDocuments.map((document) => document.slug)).size, 8);
 	assert.ok(policyDocuments.every((document) => /^[-a-z]+$/.test(document.slug)));
 	assert.ok(!policyDocuments.some((document) => document.slug.includes("recording")));
+	for (const item of policyNavigation) {
+		assert.equal(getPolicyDocument(item.slug)?.navLabel, item.label);
+	}
 });
 
 test("制度文案声明独立性、分层许可和真实数据保留行为", () => {
@@ -45,4 +48,11 @@ test("透明度制度禁止资金或合作方购买编辑结论", () => {
 	assert.match(transparency, /赞助方和合作方不得修改历史结论、删除争议、隐藏不利证据/);
 	assert.match(transparency, /购买审核背书/);
 	assert.match(transparency, /AI 输出不作为来源/);
+});
+
+test("申诉制度明确 D1 决定与 Git 发布处置不是自动联动", () => {
+	const corrections = policyText("corrections-and-rights");
+	assert.match(corrections, /D1 处置记录不会自动改写 Git 内容或删除文件/);
+	assert.match(corrections, /公开页面状态在这套发布流程完成后才生效/);
+	assert.doesNotMatch(corrections, /线索依次处于/);
 });

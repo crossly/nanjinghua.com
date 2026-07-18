@@ -185,6 +185,8 @@ function ArchiveEntryPage() {
 									{file.kind} · {file.fileName} · SHA-256 <code>{file.sha256}</code> ·
 									{file.publicAccess ? "公开" : "不公开"}
 									<br />
+									权利依据：{file.rightsBasis}
+									<br />
 									处置：本站保存副本{file.disposition.storedCopy} · 备份
 									{file.disposition.backups} · {file.disposition.decidedAt} ·
 									{file.disposition.decidedBy}
@@ -203,12 +205,10 @@ function ArchiveEntryPage() {
 							<dt>核对日期</dt>
 							<dd>{entry.review.reviewedAt}</dd>
 						</div>
-						{entry.review.scope ? (
-							<div>
-								<dt>核对范围</dt>
-								<dd>{entry.review.scope}</dd>
-							</div>
-						) : null}
+						<div>
+							<dt>核对范围</dt>
+							<dd>{entry.review.scope}</dd>
+						</div>
 						<div>
 							<dt>AI 辅助</dt>
 							<dd>{entry.aiAssistance ? "资料发现、归纳与初稿整理" : "未使用"}</dd>

@@ -231,7 +231,7 @@ const publishedArchiveEntrySchema = z
 				status: reviewStatusSchema,
 				reviewer: requiredText,
 				reviewedAt: isoDateSchema,
-				scope: requiredText.optional(),
+				scope: requiredText,
 			})
 			.strict(),
 		aiAssistance: z.boolean(),

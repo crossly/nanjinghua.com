@@ -1,21 +1,6 @@
 import { ArrowUpRight } from "lucide-react";
 
-import { policyDocuments } from "../content/policies";
-
-const footerGroups = [
-	{
-		label: "项目",
-		slugs: ["about", "editorial", "transparency"],
-	},
-	{
-		label: "权利与数据",
-		slugs: ["rights-and-licensing", "privacy", "corrections-and-rights"],
-	},
-	{
-		label: "参与",
-		slugs: ["accessibility", "participate"],
-	},
-] as const;
+import { policyNavigationGroups } from "../content/policy-index";
 
 export function SiteFooter() {
 	return (
@@ -28,19 +13,15 @@ export function SiteFooter() {
 					<p>南京话的历史 · 公共数字档案预览</p>
 				</div>
 
-				{footerGroups.map((group) => (
+				{policyNavigationGroups.map((group) => (
 					<nav key={group.label} aria-label={group.label}>
 						<p>{group.label}</p>
 						<ul>
-							{group.slugs.map((slug) => {
-								const document = policyDocuments.find((candidate) => candidate.slug === slug);
-								if (!document) return null;
-								return (
-									<li key={document.slug}>
-										<a href={`/policies/${document.slug}`}>{document.navLabel}</a>
-									</li>
-								);
-							})}
+							{group.items.map((item) => (
+								<li key={item.slug}>
+									<a href={`/policies/${item.slug}`}>{item.label}</a>
+								</li>
+							))}
 						</ul>
 					</nav>
 				))}
