@@ -41,6 +41,9 @@ test("制度文案声明独立性、分层许可和真实数据保留行为", ()
 	assert.match(privacy, /连续 180 天没有更新/);
 	assert.match(privacy, /提醒后 7 天宽限期/);
 	assert.match(privacy, /权利请求、隐私或安全请求属于优先线索/);
+	assert.match(privacy, /Cloudflare Web Analytics 会以无 Cookie 的聚合方式/);
+	assert.match(privacy, /不接入广告、跨站追踪、设备指纹、用户画像、会话回放或表单事件统计/);
+	assert.match(privacy, /不把可识别个人的站内搜索历史写入应用日志/);
 });
 
 test("透明度制度禁止资金或合作方购买编辑结论", () => {

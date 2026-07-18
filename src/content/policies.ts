@@ -176,7 +176,8 @@ export const policyDocuments = [
 				title: "怎样保存和使用",
 				paragraphs: [
 					"线索正文、来源、关联档案编号和处理状态保存在一张受限表中；电子邮箱、手机或微信等可选联系方式保存在单独的受限表中，并通过内部编号关联。公开档案不会自动显示提交者的联系方式。",
-					"这些信息只用于核验材料、回复提交者、处理纠错与权利请求、记录必要的处置过程和防止滥用。本站代码目前未接入广告或行为分析服务；Cloudflare 仍会为托管、安全和运行维护处理必要日志。",
+					"这些信息只用于核验材料、回复提交者、处理纠错与权利请求、记录必要的处置过程和防止滥用。Cloudflare Web Analytics 会以无 Cookie 的聚合方式统计页面访问、来源、设备类别、国家或地区及网页性能；本站不接入广告、跨站追踪、设备指纹、用户画像、会话回放或表单事件统计。",
+					"本站不把可识别个人的站内搜索历史写入应用日志，并关闭 Cloudflare Worker 的持久化请求日志。Cloudflare 仍会为托管、安全、Turnstile、聚合统计和运行维护处理必要数据。",
 				],
 			},
 			{
@@ -200,7 +201,7 @@ export const policyDocuments = [
 					{
 						label: "Cloudflare 隐私政策",
 						href: "https://www.cloudflare.com/privacypolicy/",
-						description: "了解托管与 Turnstile 服务方的数据处理说明。",
+						description: "了解托管、Turnstile 与聚合统计服务方的数据处理说明。",
 					},
 				],
 			},

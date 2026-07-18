@@ -45,6 +45,7 @@ wrangler secret put TURNSTILE_SECRET_KEY
 wrangler secret put EDITOR_API_KEY
 pnpm run db:migrate:remote
 pnpm run validate:secrets
+pnpm run validate:cloudflare
 pnpm preview:worker
 pnpm run deploy
 ```
@@ -56,6 +57,10 @@ pnpm run deploy
 应用使用 TanStack Start 的 Cloudflare Vite 适配器，Worker 入口、D1 绑定、Cron 和兼容日期由
 `wrangler.jsonc` 管理。每日 Cron 会执行联系方式保留与无处理提醒；提醒线索编号同时写入状态事件和
 Worker 日志。
+
+生产备份、隔离恢复演练、回滚、密钥轮换、性能预算和故障排查见
+[Cloudflare 生产运行手册](./docs/runbooks/production-operations.md)。当前只覆盖 Git、D1、Worker 与
+Turnstile；R2、真人音频和媒体恢复按产品决定暂缓。
 
 ## 领域与决策
 

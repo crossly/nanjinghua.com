@@ -16,6 +16,14 @@
 		"TURNSTILE_MODE": "production",
 		"TURNSTILE_SITE_KEY": "0x4AAAAAAD3tFpmiB4jhX_8m"
 	},
+	"observability": {
+		"enabled": true,
+		"logs": {
+			"enabled": true,
+			"head_sampling_rate": 1,
+			"invocation_logs": false
+		}
+	},
 	"triggers": {
 		"crons": ["0 2 * * *"]
 	}
