@@ -1378,11 +1378,19 @@ img {
 	margin-top: 0;
 }
 
-.prose table {
-	display: block;
+.prose__table-scroll {
 	width: 100%;
 	margin-block: 2rem;
 	overflow-x: auto;
+	outline-offset: 4px;
+}
+
+.prose__table-scroll:focus-visible {
+	outline: 2px solid var(--red);
+}
+
+.prose table {
+	width: 100%;
 	border-collapse: collapse;
 	font-size: 0.875rem;
 	line-height: 1.7;
@@ -1673,6 +1681,26 @@ img {
 	width: min(100% - 4rem, 90rem);
 	margin-inline: auto;
 	padding-block: 5rem 8rem;
+}
+
+.contribute__skip {
+	position: fixed;
+	top: 1rem;
+	left: 1rem;
+	z-index: 20;
+	padding: 0.75rem 1rem;
+	font: inherit;
+	color: var(--white);
+	text-decoration: none;
+	background: var(--red);
+	border: 0;
+	outline: 2px solid var(--white);
+	outline-offset: 3px;
+	transform: translateY(calc(-100% - 2rem));
+}
+
+.contribute__skip:focus-visible {
+	transform: translateY(0);
 }
 
 .contribute__lead {
