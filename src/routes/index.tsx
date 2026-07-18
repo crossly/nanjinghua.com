@@ -12,6 +12,42 @@ import {
 
 export const Route = createFileRoute("/")({ component: Home });
 
+const historicalPath = [
+	{
+		id: "NJH000008",
+		period: "1864",
+		note: "英文原著区分 Nanking、Peking 与西部发音系统，不把历史记录直接等同于当代南京话。",
+	},
+	{
+		id: "NJH000005",
+		period: "1920s",
+		note: "赵元任《南京音系》目前先作为书目线索，不把尚未取得的原文内容补写成结论。",
+	},
+	{
+		id: "NJH000004",
+		period: "1960",
+		note: "区域调查成果把南京材料放进江苏与上海方言的可比较框架。",
+	},
+	{
+		id: "NJH000002",
+		period: "1993",
+		note: "地方志专志系统整理南京方言，但它仍需与更早原始材料和后续调查相互核对。",
+	},
+	{
+		id: "NJH000012",
+		period: "2006",
+		note: "有限学生样本记录新老派差异，结论只适用于论文交代的调查对象。",
+	},
+] as const;
+
+function requirePublishedArchive(id: string) {
+	const entry = getPublicArchiveEntry(id);
+	if (!entry || entry.publicationStatus !== "公开") {
+		throw new Error(`首页引用的公开档案不存在：${id}`);
+	}
+	return entry;
+}
+
 function Home() {
 	const openingCollection = getCollection("what-is-nanjinghua");
 	const [openingArticle, ...continuingArticles] = openingCollection
@@ -21,6 +57,12 @@ function Home() {
 	const featuredArchive = featuredArticle
 		? getPublicArchiveEntry(featuredArticle.archiveIds[0] ?? "")
 		: undefined;
+	const culturalArticle = getArticle("nanjinghua-cultural-forms");
+	const historicalEntries = historicalPath.map((item) => ({
+		...item,
+		entry: requirePublishedArchive(item.id),
+	}));
+	const highlightedArchives = ["NJH000008", "NJH000015", "NJH000016"].map(requirePublishedArchive);
 	const publicArchiveCount = archiveEntries.filter(
 		(entry) => entry.publicationStatus === "公开",
 	).length;
@@ -30,10 +72,12 @@ function Home() {
 		!openingArticle ||
 		!featuredArticle ||
 		!featuredArchive ||
-		featuredArchive.publicationStatus !== "公开"
+		featuredArchive.publicationStatus !== "公开" ||
+		!culturalArticle?.visual
 	) {
-		throw new Error("首页证据处理示例缺少对应专题或档案条目");
+		throw new Error("首页缺少对应专题、档案条目或授权视觉素材");
 	}
+	const culturalVisual = culturalArticle.visual;
 
 	return (
 		<main>
@@ -66,7 +110,7 @@ function Home() {
 					<h1 id="site-title">南京话</h1>
 					<p className="hero__subtitle">南京话的历史</p>
 					<p className="hero__lede">
-						从南京主城区地方话出发，辨清地域、年代与证据，连接历史记录与当代声音。
+						从南京主城区地方话出发，辨清地域、年代与证据，连接历史记录与当代调查。
 					</p>
 					<a className="hero__action" href="#opening-collection">
 						<span>进入首发专题集合</span>
@@ -130,13 +174,104 @@ function Home() {
 					</div>
 					<div>
 						<dt>路径</dt>
-						<dd>文献与声音互证</dd>
+						<dd>文献与调查互证</dd>
 					</div>
 					<div>
 						<dt>立场</dt>
 						<dd>呈现差异，不定正宗</dd>
 					</div>
 				</dl>
+			</section>
+
+			<section className="historical-path" aria-labelledby="historical-path-title">
+				<header className="historical-path__lead">
+					<div>
+						<p className="section-label">历史脉络</p>
+						<h2 id="historical-path-title">从材料看见时间</h2>
+					</div>
+					<p>
+						这里排列的是材料形成时间，不是一条把南京话说成单一起源、直线演变的年表。每个节点都回到档案原件、书目线索或调查范围。
+					</p>
+					<a href="/articles/historical-nanjing-speech">
+						<span>阅读历史南京语音专题</span>
+						<ArrowRight aria-hidden="true" strokeWidth={1.5} />
+					</a>
+				</header>
+
+				<ol className="historical-path__list">
+					{historicalEntries.map(({ entry, period, note }) => (
+						<li key={entry.id}>
+							<a href={`/archive/${entry.id}`}>
+								<time>{period}</time>
+								<div>
+									<h3>{entry.title}</h3>
+									<p>{note}</p>
+									<span>
+										{entry.id} · {entry.evidenceIdentity}
+									</span>
+								</div>
+								<ArrowRight aria-hidden="true" strokeWidth={1.5} />
+							</a>
+						</li>
+					))}
+				</ol>
+			</section>
+
+			<section className="archive-highlights" aria-labelledby="archive-highlights-title">
+				<div className="archive-highlights__inner">
+					<header className="archive-highlights__lead">
+						<div>
+							<p className="section-label">真实内容入口</p>
+							<h2 id="archive-highlights-title">精选档案</h2>
+						</div>
+						<p>
+							从晚清文献到国家非遗名录和当代表演照片，不同材料各自说明它能证明什么，也公开不能证明什么。
+						</p>
+					</header>
+
+					<figure className="archive-highlights__visual">
+						<a href="/archive/NJH000016" aria-label="查看 NJH000016 南京白局演出照片档案">
+							<img
+								src={culturalVisual.src}
+								width={culturalVisual.width}
+								height={culturalVisual.height}
+								alt={culturalVisual.alt}
+								loading="lazy"
+							/>
+						</a>
+						<figcaption>
+							<span>南京白局演出现场。照片记录表演空间、演出者与观众关系。</span>
+							<span>
+								{culturalVisual.credit} ·{` `}
+								<a href={culturalVisual.licenseUrl} target="_blank" rel="license noreferrer">
+									{culturalVisual.license}
+								</a>{` `}
+								·{` `}
+								<a href={culturalVisual.sourceUrl} target="_blank" rel="license noreferrer">
+									Commons 来源
+								</a>
+							</span>
+						</figcaption>
+					</figure>
+
+					<ol className="archive-highlights__list">
+						{highlightedArchives.map((entry, index) => (
+							<li key={entry.id}>
+								<a href={`/archive/${entry.id}`}>
+									<span className="archive-highlights__index">0{index + 1}</span>
+									<div>
+										<p>
+											{entry.id} · {entry.evidenceIdentity}
+										</p>
+										<h3>{entry.title}</h3>
+										<span>{entry.rightsStatus}</span>
+									</div>
+									<ArrowRight aria-hidden="true" strokeWidth={1.5} />
+								</a>
+							</li>
+						))}
+					</ol>
+				</div>
 			</section>
 
 			<section className="evidence-example" aria-labelledby="evidence-example-title">
