@@ -15,6 +15,11 @@ export const d1RowCountQuery = d1BusinessTables
 	)
 	.join(" ");
 
+export function operationDirectoryArgument(args: string[]): string | undefined {
+	const positional = args.filter((argument) => argument !== "--");
+	return positional.length === 1 ? positional[0] : undefined;
+}
+
 function isObject(value: unknown): value is Record<string, unknown> {
 	return typeof value === "object" && value !== null && !Array.isArray(value);
 }

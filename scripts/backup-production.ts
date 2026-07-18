@@ -11,7 +11,12 @@ import {
 	writeFileSync,
 } from "node:fs";
 import { resolve } from "node:path";
-import { type D1RowCounts, d1RowCountQuery, parseD1RowCounts } from "./operations-data.ts";
+import {
+	type D1RowCounts,
+	d1RowCountQuery,
+	operationDirectoryArgument,
+	parseD1RowCounts,
+} from "./operations-data.ts";
 
 const databaseName = "nanjinghua-submissions";
 
@@ -34,7 +39,7 @@ if (process.argv.includes("--help")) {
 	process.exit(0);
 }
 
-const destinationArgument = process.argv[2];
+const destinationArgument = operationDirectoryArgument(process.argv.slice(2));
 if (!destinationArgument) throw new Error("必须提供备份目标目录；不得把含线索的 D1 导出写入 Git");
 
 const dirty = run("git", ["status", "--porcelain"], true);

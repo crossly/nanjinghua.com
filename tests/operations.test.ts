@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import test from "node:test";
-import { parseD1RowCounts } from "../scripts/operations-data.ts";
+import { operationDirectoryArgument, parseD1RowCounts } from "../scripts/operations-data.ts";
 
 function runScript(path: string, args: string[] = []) {
 	return spawnSync(process.execPath, [path, ...args], { encoding: "utf8" });
@@ -61,4 +61,11 @@ test("D1 计数解析器读取 Wrangler JSON 并要求四张业务表完整", ()
 			),
 		/缺少表 submission_contacts/,
 	);
+});
+
+test("运维脚本忽略 pnpm 传入的参数分隔符并拒绝歧义目录", () => {
+	assert.equal(operationDirectoryArgument(["--", ".ops/backups/example"]), ".ops/backups/example");
+	assert.equal(operationDirectoryArgument([".ops/backups/example"]), ".ops/backups/example");
+	assert.equal(operationDirectoryArgument([]), undefined);
+	assert.equal(operationDirectoryArgument(["first", "second"]), undefined);
 });
