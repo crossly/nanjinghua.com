@@ -81,6 +81,8 @@ pnpm ops:restore-drill -- /encrypted-backup/nanjinghua/2026-07-18T180000Z
 
 脚本先核对清单，再把 Git 克隆和 D1 导入系统临时目录；它不会写远端 D1。通过条件是 Git HEAD、内容数量和 D1 四张业务表的逐表行数都与备份清单一致。演练临时目录在结束时删除，备份原件不修改。
 
+已完成的非音频演练见 [2026-07-18 恢复记录](./drills/2026-07-18-non-audio-restore.md)。该记录中的 `.ops/` 副本只证明恢复流程可执行，不替代独立离线备份。
+
 ## 性能与统计
 
 `pnpm run performance:check` 限制入口 JavaScript、CSS 和首页图片体积，并拒绝 Google Fonts 或远程 CSS `@import`。正文使用系统字体，公开页面可在脚本加载较慢时先呈现预渲染内容。
