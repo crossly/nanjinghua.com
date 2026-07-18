@@ -36,7 +36,7 @@ Turnstile 组件需在 Dashboard 逐项核对：组件名 `nanjinghua-submission
 4. 记录输出的 Worker Version ID，并检查首页、检索、制度页、线索配置接口和 `sitemap.xml`。
 5. 检查正式域名不含 `X-Robots-Tag: noindex`、Worker 预览域名包含该响应头，并核对规范 URL、尾斜杠重定向与 Analytics 只注入一次。
 
-`nanjinghua.com` 已于 2026-07-18 作为 Worker custom domain 绑定并完成 HTTPS 验证。域名可达不等于中国大陆正式上线；在多个中国大陆真实网络完成稳定性验收前，仍只发布为非音频预览。
+`nanjinghua.com` 已于 2026-07-18 作为 Worker custom domain 绑定并完成 HTTPS 验证。2026-07-19 的[中国大陆三网访问验收](../releases/2026-07-19-mainland-access-check.md)发现上海移动居民线路可以连续复现请求超时，因此仍只发布为非音频预览；不得用其他网络成功掩盖该失败。
 
 部署不会自动回滚 D1。迁移必须保持向前兼容；删除或重命名列前先完成独立导出和恢复演练。
 
