@@ -67,25 +67,36 @@ pnpm exec wrangler d1 time-travel restore nanjinghua-submissions --timestamp ISO
 
 ## Git 与 D1 备份
 
-目标目录必须位于加密、访问受限且不自动同步到公开云盘的存储中。脚本使用 `0700` 目录和 `0600` 文件权限，并拒绝脏工作区与非空目标目录。
+备份格式 v2 使用 AES-256-GCM 分别认证加密 Git bundle 与 D1 SQL。`NANJINGHUA_BACKUP_KEY` 必须是 32 个随机 bytes 的 Base64 表示；密钥存入受限密码管理器或另一件加密介质，不得与备份目录放在一起，也不得写入 Git、Issue、操作日志或 shell history。
+
+目标目录必须位于访问受限、不自动同步到公开云盘且最终会转存到独立介质的存储中。脚本使用 `0700` 目录和 `0600` 文件权限，拒绝脏工作区与非空目标目录。备份和演练前在当前 shell 中静默读入已有密钥，结束后立即移除环境变量：
 
 ```bash
-pnpm ops:backup -- /encrypted-backup/nanjinghua/2026-07-18T180000Z
+read -r -s NANJINGHUA_BACKUP_KEY
+export NANJINGHUA_BACKUP_KEY
+pnpm ops:backup -- /独立介质/nanjinghua/2026-07-19T180000Z
+pnpm ops:restore-drill -- /独立介质/nanjinghua/2026-07-19T180000Z
+unset NANJINGHUA_BACKUP_KEY
 ```
 
-输出包含 Git bundle、D1 SQL、逐表行数和 SHA-256 清单。脚本会先把导出的 D1 SQL 导入隔离的本地状态并记录其中四张业务表的行数；D1 导出可能含联系方式，不得进入 Git。完成后把一份副本移到平时断开的加密介质，另一份保留在独立受限存储，并记录保管人与销毁周期。
+目标目录只包含 `content.git.bundle.enc`、`submissions.sql.enc` 和 `manifest.json`。清单记录密文与明文的大小、SHA-256、随机初始化向量、GCM 认证标签和非秘密密钥指纹，并以从备份密钥派生的 HMAC-SHA256 认证完整清单，防止跨备份拼接；清单不包含密钥。脚本先把导出的 D1 SQL 导入隔离的本地状态，记录四张业务表的行数，再从权限受限的系统临时目录加密到目标目录；成功或失败后都会删除临时明文，失败时也会清理目标目录中的半成品。
+
+D1 导出可能含联系方式。即使已经加密，备份也不得进入 Git；必须把一份副本移到平时断开的独立介质，另一份保留在独立受限存储，并记录保管人、密钥保管人和销毁周期。工作机上的 `.ops/` 副本只能用于演练，不能算作独立离线备份。
 
 每次正式发布前做 Git bundle；D1 至少每周导出一次，并在重大迁移、批量处置和密钥轮换前额外导出。Cloudflare D1 Time Travel 只作为平台内恢复层，不代替独立导出。
 
 ## 隔离恢复演练
 
 ```bash
-pnpm ops:restore-drill -- /encrypted-backup/nanjinghua/2026-07-18T180000Z
+read -r -s NANJINGHUA_BACKUP_KEY
+export NANJINGHUA_BACKUP_KEY
+pnpm ops:restore-drill -- /独立介质/nanjinghua/2026-07-19T180000Z
+unset NANJINGHUA_BACKUP_KEY
 ```
 
-脚本先核对清单，再把 Git 克隆和 D1 导入系统临时目录；它不会写远端 D1。通过条件是 Git HEAD、内容数量和 D1 四张业务表的逐表行数都与备份清单一致。演练临时目录在结束时删除，备份原件不修改。
+脚本先拒绝越界路径、符号链接和非普通文件，再验证密文大小与 SHA-256、密钥指纹、清单 HMAC 和 GCM 认证标签，最后核对解密后文件的大小与 SHA-256。随后把 Git 克隆和 D1 导入系统临时目录；它不会写远端 D1。通过条件是 Git HEAD、内容数量和 D1 四张业务表的逐表行数都与备份清单一致。演练临时目录在结束时删除，备份原件不修改。恢复工具仍可读取历史 v1 明文备份，但新备份必须使用 v2 加密格式。
 
-已完成的非音频演练见 [2026-07-18 恢复记录](./drills/2026-07-18-non-audio-restore.md)。该记录中的 `.ops/` 副本只证明恢复流程可执行，不替代独立离线备份。
+历史 v1 非音频演练见 [2026-07-18 恢复记录](./drills/2026-07-18-non-audio-restore.md)。该记录中的 `.ops/` 副本只证明恢复流程可执行，不替代独立离线备份。
 
 ## 性能与统计
 

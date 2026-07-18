@@ -1,19 +1,83 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { mkdtempSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import {
+	chmodSync,
+	copyFileSync,
+	mkdirSync,
+	mkdtempSync,
+	readdirSync,
+	readFileSync,
+	rmSync,
+	statSync,
+	symlinkSync,
+	unlinkSync,
+	writeFileSync,
+} from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
+import {
+	backupEncryptionAlgorithm,
+	backupKeyFingerprint,
+	encryptBackupFile,
+} from "../scripts/operations-crypto.ts";
 import {
 	operationDirectoryArgument,
 	parseD1DatabaseInfo,
 	parseD1RowCounts,
 } from "../scripts/operations-data.ts";
+import {
+	authenticateBackupManifest,
+	type EncryptedBackupManifestPayload,
+} from "../scripts/operations-manifest.ts";
 
-function runScript(path: string, args: string[] = []) {
-	return spawnSync(process.execPath, [path, ...args], { encoding: "utf8" });
+function runScript(path: string, args: string[] = [], environment: Record<string, string> = {}) {
+	return spawnSync(process.execPath, [path, ...args], {
+		encoding: "utf8",
+		env: { ...process.env, ...environment },
+	});
 }
+
+function syntheticD1Sql(): string {
+	const migrations = readdirSync("migrations")
+		.filter((file) => file.endsWith(".sql"))
+		.sort()
+		.map((file) => readFileSync(join("migrations", file), "utf8"));
+	migrations.push(`
+INSERT INTO submission_leads (
+  id, type, description, priority, status, policy_accepted_at,
+  created_at, updated_at, status_changed_at
+) VALUES (
+  'SUB-RESTORE-TEST', '纠错', 'restore fixture', 0, '核验中',
+  '2026-07-18T00:00:00Z', '2026-07-18T00:00:00Z',
+  '2026-07-18T00:00:00Z', '2026-07-18T00:00:00Z'
+);
+INSERT INTO submission_contacts (
+  lead_id, contact_method, contact_value, created_at
+) VALUES ('SUB-RESTORE-TEST', '电子邮箱', 'fixture@example.invalid', '2026-07-18T00:00:00Z');
+INSERT INTO submission_status_events (
+  lead_id, from_status, to_status, note, actor, created_at
+) VALUES (
+  'SUB-RESTORE-TEST', '已收到', '核验中', 'fixture', 'test', '2026-07-18T00:00:00Z'
+);
+INSERT INTO submission_disposition_events (
+  lead_id, archive_id, decision_type, public_catalog_action,
+  stored_copy_action, backup_action, note, actor, created_at
+) VALUES (
+  'SUB-RESTORE-TEST', 'NJH000001', '事实修订', '不适用',
+  '不适用', '不适用', 'fixture', 'test', '2026-07-18T00:00:00Z'
+);
+`);
+	return `${migrations.join("\n")}\n`;
+}
+
+const syntheticD1RowCounts = {
+	submission_contacts: 1,
+	submission_disposition_events: 1,
+	submission_leads: 1,
+	submission_status_events: 1,
+};
 
 test("Cloudflare 生产配置声明 Worker、D1、Turnstile 与隐私友好日志", () => {
 	const result = runScript("scripts/validate-cloudflare-config.ts");
@@ -95,77 +159,268 @@ test("远端 D1 信息解析器返回可与生产配置比对的名称和 ID", (
 	assert.throws(() => parseD1DatabaseInfo("{}"), /缺少名称或 ID/);
 });
 
-test("恢复脚本可从合成 Git 与 D1 备份还原内容和逐表数据", () => {
+test("生产备份 CLI 只留下可恢复的认证加密载荷并在失败时清理", () => {
+	const fixtureDirectory = mkdtempSync(join(tmpdir(), "nanjinghua-backup-cli-test-"));
+	try {
+		const fakeBin = join(fixtureDirectory, "bin");
+		const backupDirectory = join(fixtureDirectory, "backup");
+		const failedBackupDirectory = join(fixtureDirectory, "failed-backup");
+		const commandLog = join(fixtureDirectory, "commands.log");
+		const exportState = join(fixtureDirectory, "export-path.txt");
+		mkdirSync(fakeBin);
+
+		const fakeGitPath = join(fakeBin, "git");
+		writeFileSync(
+			fakeGitPath,
+			`#!/usr/bin/env node
+const { appendFileSync } = require("node:fs");
+const { spawnSync } = require("node:child_process");
+const args = process.argv.slice(2);
+appendFileSync(process.env.FAKE_COMMAND_LOG, "git key=" + Boolean(process.env.NANJINGHUA_BACKUP_KEY) + " " + args.join(" ") + "\\n");
+if (args[0] === "status") process.exit(0);
+const result = spawnSync(process.env.REAL_GIT, args, { cwd: process.cwd(), stdio: "inherit" });
+process.exit(result.status ?? 1);
+`,
+			{ mode: 0o700 },
+		);
+		chmodSync(fakeGitPath, 0o700);
+
+		const fakePnpmPath = join(fakeBin, "pnpm");
+		writeFileSync(
+			fakePnpmPath,
+			`#!/usr/bin/env node
+const { appendFileSync, readFileSync, rmSync, writeFileSync } = require("node:fs");
+const args = process.argv.slice(2);
+appendFileSync(process.env.FAKE_COMMAND_LOG, "pnpm key=" + Boolean(process.env.NANJINGHUA_BACKUP_KEY) + " " + args.join(" ") + "\\n");
+if (args.includes("export")) {
+  const output = args.find((arg) => arg.startsWith("--output=")).slice("--output=".length);
+  writeFileSync(output, Buffer.from(process.env.FAKE_D1_SQL_BASE64, "base64"));
+  writeFileSync(process.env.FAKE_EXPORT_STATE, output);
+  process.exit(0);
+}
+if (args.includes("execute")) {
+  if (args.includes("--json")) {
+    process.stdout.write(JSON.stringify([{ success: true, results: [
+      { table_name: "submission_contacts", row_count: 1 },
+      { table_name: "submission_disposition_events", row_count: 1 },
+      { table_name: "submission_leads", row_count: 1 },
+      { table_name: "submission_status_events", row_count: 1 }
+    ] }]));
+    if (process.env.FAKE_REMOVE_EXPORT_AFTER_VERIFY === "1") {
+      rmSync(readFileSync(process.env.FAKE_EXPORT_STATE, "utf8"), { force: true });
+    }
+    process.exit(0);
+  }
+  process.exit(0);
+}
+process.exit(2);
+`,
+			{ mode: 0o700 },
+		);
+		chmodSync(fakePnpmPath, 0o700);
+
+		const realGit = spawnSync("which", ["git"], { encoding: "utf8" }).stdout.trim();
+		const encodedBackupKey = Buffer.alloc(32, 11).toString("base64");
+		const fakeEnvironment = {
+			PATH: `${fakeBin}:${process.env.PATH}`,
+			NANJINGHUA_BACKUP_KEY: encodedBackupKey,
+			REAL_GIT: realGit,
+			FAKE_COMMAND_LOG: commandLog,
+			FAKE_D1_SQL_BASE64: Buffer.from(syntheticD1Sql()).toString("base64"),
+			FAKE_EXPORT_STATE: exportState,
+		};
+
+		const backedUp = runScript(
+			"scripts/backup-production.ts",
+			["--", backupDirectory],
+			fakeEnvironment,
+		);
+		assert.equal(backedUp.status, 0, backedUp.stderr);
+		assert.deepEqual(readdirSync(backupDirectory).sort(), [
+			"content.git.bundle.enc",
+			"manifest.json",
+			"submissions.sql.enc",
+		]);
+		for (const name of readdirSync(backupDirectory)) {
+			assert.equal(statSync(join(backupDirectory, name)).mode & 0o777, 0o600);
+		}
+		const manifest = JSON.parse(readFileSync(join(backupDirectory, "manifest.json"), "utf8")) as {
+			version: number;
+			authentication?: { algorithm?: string };
+		};
+		assert.equal(manifest.version, 2);
+		assert.equal(manifest.authentication?.algorithm, "hmac-sha256");
+		assert.doesNotMatch(readFileSync(commandLog, "utf8"), /key=true/);
+
+		const restored = runScript("scripts/restore-drill.ts", ["--", backupDirectory], {
+			NANJINGHUA_BACKUP_KEY: encodedBackupKey,
+		});
+		assert.equal(restored.status, 0, restored.stderr);
+		assert.match(restored.stdout, /"outcome": "passed"/);
+
+		const failed = runScript("scripts/backup-production.ts", ["--", failedBackupDirectory], {
+			...fakeEnvironment,
+			FAKE_REMOVE_EXPORT_AFTER_VERIFY: "1",
+		});
+		assert.notEqual(failed.status, 0);
+		assert.deepEqual(readdirSync(failedBackupDirectory), []);
+	} finally {
+		rmSync(fixtureDirectory, { recursive: true, force: true });
+	}
+});
+
+test("恢复脚本可认证解密合成 Git 与 D1 备份并还原逐表数据", async () => {
 	const fixtureDirectory = mkdtempSync(join(tmpdir(), "nanjinghua-operations-test-"));
 	try {
 		const bundlePath = join(fixtureDirectory, "content.git.bundle");
 		const d1Path = join(fixtureDirectory, "submissions.sql");
+		const encryptedBundlePath = `${bundlePath}.enc`;
+		const encryptedD1Path = `${d1Path}.enc`;
+		const backupKey = Buffer.alloc(32, 7);
+		const encodedBackupKey = backupKey.toString("base64");
+		const legacyDirectory = join(fixtureDirectory, "legacy");
+		mkdirSync(legacyDirectory);
 		const bundle = spawnSync("git", ["bundle", "create", bundlePath, "HEAD"], {
 			encoding: "utf8",
 		});
 		assert.equal(bundle.status, 0, bundle.stderr);
 
-		const migrations = readdirSync("migrations")
-			.filter((file) => file.endsWith(".sql"))
-			.sort()
-			.map((file) => readFileSync(join("migrations", file), "utf8"));
-		migrations.push(`
-INSERT INTO submission_leads (
-  id, type, description, priority, status, policy_accepted_at,
-  created_at, updated_at, status_changed_at
-) VALUES (
-  'SUB-RESTORE-TEST', '纠错', 'restore fixture', 0, '核验中',
-  '2026-07-18T00:00:00Z', '2026-07-18T00:00:00Z',
-  '2026-07-18T00:00:00Z', '2026-07-18T00:00:00Z'
-);
-INSERT INTO submission_contacts (
-  lead_id, contact_method, contact_value, created_at
-) VALUES ('SUB-RESTORE-TEST', '电子邮箱', 'fixture@example.invalid', '2026-07-18T00:00:00Z');
-INSERT INTO submission_status_events (
-  lead_id, from_status, to_status, note, actor, created_at
-) VALUES (
-  'SUB-RESTORE-TEST', '已收到', '核验中', 'fixture', 'test', '2026-07-18T00:00:00Z'
-);
-INSERT INTO submission_disposition_events (
-  lead_id, archive_id, decision_type, public_catalog_action,
-  stored_copy_action, backup_action, note, actor, created_at
-) VALUES (
-  'SUB-RESTORE-TEST', 'NJH000001', '事实修订', '不适用',
-  '不适用', '不适用', 'fixture', 'test', '2026-07-18T00:00:00Z'
-);
-`);
-		writeFileSync(d1Path, `${migrations.join("\n")}\n`);
+		writeFileSync(d1Path, syntheticD1Sql());
 
 		const gitHead = spawnSync("git", ["rev-parse", "HEAD"], { encoding: "utf8" }).stdout.trim();
 		const digest = (path: string) => createHash("sha256").update(readFileSync(path)).digest("hex");
-		const manifest = {
-			version: 1,
+		const contentCounts = {
+			archives: readdirSync("content/archive").filter((file) => file.endsWith(".meta.json")).length,
+			articles: readdirSync("content/articles").filter((file) => file.endsWith(".meta.json"))
+				.length,
+		};
+		const d1RowCounts = syntheticD1RowCounts;
+		const legacyBundlePath = join(legacyDirectory, "content.git.bundle");
+		const legacyD1Path = join(legacyDirectory, "submissions.sql");
+		copyFileSync(bundlePath, legacyBundlePath);
+		copyFileSync(d1Path, legacyD1Path);
+		writeFileSync(
+			join(legacyDirectory, "manifest.json"),
+			JSON.stringify({
+				version: 1,
+				gitHead,
+				databaseName: "nanjinghua-submissions",
+				contentCounts,
+				d1RowCounts,
+				files: [legacyBundlePath, legacyD1Path].map((path) => ({
+					name: path.slice(legacyDirectory.length + 1),
+					bytes: statSync(path).size,
+					sha256: digest(path),
+				})),
+			}),
+		);
+		const encryptedFiles = await Promise.all(
+			[
+				[bundlePath, encryptedBundlePath],
+				[d1Path, encryptedD1Path],
+			].map(async ([plaintextPath, encryptedPath]) => {
+				const encryption = await encryptBackupFile(plaintextPath, encryptedPath, backupKey);
+				return {
+					name: encryptedPath.slice(fixtureDirectory.length + 1),
+					bytes: statSync(encryptedPath).size,
+					sha256: digest(encryptedPath),
+					plaintext: {
+						name: plaintextPath.slice(fixtureDirectory.length + 1),
+						bytes: statSync(plaintextPath).size,
+						sha256: digest(plaintextPath),
+					},
+					encryption,
+				};
+			}),
+		);
+		rmSync(bundlePath);
+		rmSync(d1Path);
+
+		const manifestPayload: EncryptedBackupManifestPayload = {
+			version: 2,
+			createdAt: "2026-07-19T00:00:00.000Z",
 			gitHead,
 			databaseName: "nanjinghua-submissions",
-			contentCounts: {
-				archives: readdirSync("content/archive").filter((file) => file.endsWith(".meta.json"))
-					.length,
-				articles: readdirSync("content/articles").filter((file) => file.endsWith(".meta.json"))
-					.length,
+			contentCounts,
+			d1RowCounts,
+			encryption: {
+				algorithm: backupEncryptionAlgorithm,
+				keyFingerprint: backupKeyFingerprint(backupKey),
 			},
-			d1RowCounts: {
-				submission_contacts: 1,
-				submission_disposition_events: 1,
-				submission_leads: 1,
-				submission_status_events: 1,
-			},
-			files: [bundlePath, d1Path].map((path) => ({
-				name: path.slice(fixtureDirectory.length + 1),
-				bytes: statSync(path).size,
-				sha256: digest(path),
-			})),
+			files: encryptedFiles,
+			deferred: ["R2 media", "audio assets"],
 		};
-		writeFileSync(join(fixtureDirectory, "manifest.json"), JSON.stringify(manifest));
+		let manifest = authenticateBackupManifest(manifestPayload, backupKey);
+		const manifestPath = join(fixtureDirectory, "manifest.json");
+		writeFileSync(manifestPath, JSON.stringify(manifest));
 
-		const restored = runScript("scripts/restore-drill.ts", ["--", fixtureDirectory]);
+		const withoutKey = runScript("scripts/restore-drill.ts", ["--", fixtureDirectory]);
+		assert.notEqual(withoutKey.status, 0);
+		assert.match(withoutKey.stderr, /NANJINGHUA_BACKUP_KEY/);
+
+		const restored = runScript("scripts/restore-drill.ts", ["--", fixtureDirectory], {
+			NANJINGHUA_BACKUP_KEY: encodedBackupKey,
+		});
 		assert.equal(restored.status, 0, restored.stderr);
 		assert.match(restored.stdout, /"outcome": "passed"/);
 		assert.match(restored.stdout, /"submission_disposition_events": 1/);
+
+		const originalGitHead = manifest.gitHead;
+		manifest.gitHead = "0".repeat(40);
+		writeFileSync(manifestPath, JSON.stringify(manifest));
+		const unauthenticatedManifest = runScript(
+			"scripts/restore-drill.ts",
+			["--", fixtureDirectory],
+			{ NANJINGHUA_BACKUP_KEY: encodedBackupKey },
+		);
+		assert.notEqual(unauthenticatedManifest.status, 0);
+		assert.match(unauthenticatedManifest.stderr, /清单认证/);
+		manifest.gitHead = originalGitHead;
+		manifest = authenticateBackupManifest(manifestPayload, backupKey);
+		writeFileSync(manifestPath, JSON.stringify(manifest));
+
+		const legacyRestored = runScript("scripts/restore-drill.ts", ["--", legacyDirectory]);
+		assert.equal(legacyRestored.status, 0, legacyRestored.stderr);
+		assert.match(legacyRestored.stdout, /"outcome": "passed"/);
+
+		const originalCiphertext = readFileSync(encryptedBundlePath);
+		const damagedCiphertext = Buffer.from(originalCiphertext);
+		damagedCiphertext[0] ^= 0xff;
+		writeFileSync(encryptedBundlePath, damagedCiphertext);
+		const damagedPayload = {
+			...manifestPayload,
+			files: manifestPayload.files.map((file, index) =>
+				index === 0 ? { ...file, sha256: digest(encryptedBundlePath) } : file,
+			),
+		};
+		manifest = authenticateBackupManifest(damagedPayload, backupKey);
+		writeFileSync(manifestPath, JSON.stringify(manifest));
+		const damaged = runScript("scripts/restore-drill.ts", ["--", fixtureDirectory], {
+			NANJINGHUA_BACKUP_KEY: encodedBackupKey,
+		});
+		assert.notEqual(damaged.status, 0);
+		assert.match(damaged.stderr, /无法认证解密/);
+
+		writeFileSync(encryptedBundlePath, originalCiphertext);
+		manifest = authenticateBackupManifest(manifestPayload, backupKey);
+		const originalEncryptedName = manifest.files[0].name;
+		manifest.files[0].name = `../${originalEncryptedName}`;
+		writeFileSync(manifestPath, JSON.stringify(manifest));
+		const traversal = runScript("scripts/restore-drill.ts", ["--", fixtureDirectory], {
+			NANJINGHUA_BACKUP_KEY: encodedBackupKey,
+		});
+		assert.notEqual(traversal.status, 0);
+		assert.match(traversal.stderr, /越界路径/);
+
+		manifest = authenticateBackupManifest(manifestPayload, backupKey);
+		writeFileSync(manifestPath, JSON.stringify(manifest));
+		unlinkSync(encryptedBundlePath);
+		symlinkSync(legacyBundlePath, encryptedBundlePath);
+		const symlink = runScript("scripts/restore-drill.ts", ["--", fixtureDirectory], {
+			NANJINGHUA_BACKUP_KEY: encodedBackupKey,
+		});
+		assert.notEqual(symlink.status, 0);
+		assert.match(symlink.stderr, /普通文件/);
 	} finally {
 		rmSync(fixtureDirectory, { recursive: true, force: true });
 	}
