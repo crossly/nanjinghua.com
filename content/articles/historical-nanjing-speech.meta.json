@@ -10,7 +10,8 @@
 	"review": {
 		"status": "编辑核对后发布",
 		"reviewer": "Ricky（主编）",
-		"reviewedAt": "2026-07-17"
+		"reviewedAt": "2026-07-17",
+		"scope": "核对历史材料题名、版本、页码、观点归属与相互冲突的解释；历史音系判断仍按条目标示待专家复核"
 	},
 	"aiAssistance": true,
 	"publishedAt": "2026-07-17",

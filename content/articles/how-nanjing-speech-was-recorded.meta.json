@@ -10,7 +10,8 @@
 	"review": {
 		"status": "编辑核对后发布",
 		"reviewer": "Ricky（主编）",
-		"reviewedAt": "2026-07-17"
+		"reviewedAt": "2026-07-17",
+		"scope": "核对历史记录媒介、转写边界、来源页码和档案关联；不把书写系统直接等同于可恢复的实际语音"
 	},
 	"aiAssistance": true,
 	"publishedAt": "2026-07-17",

@@ -10,7 +10,8 @@
 	"review": {
 		"status": "编辑核对后发布",
 		"reviewer": "Ricky（主编）",
-		"reviewedAt": "2026-07-17"
+		"reviewedAt": "2026-07-17",
+		"scope": "核对三类语言对象的定义边界、书目来源、引文位置、档案关联与未决问题；不裁定唯一正宗形式"
 	},
 	"aiAssistance": true,
 	"publishedAt": "2026-07-17",

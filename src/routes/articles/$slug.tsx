@@ -51,10 +51,14 @@ function ArticlePage() {
 							</dd>
 						</div>
 						<div>
-							<dt>审核</dt>
+							<dt>{article.review.status === "专家复核" ? "专家复核" : "编辑审核"}</dt>
 							<dd>
-								{article.review.reviewer} · {article.review.status}
+								{article.review.reviewer} · {article.review.status} · {article.review.reviewedAt}
 							</dd>
+						</div>
+						<div>
+							<dt>核对范围</dt>
+							<dd>{article.review.scope}</dd>
 						</div>
 						<div>
 							<dt>发布</dt>

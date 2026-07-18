@@ -346,6 +346,7 @@ export const articleSchema = z
 				status: reviewStatusSchema,
 				reviewer: requiredText,
 				reviewedAt: isoDateSchema,
+				scope: requiredText,
 			})
 			.strict(),
 		aiAssistance: z.boolean(),

@@ -10,7 +10,8 @@
 	"review": {
 		"status": "编辑核对后发布",
 		"reviewer": "Ricky（主编）",
-		"reviewedAt": "2026-07-17"
+		"reviewedAt": "2026-07-17",
+		"scope": "核对证据身份、时间与地点边界、引用链和方法说明；不替代相关语言史问题的学科专家复核"
 	},
 	"aiAssistance": true,
 	"publishedAt": "2026-07-17",

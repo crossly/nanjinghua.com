@@ -21,7 +21,8 @@
 	"review": {
 		"status": "编辑核对后发布",
 		"reviewer": "Ricky（主编）",
-		"reviewedAt": "2026-07-17"
+		"reviewedAt": "2026-07-17",
+		"scope": "核对文化形式来源、非遗名录关系、图片作者、日期、许可、派生文件与档案关联"
 	},
 	"aiAssistance": true,
 	"publishedAt": "2026-07-17",

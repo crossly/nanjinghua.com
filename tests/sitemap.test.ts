@@ -10,7 +10,9 @@ test("站点地图包含所有正式档案和专题且排除治理夹具", async
 	const locations = records.map((record) => record.loc);
 	assert.equal(locations.filter((location) => location.includes("/archive/")).length, 20);
 	assert.equal(locations.filter((location) => location.includes("/articles/")).length, 7);
+	assert.equal(locations.filter((location) => location.includes("/policies/")).length, 8);
 	assert.ok(locations.includes("https://nanjinghua.com/browse"));
+	assert.ok(locations.includes("https://nanjinghua.com/policies/privacy"));
 	assert.ok(locations.includes("https://nanjinghua.com/archive/NJH000020"));
 	assert.ok(!locations.includes("https://nanjinghua.com/archive/NJH000021"));
 	assert.ok(!locations.includes("https://nanjinghua.com/archive/NJH000022"));

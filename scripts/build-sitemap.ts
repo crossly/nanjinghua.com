@@ -2,6 +2,8 @@ import { readdir, readFile, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
+import { policyDocuments } from "../src/content/policies.ts";
+
 type SitemapRecord = {
 	loc: string;
 	lastmod?: string;
@@ -47,6 +49,10 @@ export async function buildSitemap(projectRoot = process.cwd()): Promise<Sitemap
 	const records: SitemapRecord[] = [
 		{ loc: `${siteUrl}/` },
 		{ loc: `${siteUrl}/browse` },
+		...policyDocuments.map((document) => ({
+			loc: `${siteUrl}/policies/${document.slug}`,
+			lastmod: document.updatedAt,
+		})),
 		...articles.map((article) => ({
 			loc: `${siteUrl}/articles/${article.slug}`,
 			lastmod: article.updatedAt,

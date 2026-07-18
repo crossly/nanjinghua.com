@@ -200,6 +200,16 @@ function ArchiveEntryPage() {
 							<dd>{entry.review.reviewer}</dd>
 						</div>
 						<div>
+							<dt>核对日期</dt>
+							<dd>{entry.review.reviewedAt}</dd>
+						</div>
+						{entry.review.scope ? (
+							<div>
+								<dt>核对范围</dt>
+								<dd>{entry.review.scope}</dd>
+							</div>
+						) : null}
+						<div>
 							<dt>AI 辅助</dt>
 							<dd>{entry.aiAssistance ? "资料发现、归纳与初稿整理" : "未使用"}</dd>
 						</div>

@@ -17,7 +17,8 @@
 	"review": {
 		"status": "编辑核对后发布",
 		"reviewer": "Ricky（主编）",
-		"reviewedAt": "2026-07-17"
+		"reviewedAt": "2026-07-17",
+		"scope": "核对研究对象、任务设计、年龄差异结论、来源定位与档案关联；不将任务结果外推为全部南京人"
 	},
 	"aiAssistance": true,
 	"publishedAt": "2026-07-17",

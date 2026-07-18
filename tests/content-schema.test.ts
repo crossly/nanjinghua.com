@@ -76,6 +76,7 @@ const validArticle = {
 		status: "编辑核对后发布",
 		reviewer: "测试编辑",
 		reviewedAt: "2026-07-17",
+		scope: "核对来源、引用位置与档案关联",
 	},
 	aiAssistance: true,
 	publishedAt: "2026-07-17",
@@ -92,6 +93,23 @@ const validCollection = {
 	publishedAt: "2026-07-17",
 	updatedAt: "2026-07-17",
 };
+
+test("专题审核记录必须公开真实核对范围", () => {
+	assert.throws(
+		() =>
+			parseArticles([
+				{
+					...validArticle,
+					review: {
+						status: "专家复核",
+						reviewer: "测试专家",
+						reviewedAt: "2026-07-17",
+					},
+				},
+			]),
+		/核对范围|scope|expected string/i,
+	);
+});
 
 const validOriginalFile = {
 	kind: "原始文件",

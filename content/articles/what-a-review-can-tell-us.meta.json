@@ -10,7 +10,8 @@
 	"review": {
 		"status": "编辑核对后发布",
 		"reviewer": "Ricky（主编）",
-		"reviewedAt": "2026-07-17"
+		"reviewedAt": "2026-07-17",
+		"scope": "核对综述文章的责任者、出版信息、原文摘要、观点归属、权利边界与档案引用链"
 	},
 	"aiAssistance": true,
 	"publishedAt": "2026-07-17",
