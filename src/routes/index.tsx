@@ -20,7 +20,7 @@ const historicalPath = [
 	},
 	{
 		id: "NJH000005",
-		period: "1920s",
+		period: "20 世纪 20 年代",
 		note: "赵元任《南京音系》目前先作为书目线索，不把尚未取得的原文内容补写成结论。",
 	},
 	{
@@ -245,8 +245,8 @@ function Home() {
 								{culturalVisual.credit} ·{` `}
 								<a href={culturalVisual.licenseUrl} target="_blank" rel="license noreferrer">
 									{culturalVisual.license}
-								</a>{` `}
-								·{` `}
+								</a>
+								{` `}·{` `}
 								<a href={culturalVisual.sourceUrl} target="_blank" rel="license noreferrer">
 									Commons 来源
 								</a>
