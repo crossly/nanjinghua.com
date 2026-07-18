@@ -36,6 +36,9 @@ importers:
         specifier: 4.4.3
         version: 4.4.3
     devDependencies:
+      '@axe-core/playwright':
+        specifier: 4.12.1
+        version: 4.12.1(playwright-core@1.61.1)
       '@biomejs/biome':
         specifier: 2.4.5
         version: 2.4.5
@@ -71,6 +74,11 @@ importers:
         version: 4.111.0
 
 packages:
+
+  '@axe-core/playwright@4.12.1':
+    resolution: {integrity: sha512-rMd7xriptqKpP+w5265i4Hdkv2X5kbu6uiBi/B2I7uf3hieRBM3qDCfaKPtxfiYb2mKXfF+yLODJwIx+Jv1GDw==}
+    peerDependencies:
+      playwright-core: '>= 1.0.0'
 
   '@babel/code-frame@7.27.1':
     resolution: {integrity: sha512-cjQ7ZlQ0Mv3b47hABuTevyTuYN4i+loJKGeV9flcCgIK37cCXRh+L1bd3iBHlynerhQ7BhCkn2BPbQUL+rGqFg==}
@@ -945,6 +953,10 @@ packages:
   argparse@2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
 
+  axe-core@4.12.1:
+    resolution: {integrity: sha512-s7iGf5GaVMxEG0ENN9x+xTr7GFZCb1ZP/1uATUpCEK2X78nDB3RwbtFCo9pGAf9ru+VwoQ464DkaLEeRM08wJA==}
+    engines: {node: '>=4'}
+
   babel-dead-code-elimination@1.0.12:
     resolution: {integrity: sha512-GERT7L2TiYcYDtYk1IpD+ASAYXjKbLTDPhBtYj7X1NuRMDTMtAx9kyBenub1Ev41lo91OHCKdmP+egTDmfQ7Ig==}
 
@@ -1773,6 +1785,11 @@ packages:
 
 snapshots:
 
+  '@axe-core/playwright@4.12.1(playwright-core@1.61.1)':
+    dependencies:
+      axe-core: 4.12.1
+      playwright-core: 1.61.1
+
   '@babel/code-frame@7.27.1':
     dependencies:
       '@babel/helper-validator-identifier': 7.29.7
@@ -2551,6 +2568,8 @@ snapshots:
   ansis@4.3.1: {}
 
   argparse@2.0.1: {}
+
+  axe-core@4.12.1: {}
 
   babel-dead-code-elimination@1.0.12:
     dependencies:
