@@ -75,4 +75,10 @@ article: 2n5x3LmgsOfVrnpb100020mjs 2eGqauJdflUXJtQ9500020mjs 2qk88aGMv0spFcILE00
 4. 下一步由项目负责人确认备案主体、域名备案状态和可用的境内云/CDN账户，再按 `docs/adr/0009-mainland-access-over-platform-purity.md` 建立合规替代交付并重复同一矩阵。
 5. 即使后续自动探针全部通过，正式上线前仍需在至少三个真实终端网络完成手动浏览器验收。
 
+## Cloudflare 境内路径复核
+
+2026-07-19 复核 Cloudflare 官方资料后，China Network 路径不能由当前仓库直接部署：它是 Enterprise 套餐上的独立订阅，要求每个 apex 域名先取得有效 ICP，并由 JD Cloud 完成内容审查。官方支持清单包含 CDN/Cache、Workers、Assets 和 Secrets，但没有列出 D1、Cron Triggers、Workers Observability 持久化日志或 Cloudflare Web Analytics；官方 FAQ 明确 Turnstile 在中国大陆不受支持，全球 zone 的中国访问者也可能受影响。Global Acceleration 可以改善动态 API 进出中国的路径，但同样需要 China Network 权益和账户团队参与。
+
+因此当前不创建无法验证的 `wrangler` 境内配置，也不把 D1/Turnstile 临时替换成弱化的数据或防滥用方案。项目负责人需先提供 ICP 状态、Enterprise/China Network 权益和账户团队确认，再决定静态内容境内交付、全球 Worker/D1 动态源站及提交入口的实际拓扑。只读 PoC 不连接生产 D1、不复制生产 secret，也不开放一个必然失败的提交表单；当前未预渲染的 `/browse` 必须单独证明。任何方案必须继续使用唯一发布入口 `pnpm run deploy`，并补做三网自动门禁和真实终端表单验收。完整研究见[Cloudflare 中国网络 / 京东云交付可行性](../research/cloudflare-china-network-delivery.md)。
+
 本记录不改变语音范围决定：R2、真人音频、播放器、转写和媒体派生文件继续延期。

@@ -55,6 +55,21 @@ NANJINGHUA_MAINLAND_TARGET=mirror.nanjinghua.com pnpm ops:validate:mainland
 
 可通过 `GLOBALPING_TOKEN` 提高 API 配额；脚本不会把 token 写入报告，并会在创建客户端后从进程环境删除。`NANJINGHUA_MAINLAND_ROUNDS` 和 `NANJINGHUA_MAINLAND_DELAY_MS` 只用于受控复验，不得通过减少轮数掩盖稳定性问题。自动社区探针用于可重复筛查，不替代正式上线前至少三个真实终端网络上的手动浏览器验收。
 
+### 境内替代交付前置
+
+不要把当前 `wrangler.jsonc` 直接复制为所谓境内环境。Cloudflare China Network 需要 Enterprise 套餐上的独立订阅、有效 ICP 备案或许可证、China Service 补充条款和 JD Cloud 内容审查；首次启用还需账户团队协助。项目负责人必须先提供或确认：
+
+1. `nanjinghua.com` 的备案主体、ICP 备案号与当前有效状态，并准备在页脚展示备案号。
+2. Cloudflare Enterprise、China Network 和必要时 Global Acceleration 的合同权益，以及负责接入的账户团队联系人。
+3. JD Cloud 内容审查所需的主体、域名、备案号、网站说明和签署材料。
+4. 账户团队对 TanStack Start Worker、静态 Assets、全球 Worker/D1 动态源站与 China Network 之间实际路由的书面确认。
+
+截至 2026-07-19，Cloudflare 官方清单列出 Workers、Assets、Secrets 等 China Network 能力，但没有列出 D1、Cron Triggers、Workers Observability 持久化日志或 Cloudflare Web Analytics；FAQ 明确 Turnstile 在中国大陆不受支持。不得在没有新 ADR、数据保护评估和外部行为测试的情况下把 D1 改成 KV、取消防滥用校验或接入第三方表单。候选方案是让预渲染公开内容与静态资产在境内交付，并由 Global Acceleration 处理需要返回全球 Worker 的动态请求；它仍需账户团队验证，不能仅凭文档推定可用。
+
+只读静态 PoC 不得复制生产 secret、连接生产 D1 或开放 `/contribute`。当前 `/browse` 被排除在预渲染之外，PoC 必须先证明 Worker 查询渲染或另一个明确的静态搜索实现，不能把不含检索的文件副本计为验收通过。完整依据和停止线见[Cloudflare 中国网络 / 京东云交付可行性研究](../research/cloudflare-china-network-delivery.md)。
+
+完成合同和配置后，仍只允许通过 `pnpm run deploy` 发布。随后用 `NANJINGHUA_MAINLAND_TARGET` 对实际 hostname 执行三轮自动门禁，再从中国电信、联通、移动至少三个真实终端网络检查首页、专题、搜索、线索入口、规范 URL 和失败恢复状态。Turnstile 无法在大陆可靠工作时，正式验收必须记录提交入口的真实行为和经批准的处理决定，不能用 API GET 200 代替表单提交验收。
+
 部署不会自动回滚 D1。迁移必须保持向前兼容；删除或重命名列前先完成独立导出和恢复演练。
 
 ## 回滚
