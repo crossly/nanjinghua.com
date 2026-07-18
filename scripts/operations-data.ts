@@ -20,6 +20,25 @@ export function operationDirectoryArgument(args: string[]): string | undefined {
 	return positional.length === 1 ? positional[0] : undefined;
 }
 
+export function parseD1DatabaseInfo(stdout: string): { uuid: string; name: string } {
+	let decoded: unknown;
+	try {
+		decoded = JSON.parse(stdout);
+	} catch {
+		throw new Error("Wrangler D1 信息不是有效 JSON");
+	}
+	if (
+		!isObject(decoded) ||
+		typeof decoded.uuid !== "string" ||
+		decoded.uuid.length === 0 ||
+		typeof decoded.name !== "string" ||
+		decoded.name.length === 0
+	) {
+		throw new Error("Wrangler D1 信息缺少名称或 ID");
+	}
+	return { uuid: decoded.uuid, name: decoded.name };
+}
+
 function isObject(value: unknown): value is Record<string, unknown> {
 	return typeof value === "object" && value !== null && !Array.isArray(value);
 }

@@ -24,7 +24,9 @@ export PATH="$(dirname "$NODE24"):/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin
 - Worker secrets：`TURNSTILE_SECRET_KEY`、`EDITOR_API_KEY`
 - Cron：每日 UTC 02:00 执行线索保留周期任务
 
-`pnpm run validate:cloudflare` 检查这些声明。持久化应用日志已开启，但关闭自动 invocation logs，避免把公开搜索查询字符串作为日志长期保存。
+`pnpm run validate:cloudflare` 检查本地声明，`pnpm run validate:cloudflare:remote` 再读取 Cloudflare D1 元数据并逐项比对生产名称与 ID。持久化应用日志已开启，但关闭自动 invocation logs，避免把公开搜索查询字符串作为日志长期保存。
+
+Turnstile 组件需在 Dashboard 逐项核对：组件名 `nanjinghua-submissions`、site key 与 `wrangler.jsonc` 一致、模式为 Managed，hostname 同时包含 `nanjinghua.com` 和 `nanjinghua-com.xflash.workers.dev`。上述项目已于 2026-07-18 核对。`pnpm run validate:secrets` 只能证明 Worker 中存在 `TURNSTILE_SECRET_KEY`，不能读取其值并证明它与组件配对；轮换或迁移后必须在允许的 hostname 完成一次真实验证提交，并立即按测试线索处置。
 
 ## 部署与验收
 
@@ -56,9 +58,9 @@ pnpm exec wrangler d1 time-travel restore nanjinghua-submissions --timestamp ISO
 
 ## 密钥轮换
 
-1. 在 Turnstile 控制台生成或确认新 secret 与当前 site key 属于同一组件，允许 `nanjinghua.com` 和 Worker 预览域名。
+1. 在 Turnstile 控制台生成或确认新 secret 与当前 site key 属于同一组件，模式为 Managed，并允许 `nanjinghua.com` 和 Worker 预览域名；不得把 secret 写入操作记录。
 2. 依次运行 `pnpm exec wrangler secret put TURNSTILE_SECRET_KEY` 和 `pnpm exec wrangler secret put EDITOR_API_KEY`；不要把值写入 Issue、日志、shell history 或仓库。
-3. 每次只轮换一个值，运行 `pnpm run validate:secrets`，再完成一次测试线索与编辑读取。
+3. 每次只轮换一个值，运行 `pnpm run validate:secrets`，再从允许的 hostname 完成一次真实 Turnstile 测试线索与编辑读取；仅看到 secret 名称不能证明新值与 site key 配对。
 4. 确认新值工作后撤销旧值，并把日期、责任人和验证结果写入受限运维台账。
 
 ## Git 与 D1 备份

@@ -46,6 +46,7 @@ wrangler secret put EDITOR_API_KEY
 pnpm run db:migrate:remote
 pnpm run validate:secrets
 pnpm run validate:cloudflare
+pnpm run validate:cloudflare:remote
 pnpm preview:worker
 pnpm run deploy
 ```
