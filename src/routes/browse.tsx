@@ -12,6 +12,7 @@ import {
 	filterDiscoveryItems,
 } from "../content/discovery";
 import { archiveEntries, articles, collections } from "../content/registry";
+import { SITE_ORIGIN } from "../site";
 
 const discoveryItems = createDiscoveryItems({ archiveEntries, articles, collections });
 
@@ -39,7 +40,7 @@ export const Route = createFileRoute("/browse")({
 				content: "检索南京话档案、专题文章和专题集合，并按受控档案字段组合筛选。",
 			},
 		],
-		links: [{ rel: "canonical", href: "https://nanjinghua.com/browse" }],
+		links: [{ rel: "canonical", href: `${SITE_ORIGIN}/browse` }],
 	}),
 	component: BrowsePage,
 });

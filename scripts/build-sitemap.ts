@@ -3,6 +3,7 @@ import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
 import { policyDocuments } from "../src/content/policies.ts";
+import { SITE_ORIGIN } from "../src/site.ts";
 
 type SitemapRecord = {
 	loc: string;
@@ -19,8 +20,6 @@ type ArticleMetadata = {
 	slug: string;
 	updatedAt?: string;
 };
-
-const siteUrl = "https://nanjinghua.com";
 
 function escapeXml(value: string): string {
 	return value
@@ -47,20 +46,20 @@ export async function buildSitemap(projectRoot = process.cwd()): Promise<Sitemap
 	const archives = await readJsonFiles<ArchiveMetadata>(join(root, "content", "archive"));
 	const articles = await readJsonFiles<ArticleMetadata>(join(root, "content", "articles"));
 	const records: SitemapRecord[] = [
-		{ loc: `${siteUrl}/` },
-		{ loc: `${siteUrl}/browse` },
+		{ loc: `${SITE_ORIGIN}/` },
+		{ loc: `${SITE_ORIGIN}/browse` },
 		...policyDocuments.map((document) => ({
-			loc: `${siteUrl}/policies/${document.slug}`,
+			loc: `${SITE_ORIGIN}/policies/${document.slug}`,
 			lastmod: document.updatedAt,
 		})),
 		...articles.map((article) => ({
-			loc: `${siteUrl}/articles/${article.slug}`,
+			loc: `${SITE_ORIGIN}/articles/${article.slug}`,
 			lastmod: article.updatedAt,
 		})),
 		...archives
 			.filter((entry) => entry.publicationStatus !== "隐私删除")
 			.map((entry) => ({
-				loc: `${siteUrl}/archive/${entry.id}`,
+				loc: `${SITE_ORIGIN}/archive/${entry.id}`,
 				lastmod: entry.updatedAt,
 			})),
 	];

@@ -3,6 +3,7 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { ArchiveHeader } from "../../components/archive-header";
 import { MarkdownContent } from "../../components/markdown-content";
 import { getArchiveEntriesForArticle, getArticle } from "../../content/registry";
+import { SITE_ORIGIN } from "../../site";
 
 export const Route = createFileRoute("/articles/$slug")({
 	loader: ({ params }) => {
@@ -24,7 +25,7 @@ export const Route = createFileRoute("/articles/$slug")({
 			? [
 					{
 						rel: "canonical",
-						href: `https://nanjinghua.com/articles/${loaderData.article.slug}`,
+						href: `${SITE_ORIGIN}/articles/${loaderData.article.slug}`,
 					},
 				]
 			: [],

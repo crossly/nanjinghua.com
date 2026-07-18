@@ -10,6 +10,7 @@ import {
 } from "../../content/registry";
 import type { ArchiveEntryMetadata } from "../../content/schema";
 import { formatArchiveCitation, toArchiveJsonLd } from "../../content/structured-data";
+import { CANONICAL_HOSTNAME, SITE_ORIGIN } from "../../site";
 
 export const Route = createFileRoute("/archive/$archiveId")({
 	loader: ({ params }) => {
@@ -34,7 +35,7 @@ export const Route = createFileRoute("/archive/$archiveId")({
 			? [
 					{
 						rel: "canonical",
-						href: `https://nanjinghua.com/archive/${loaderData.entry.id}`,
+						href: `${SITE_ORIGIN}/archive/${loaderData.entry.id}`,
 					},
 				]
 			: [],
@@ -233,7 +234,9 @@ function ArchiveEntryPage() {
 					</div>
 					<div>
 						<p className="citation-block__text">{formatArchiveCitation(entry)}</p>
-						<p className="citation-block__permalink">永久网址：nanjinghua.com/archive/{entry.id}</p>
+						<p className="citation-block__permalink">
+							永久网址：{CANONICAL_HOSTNAME}/archive/{entry.id}
+						</p>
 					</div>
 				</section>
 

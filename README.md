@@ -7,7 +7,7 @@
 - 正式域名：[https://nanjinghua.com](https://nanjinghua.com)
 - Worker 预览：[https://nanjinghua-com.xflash.workers.dev](https://nanjinghua-com.xflash.workers.dev)
 
-正式域名已于 2026-07-18 绑定 Cloudflare Worker 并完成 HTTPS 与真实浏览器验证。当前版本不含真人语音，仍只称为非音频预览；Worker 预览域名只用于验收，不允许搜索引擎收录。
+正式域名已于 2026-07-18 绑定 Cloudflare Worker 并完成 HTTPS 与真实浏览器验证。当前版本不含真人语音，仍只称为非音频预览；Worker 预览域名只用于验收，其内容页面不允许搜索引擎收录。
 
 ## 环境
 

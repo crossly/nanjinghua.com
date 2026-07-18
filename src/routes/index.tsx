@@ -9,10 +9,11 @@ import {
 	getCollection,
 	getPublicArchiveEntry,
 } from "../content/registry";
+import { SITE_ORIGIN } from "../site";
 
 export const Route = createFileRoute("/")({
 	head: () => ({
-		links: [{ rel: "canonical", href: "https://nanjinghua.com/" }],
+		links: [{ rel: "canonical", href: `${SITE_ORIGIN}/` }],
 	}),
 	component: Home,
 });

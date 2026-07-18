@@ -325,7 +325,12 @@ test("公众可以在不注册和不上传文件的情况下提交线索", async
 	await page.getByLabel("联系类型（可选）").selectOption("电子邮箱");
 	await page.getByLabel("联系方式（可选）").fill("reader@example.com");
 	await page.getByLabel(/我已了解上述信息用途/).check();
+	const submissionResponse = page.waitForResponse(
+		(response) =>
+			response.url().endsWith("/api/submissions") && response.request().method() === "POST",
+	);
 	await page.getByRole("button", { name: "提交线索" }).click();
+	expect((await submissionResponse).status()).toBe(201);
 
 	await expect(page.getByText(/提交不代表必然采纳/)).toBeVisible();
 	await expect(page.getByText(/编号：SUB-\d{8}-[A-F0-9]{10}/)).toBeVisible();

@@ -1,6 +1,7 @@
+import { SITE_ORIGIN } from "../site";
 import type { PublicArchiveEntry, PublishedArchiveEntry } from "./publication";
 
-const archiveBaseUrl = "https://nanjinghua.com/archive";
+const archiveBaseUrl = `${SITE_ORIGIN}/archive`;
 const metadataLicenseUrl = "https://creativecommons.org/publicdomain/zero/1.0/";
 
 export function formatArchiveCitation(entry: PublishedArchiveEntry): string {
@@ -12,7 +13,7 @@ export function toArchiveExport(entry: PublicArchiveEntry) {
 		"@context": {
 			dc: "http://purl.org/dc/elements/1.1/",
 			dcterms: "http://purl.org/dc/terms/",
-			nanjinghua: "https://nanjinghua.com/ns#",
+			nanjinghua: `${SITE_ORIGIN}/ns#`,
 		},
 		"@id": `${archiveBaseUrl}/${entry.id}`,
 		"dc:identifier": entry.id,
@@ -62,7 +63,7 @@ export function toArchiveJsonLd(entry: PublicArchiveEntry) {
 		isPartOf: {
 			"@type": "ArchiveOrganization",
 			name: "南京话",
-			url: "https://nanjinghua.com",
+			url: SITE_ORIGIN,
 		},
 	};
 

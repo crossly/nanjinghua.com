@@ -1,11 +1,14 @@
 import defaultServerEntry from "@tanstack/react-start/server-entry";
 
-import { applyIndexingPolicy } from "./indexing-policy";
+import { applyIndexingPolicy, redirectCanonicalHttpRequest } from "./indexing-policy";
 import { runSubmissionRetention } from "./submissions/service";
 import type { SubmissionEnv } from "./submissions/turnstile";
 
 export default {
 	async fetch(request) {
+		const redirect = redirectCanonicalHttpRequest(request);
+		if (redirect) return redirect;
+
 		const response = await defaultServerEntry.fetch(request);
 		return applyIndexingPolicy(request, response);
 	},

@@ -16,7 +16,7 @@
 
 - `nanjinghua.com` 已绑定为 Worker custom domain，HTTPS 首页返回 200。
 - 规范 URL 使用 `https://nanjinghua.com`，公开内容统一为无尾斜杠路径。
-- 正式域名允许索引；Worker 预览域名和本地预览通过 `X-Robots-Tag: noindex, nofollow` 禁止索引。
+- 正式域名内容页面允许索引；Worker 预览域名和本地预览的内容页面通过 `X-Robots-Tag: noindex, nofollow` 禁止索引。
 - `robots.txt` 与 `sitemap.xml` 均指向正式域名。
 - Cloudflare Web Analytics 已在正式域名真实浏览器中确认只注入一次；Turnstile 脚本和响应字段已加载。
 

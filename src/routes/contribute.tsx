@@ -172,7 +172,13 @@ function ContributePage() {
 					type="button"
 					className="contribute__skip"
 					onClick={() => {
-						window.requestAnimationFrame(() => submissionTypeRef.current?.focus());
+						submissionTypeRef.current?.focus();
+					}}
+					onKeyDown={(event) => {
+						if (event.key === "Enter" || event.key === " ") {
+							event.preventDefault();
+							submissionTypeRef.current?.focus();
+						}
 					}}
 				>
 					跳到线索表单

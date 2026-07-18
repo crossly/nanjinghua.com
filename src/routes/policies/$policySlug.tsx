@@ -3,6 +3,7 @@ import { ArrowRight } from "lucide-react";
 
 import { ArchiveHeader } from "../../components/archive-header";
 import { getPolicyDocument, policyDocuments } from "../../content/policies";
+import { SITE_ORIGIN } from "../../site";
 
 export const Route = createFileRoute("/policies/$policySlug")({
 	loader: ({ params }) => {
@@ -21,7 +22,7 @@ export const Route = createFileRoute("/policies/$policySlug")({
 			? [
 					{
 						rel: "canonical",
-						href: `https://nanjinghua.com/policies/${loaderData.document.slug}`,
+						href: `${SITE_ORIGIN}/policies/${loaderData.document.slug}`,
 					},
 				]
 			: [],
