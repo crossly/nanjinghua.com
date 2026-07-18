@@ -1,0 +1,304 @@
+import assert from "node:assert/strict";
+import { spawn } from "node:child_process";
+import { createServer, type IncomingMessage, type ServerResponse } from "node:http";
+import type { AddressInfo } from "node:net";
+import test from "node:test";
+
+type MeasurementRequest = {
+	type: string;
+	target: string;
+	locations: Array<{ magic: string }>;
+	limit: number;
+	measurementOptions: {
+		protocol: string;
+		port: number;
+		request: { method: string; path: string; query?: string };
+	};
+};
+
+type ValidatorResult = {
+	code: number | null;
+	stdout: string;
+	stderr: string;
+};
+
+type FakeGlobalpingOptions = {
+	createStatus?: number;
+	failingHomeMobile?: boolean;
+};
+
+const expectedLocations = [
+	{ magic: "China+AS4134+eyeball" },
+	{ magic: "China+AS4837+eyeball" },
+	{ magic: "China+AS9808+eyeball" },
+];
+
+const networks = [
+	{ asn: 4134, city: "Shenzhen", name: "中国电信" },
+	{ asn: 4837, city: "Changsha", name: "中国联通" },
+	{ asn: 9808, city: "Shanghai", name: "中国移动" },
+];
+
+function expectedBody(request: MeasurementRequest): string {
+	switch (request.measurementOptions.request.path) {
+		case "/":
+			return "南京话｜南京话的历史";
+		case "/articles/what-is-nanjinghua":
+			return "南京话是什么？";
+		case "/browse":
+			return "南京白局";
+		case "/api/submissions":
+			return '{"available":true}';
+		default:
+			throw new Error(`未预期的验收路径：${request.measurementOptions.request.path}`);
+	}
+}
+
+async function readJson(request: IncomingMessage): Promise<unknown> {
+	const chunks: Buffer[] = [];
+	for await (const chunk of request) chunks.push(Buffer.from(chunk));
+	return JSON.parse(Buffer.concat(chunks).toString("utf8")) as unknown;
+}
+
+function respond(response: ServerResponse, status: number, body: unknown): void {
+	response.writeHead(status, { "content-type": "application/json" });
+	response.end(JSON.stringify(body));
+}
+
+async function runValidator(environment: Record<string, string>): Promise<ValidatorResult> {
+	const childEnvironment: NodeJS.ProcessEnv = {
+		...process.env,
+		...environment,
+		GLOBALPING_TOKEN: "integration-test-token",
+		NO_COLOR: "1",
+	};
+	delete childEnvironment.FORCE_COLOR;
+
+	return await new Promise((resolve, reject) => {
+		const child = spawn("pnpm", ["--silent", "run", "ops:validate:mainland"], {
+			cwd: process.cwd(),
+			env: childEnvironment,
+			stdio: ["ignore", "pipe", "pipe"],
+		});
+		let stdout = "";
+		let stderr = "";
+		let timedOut = false;
+		child.stdout.setEncoding("utf8").on("data", (chunk) => {
+			stdout += chunk;
+		});
+		child.stderr.setEncoding("utf8").on("data", (chunk) => {
+			stderr += chunk;
+		});
+		child.once("error", reject);
+		const timeout = setTimeout(() => {
+			timedOut = true;
+			child.kill("SIGKILL");
+		}, 15_000);
+		child.once("close", (code) => {
+			clearTimeout(timeout);
+			if (timedOut) {
+				reject(new Error(`大陆验收 CLI 超时；stdout=${stdout}; stderr=${stderr}`));
+				return;
+			}
+			resolve({ code, stdout, stderr });
+		});
+	});
+}
+
+async function withFakeGlobalping(
+	options: FakeGlobalpingOptions,
+	run: (context: {
+		baseUrl: string;
+		requests: MeasurementRequest[];
+		authorizationHeaders: Array<string | undefined>;
+	}) => Promise<void>,
+): Promise<void> {
+	const requests: MeasurementRequest[] = [];
+	const authorizationHeaders: Array<string | undefined> = [];
+	const measurements = new Map<string, MeasurementRequest>();
+	const serverErrors: Error[] = [];
+	const server = createServer((request, response) => {
+		void (async () => {
+			const url = new URL(request.url ?? "/", "http://globalping.test");
+			if (request.method === "POST" && url.pathname === "/v1/measurements") {
+				authorizationHeaders.push(request.headers.authorization);
+				if (options.createStatus) {
+					respond(response, options.createStatus, { error: { message: "Too many requests" } });
+					return;
+				}
+				const body = (await readJson(request)) as MeasurementRequest;
+				requests.push(body);
+				const id = `measurement-${requests.length}`;
+				measurements.set(id, body);
+				respond(response, 202, { id, probesCount: 3 });
+				return;
+			}
+
+			const match = url.pathname.match(/^\/v1\/measurements\/(measurement-\d+)$/);
+			if (request.method === "GET" && match) {
+				const measurementRequest = measurements.get(match[1]);
+				if (!measurementRequest) {
+					respond(response, 404, { error: { message: "Measurement not found" } });
+					return;
+				}
+				const results = networks.map((network, index) => ({
+					probe: {
+						country: "CN",
+						city: network.city,
+						asn: network.asn,
+						network: network.name,
+						tags: ["eyeball-network"],
+					},
+					result: {
+						status: "finished",
+						statusCode: 200,
+						rawBody: expectedBody(measurementRequest),
+						timings: { total: 500 + index * 100, firstByte: 200 + index * 50 },
+						tls: { authorized: true },
+					},
+				}));
+				if (
+					options.failingHomeMobile &&
+					measurementRequest.measurementOptions.request.path === "/"
+				) {
+					results[2].result = {
+						status: "failed",
+						statusCode: 0,
+						rawBody: "",
+						timings: { total: 0, firstByte: 0 },
+						tls: { authorized: false },
+					};
+					Object.assign(results[2].result, { rawOutput: "Request timeout." });
+				}
+				respond(response, 200, {
+					id: match[1],
+					status: "finished",
+					createdAt: "2026-07-19T00:00:00.000Z",
+					results,
+				});
+				return;
+			}
+
+			respond(response, 404, { error: { message: "Unexpected request" } });
+		})().catch((error) => {
+			serverErrors.push(error instanceof Error ? error : new Error(String(error)));
+			if (!response.headersSent)
+				respond(response, 500, { error: { message: "Fake server error" } });
+			else response.end();
+		});
+	});
+
+	await new Promise<void>((resolve, reject) => {
+		server.once("error", reject);
+		server.listen(0, "127.0.0.1", resolve);
+	});
+	const address = server.address() as AddressInfo;
+	try {
+		await run({
+			baseUrl: `http://127.0.0.1:${address.port}/v1`,
+			requests,
+			authorizationHeaders,
+		});
+		assert.deepEqual(serverErrors, []);
+	} finally {
+		await new Promise<void>((resolve, reject) => {
+			server.close((error) => (error ? reject(error) : resolve()));
+		});
+	}
+}
+
+test("公开命令从三网检查四条路径并输出可审计成功报告", async () => {
+	await withFakeGlobalping({}, async ({ baseUrl, requests, authorizationHeaders }) => {
+		const result = await runValidator({
+			GLOBALPING_API_BASE_URL: baseUrl,
+			NANJINGHUA_MAINLAND_TARGET: "mirror.nanjinghua.com",
+			NANJINGHUA_MAINLAND_ROUNDS: "1",
+			NANJINGHUA_MAINLAND_DELAY_MS: "0",
+		});
+
+		assert.equal(result.code, 0, result.stderr);
+		assert.equal(result.stderr, "");
+		assert.doesNotMatch(result.stdout, /integration-test-token/);
+		const report = JSON.parse(result.stdout) as {
+			passed: boolean;
+			target: string;
+			measurements: Array<{ id: string; passed: boolean }>;
+			byRoute: Record<string, { passed: number; total: number }>;
+			byNetwork: Record<string, { passed: number; total: number }>;
+		};
+		assert.equal(report.passed, true);
+		assert.equal(report.target, "mirror.nanjinghua.com");
+		assert.deepEqual(report.byRoute.home, { passed: 1, total: 1 });
+		assert.deepEqual(report.byNetwork["9808"], { passed: 4, total: 4 });
+		assert.deepEqual(
+			report.measurements.map((measurement) => measurement.id),
+			["measurement-1", "measurement-2", "measurement-3", "measurement-4"],
+		);
+		assert.deepEqual(
+			requests.map((request) => request.measurementOptions.request),
+			[
+				{ method: "GET", path: "/" },
+				{ method: "GET", path: "/articles/what-is-nanjinghua" },
+				{ method: "GET", path: "/browse", query: "q=%E7%99%BD%E5%B1%80" },
+				{ method: "GET", path: "/api/submissions" },
+			],
+		);
+		for (const request of requests) {
+			assert.equal(request.target, "mirror.nanjinghua.com");
+			assert.deepEqual(request.locations, expectedLocations);
+			assert.equal(request.limit, 3);
+			assert.equal(request.measurementOptions.protocol, "HTTPS");
+		}
+		assert.deepEqual(authorizationHeaders, Array(4).fill("Bearer integration-test-token"));
+	});
+});
+
+test("公开命令把居民线路超时报告为站点失败状态码 1", async () => {
+	await withFakeGlobalping({ failingHomeMobile: true }, async ({ baseUrl }) => {
+		const result = await runValidator({
+			GLOBALPING_API_BASE_URL: baseUrl,
+			NANJINGHUA_MAINLAND_ROUNDS: "1",
+			NANJINGHUA_MAINLAND_DELAY_MS: "0",
+		});
+		assert.equal(result.code, 1);
+		assert.match(result.stderr, /三网访问验收未通过/);
+		const report = JSON.parse(result.stdout) as {
+			passed: boolean;
+			byNetwork: Record<string, { passed: number; total: number }>;
+			measurements: Array<{
+				results: Array<{ asn: number; passed: boolean; reasons: string[] }>;
+			}>;
+		};
+		assert.equal(report.passed, false);
+		assert.deepEqual(report.byNetwork["9808"], { passed: 3, total: 4 });
+		const mobile = report.measurements[0].results.find((probe) => probe.asn === 9808);
+		assert.ok(mobile);
+		assert.equal(mobile.passed, false);
+		assert.match(mobile.reasons.join(" "), /Request timeout/);
+	});
+});
+
+test("公开命令把 Globalping API 故障报告为状态码 2", async () => {
+	await withFakeGlobalping({ createStatus: 429 }, async ({ baseUrl }) => {
+		const result = await runValidator({
+			GLOBALPING_API_BASE_URL: baseUrl,
+			NANJINGHUA_MAINLAND_ROUNDS: "1",
+			NANJINGHUA_MAINLAND_DELAY_MS: "0",
+		});
+		assert.equal(result.code, 2);
+		assert.equal(result.stdout, "");
+		assert.match(result.stderr, /Globalping API POST.*429.*Too many requests/);
+	});
+});
+
+test("公开命令在参数错误时不发起网络测量并报告状态码 2", async () => {
+	const result = await runValidator({
+		GLOBALPING_API_BASE_URL: "http://127.0.0.1:1/v1",
+		NANJINGHUA_MAINLAND_TARGET: "https://nanjinghua.com",
+		NANJINGHUA_MAINLAND_ROUNDS: "1",
+		NANJINGHUA_MAINLAND_DELAY_MS: "0",
+	});
+	assert.equal(result.code, 2);
+	assert.equal(result.stdout, "");
+	assert.match(result.stderr, /必须是小写 hostname/);
+});
