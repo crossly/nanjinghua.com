@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 type WranglerConfig = {
 	main?: string;
 	compatibility_date?: string;
+	assets?: { html_handling?: string; run_worker_first?: string[] };
 	d1_databases?: Array<Record<string, unknown>>;
 	vars?: Record<string, unknown>;
 	observability?: {
@@ -20,6 +21,25 @@ const config = JSON.parse(readFileSync("wrangler.jsonc", "utf8")) as WranglerCon
 const database = config.d1_databases?.find((entry) => entry.binding === "SUBMISSIONS_DB");
 
 requireCondition(config.main === "./src/server.ts", "Worker 入口必须是 ./src/server.ts");
+requireCondition(
+	config.assets?.html_handling === "drop-trailing-slash",
+	"公开内容必须统一为无尾斜杠 URL",
+);
+for (const route of [
+	"/*",
+	"!/assets/*",
+	"!/images/*",
+	"!/downloads/*",
+	"!/favicon.svg",
+	"!/manifest.json",
+	"!/robots.txt",
+	"!/sitemap.xml",
+]) {
+	requireCondition(
+		config.assets.run_worker_first?.includes(route),
+		`索引策略缺少 Worker/Assets 路由 ${route}`,
+	);
+}
 requireCondition(/^\d{4}-\d{2}-\d{2}$/.test(config.compatibility_date ?? ""), "缺少兼容日期");
 requireCondition(database?.database_name === "nanjinghua-submissions", "缺少生产 D1 绑定");
 requireCondition(

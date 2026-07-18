@@ -10,7 +10,12 @@ import {
 	getPublicArchiveEntry,
 } from "../content/registry";
 
-export const Route = createFileRoute("/")({ component: Home });
+export const Route = createFileRoute("/")({
+	head: () => ({
+		links: [{ rel: "canonical", href: "https://nanjinghua.com/" }],
+	}),
+	component: Home,
+});
 
 const historicalPath = [
 	{

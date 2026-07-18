@@ -34,7 +34,9 @@ Turnstile 组件需在 Dashboard 逐项核对：组件名 `nanjinghua-submission
 2. 执行完整测试：`pnpm check && pnpm run typecheck && pnpm run test:unit && pnpm exec playwright test`。
 3. 只使用 `pnpm run deploy` 发布。命令会构建内容、检查性能预算与生产配置、验证 secrets、应用远端 D1 迁移，再部署 Worker。
 4. 记录输出的 Worker Version ID，并检查首页、检索、制度页、线索配置接口和 `sitemap.xml`。
-5. 自定义域名可用前，`workers.dev` 只称为预览地址；不得据此宣称中国大陆正式上线。
+5. 检查正式域名不含 `X-Robots-Tag: noindex`、Worker 预览域名包含该响应头，并核对规范 URL、尾斜杠重定向与 Analytics 只注入一次。
+
+`nanjinghua.com` 已于 2026-07-18 作为 Worker custom domain 绑定并完成 HTTPS 验证。域名可达不等于中国大陆正式上线；在多个中国大陆真实网络完成稳定性验收前，仍只发布为非音频预览。
 
 部署不会自动回滚 D1。迁移必须保持向前兼容；删除或重命名列前先完成独立导出和恢复演练。
 
@@ -91,7 +93,7 @@ pnpm ops:restore-drill -- /encrypted-backup/nanjinghua/2026-07-18T180000Z
 
 Cloudflare Web Analytics 已于 2026-07-18 在 Dashboard 为 `nanjinghua.com` 启用自动注入和 Real User Measurements，只允许无 Cookie 聚合统计，不加入广告、跨站追踪、用户画像、会话回放或表单事件。统计控制台属于人工配置，站点 token 只记入受限运维台账。
 
-自定义域名当前仍无法完成 TLS 连接，因此 Dashboard 中的“Automatic setup”还不是前台 beacon 已加载的证明。域名恢复后，用浏览器网络面板确认 `beacon.min.js` 与数据请求只加载一次，并验证 History API 导航、Core Web Vitals 和隐私政策；`workers.dev` 预览域名不属于这个统计站点。
+正式域名前台已于 2026-07-18 用真实浏览器确认 `beacon.min.js` 只注入一次，且隐私政策披露与实际配置一致。后续发布仍需检查 History API 导航和 Core Web Vitals；`workers.dev` 预览域名不属于这个统计站点。不要在公开记录、日志或仓库中输出 beacon token。
 
 ## 撤回与故障排查
 
