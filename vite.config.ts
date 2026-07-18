@@ -23,8 +23,11 @@ const config = defineConfig(({ mode }) => {
 					enabled: true,
 					failOnError: true,
 					crawlLinks: true,
-					// The prerenderer reads crawled responses as text, so binary downloads must keep Vite's bytes.
-					filter: (page) => !page.path.startsWith("/api/") && !page.path.startsWith("/downloads/"),
+					// Binary downloads and query-dependent forms must keep their runtime response path.
+					filter: (page) =>
+						!page.path.startsWith("/api/") &&
+						!page.path.startsWith("/downloads/") &&
+						!page.path.startsWith("/contribute"),
 				},
 			}),
 			viteReact(),

@@ -12,6 +12,9 @@ test("档案页公开真实修订记录并提供已关联的权利申诉入口",
 	await page.getByRole("link", { name: "纠错或权利申诉" }).click();
 	await expect(page).toHaveURL(/\/contribute\?archiveId=NJH000011/);
 	await expect(page.getByLabel("关联档案编号（必填）")).toHaveValue("NJH000011");
+	await page.reload();
+	await expect(page.getByLabel("线索类型")).toHaveValue("权利请求");
+	await expect(page.getByLabel("关联档案编号（必填）")).toHaveValue("NJH000011");
 
 	const widths = await page.evaluate(() => ({
 		client: document.documentElement.clientWidth,
