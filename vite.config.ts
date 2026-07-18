@@ -18,7 +18,8 @@ const config = defineConfig({
 				enabled: true,
 				failOnError: true,
 				crawlLinks: true,
-				filter: (page) => !page.path.startsWith("/api/"),
+				// The prerenderer reads crawled responses as text, so binary downloads must keep Vite's bytes.
+				filter: (page) => !page.path.startsWith("/api/") && !page.path.startsWith("/downloads/"),
 			},
 		}),
 		viteReact(),

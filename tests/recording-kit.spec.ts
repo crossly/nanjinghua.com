@@ -1,6 +1,12 @@
-import { expect, test } from "@playwright/test";
+import { createHash } from "node:crypto";
 
-import { RECORDING_KIT_DOWNLOAD_PATH } from "../src/recording-kit/config.ts";
+import { expect, test } from "@playwright/test";
+import { unzipSync } from "fflate";
+
+import {
+	RECORDING_KIT_ARCHIVE_NAME,
+	RECORDING_KIT_DOWNLOAD_PATH,
+} from "../src/recording-kit/config.ts";
 
 test("非专业采集者可以取得完整的成年说话者语音采集包", async ({ page, request }) => {
 	await page.goto("/contribute");
@@ -32,7 +38,16 @@ test("非专业采集者可以取得完整的成年说话者语音采集包", as
 	const response = await request.get(RECORDING_KIT_DOWNLOAD_PATH);
 	expect(response.ok()).toBe(true);
 	expect(response.headers()["content-type"]).toContain("application/zip");
-	expect((await response.body()).subarray(0, 2).toString("ascii")).toBe("PK");
+	const archiveBytes = await response.body();
+	expect(archiveBytes.subarray(0, 2).toString("ascii")).toBe("PK");
+	const checksumResponse = await request.get(`${RECORDING_KIT_DOWNLOAD_PATH}.sha256`);
+	expect(checksumResponse.ok()).toBe(true);
+	const checksumText = await checksumResponse.text();
+	const expectedHash = checksumText.split("  ")[0];
+	expect(createHash("sha256").update(archiveBytes).digest("hex")).toBe(expectedHash);
+	const archive = unzipSync(archiveBytes);
+	expect(archive[`nanjinghua-recording-kit/README.md`]).toBeTruthy();
+	expect(checksumText).toContain(RECORDING_KIT_ARCHIVE_NAME);
 
 	const widths = await page.evaluate(() => ({
 		client: document.documentElement.clientWidth,
