@@ -9,6 +9,8 @@
 
 正式域名已于 2026-07-18 绑定 Cloudflare Worker 并完成 HTTPS 与真实浏览器验证。当前版本不含真人语音，仍只称为非音频预览；Worker 预览域名只用于验收，其内容页面不允许搜索引擎收录。
 
+最新部署与验收边界见 [2026-07-20 非语音只读交付验证记录](./docs/releases/2026-07-20-readonly-delivery-proof.md)。
+
 ## 环境
 
 - Node.js 24.18.0（见 `.node-version`）
