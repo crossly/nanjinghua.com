@@ -4,7 +4,7 @@ import { runMainlandAccessValidation } from "./mainland-access.ts";
 if (process.argv.includes("--help")) {
 	console.log(`用法：pnpm ops:validate:mainland
 
-从中国电信 AS4134、中国联通 AS4837、中国移动 AS9808 的中国大陆居民网络探针，
+从深圳电信 AS4134、长沙联通 AS4837、上海移动 AS9808 的固定中国大陆居民网络探针，
 对首页、专题、搜索和非音频线索 API 执行多轮 HTTPS GET。任一 TLS、HTTP 200、
 正文签名或探针身份检查失败时以状态码 1 退出；Globalping API 故障以状态码 2 退出。
 

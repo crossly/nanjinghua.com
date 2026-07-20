@@ -5,19 +5,19 @@ export const mainlandNetworks = [
 		id: "telecom",
 		asn: 4134,
 		name: "中国电信",
-		location: "China+AS4134+eyeball",
+		city: "Shenzhen",
 	},
 	{
 		id: "unicom",
 		asn: 4837,
 		name: "中国联通",
-		location: "China+AS4837+eyeball",
+		city: "Changsha",
 	},
 	{
 		id: "mobile",
 		asn: 9808,
 		name: "中国移动",
-		location: "China+AS9808+eyeball",
+		city: "Shanghai",
 	},
 ] as const;
 
@@ -150,7 +150,9 @@ export function createMainlandMeasurementRequest(
 	return {
 		type: "http",
 		target,
-		locations: mainlandNetworks.map((network) => ({ magic: network.location })),
+		locations: mainlandNetworks.map((network) => ({
+			magic: `${network.city}+AS${network.asn}+eyeball`,
+		})),
 		limit: mainlandNetworks.length,
 		measurementOptions: {
 			protocol: "HTTPS",
@@ -187,6 +189,9 @@ export function summarizeMainlandMeasurement(
 		const { probe, result } = resultItem;
 		const reasons: string[] = [];
 		if (probe.country !== "CN") reasons.push(`探针不在中国大陆：${probe.country}`);
+		if (probe.city !== network.city) {
+			reasons.push(`探针不在固定回归点 ${network.city}：实际 ${probe.city ?? "未知"}`);
+		}
 		if (!probe.tags.includes("eyeball-network")) reasons.push("探针不是居民网络");
 		if (result.status !== "finished") {
 			reasons.push(result.rawOutput || `测量状态为 ${result.status}`);

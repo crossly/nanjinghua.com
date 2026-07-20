@@ -25,12 +25,13 @@ type ValidatorResult = {
 type FakeGlobalpingOptions = {
 	createStatus?: number;
 	failingHomeMobile?: boolean;
+	wrongMobileCity?: boolean;
 };
 
 const expectedLocations = [
-	{ magic: "China+AS4134+eyeball" },
-	{ magic: "China+AS4837+eyeball" },
-	{ magic: "China+AS9808+eyeball" },
+	{ magic: "Shenzhen+AS4134+eyeball" },
+	{ magic: "Changsha+AS4837+eyeball" },
+	{ magic: "Shanghai+AS9808+eyeball" },
 ];
 
 const networks = [
@@ -144,7 +145,7 @@ async function withFakeGlobalping(
 				const results = networks.map((network, index) => ({
 					probe: {
 						country: "CN",
-						city: network.city,
+						city: options.wrongMobileCity && network.asn === 9808 ? "Kunming" : network.city,
 						asn: network.asn,
 						network: network.name,
 						tags: ["eyeball-network"],
@@ -275,6 +276,28 @@ test("公开命令把居民线路超时报告为站点失败状态码 1", async 
 		assert.ok(mobile);
 		assert.equal(mobile.passed, false);
 		assert.match(mobile.reasons.join(" "), /Request timeout/);
+	});
+});
+
+test("公开命令拒绝用其他城市的同运营商探针替代固定回归点", async () => {
+	await withFakeGlobalping({ wrongMobileCity: true }, async ({ baseUrl }) => {
+		const result = await runValidator({
+			GLOBALPING_API_BASE_URL: baseUrl,
+			NANJINGHUA_MAINLAND_ROUNDS: "1",
+			NANJINGHUA_MAINLAND_DELAY_MS: "0",
+		});
+		assert.equal(result.code, 1);
+		const report = JSON.parse(result.stdout) as {
+			measurements: Array<{
+				results: Array<{ asn: number; passed: boolean; reasons: string[] }>;
+			}>;
+		};
+		for (const measurement of report.measurements) {
+			const mobile = measurement.results.find((probe) => probe.asn === 9808);
+			assert.ok(mobile);
+			assert.equal(mobile.passed, false);
+			assert.match(mobile.reasons.join(" "), /固定回归点 Shanghai.*实际 Kunming/);
+		}
 	});
 });
 

@@ -42,7 +42,7 @@ Turnstile 组件需在 Dashboard 逐项核对：组件名 `nanjinghua-submission
 
 ### 中国大陆访问门禁
 
-`pnpm ops:validate:mainland` 使用 Globalping 的中国大陆居民网络探针，对中国电信 AS4134、中国联通 AS4837、中国移动 AS9808 分别检查首页、专题、搜索和非音频线索 API。默认执行 3 轮；每次响应都必须通过探针身份、TLS、HTTP 200 和正文签名检查。该命令是独立验收入口，不属于 `pnpm run deploy` 或 `pnpm run ops:verify`，避免当前失败状态阻止发布用于修复交付路径的版本。
+`pnpm ops:validate:mainland` 使用 Globalping 的固定中国大陆居民网络探针，对深圳电信 AS4134、长沙联通 AS4837、上海移动 AS9808 分别检查首页、专题、搜索和非音频线索 API。默认执行 3 轮；每次响应都必须通过国家、城市、ASN、居民网络标签、TLS、HTTP 200 和正文签名检查。同一运营商的其他城市不能替代固定回归点。该命令是独立验收入口，不属于 `pnpm run deploy` 或 `pnpm run ops:verify`，避免当前失败状态阻止发布用于修复交付路径的版本。
 
 ```bash
 pnpm ops:validate:mainland
@@ -56,6 +56,8 @@ NANJINGHUA_MAINLAND_TARGET=mirror.nanjinghua.com pnpm ops:validate:mainland
 - 状态码 2：参数错误、Globalping API 故障或测量超时；不能据此判定站点通过或失败。
 
 可通过 `GLOBALPING_TOKEN` 提高 API 配额；脚本不会把 token 写入报告，并会在创建客户端后从进程环境删除。`NANJINGHUA_MAINLAND_ROUNDS` 和 `NANJINGHUA_MAINLAND_DELAY_MS` 只用于受控复验，不得通过减少轮数掩盖稳定性问题。自动社区探针用于可重复筛查，不替代正式上线前至少三个真实终端网络上的手动浏览器验收。
+
+2026-07-20 的[固定三网恢复复验](../releases/2026-07-20-mainland-recovery-recheck.md)首个窗口三轮 36/36 通过，但分开的第二窗口为 35/36，上海移动访问非音频线索配置 API 再次超时。原因未定的 Globalping 调用 `fetch failed` 按状态码 2 与站点结果分开记录。标准 Cloudflare 路径仍未通过跨时间稳定性和真实终端体验门槛，继续保持非音频预览。
 
 ### 境内替代交付前置
 
