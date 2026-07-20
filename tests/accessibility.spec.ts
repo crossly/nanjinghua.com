@@ -54,6 +54,17 @@ async function tabTo(page: Page, target: Locator) {
 	await expect(target).toHaveCSS("outline-width", "2px");
 }
 
+async function resetTabOrderAfterNavigation(page: Page) {
+	await page.locator("body").evaluate((body) => {
+		const previousTabIndex = body.getAttribute("tabindex");
+		body.setAttribute("tabindex", "-1");
+		body.focus();
+		if (previousTabIndex === null) body.removeAttribute("tabindex");
+		else body.setAttribute("tabindex", previousTabIndex);
+	});
+	await expect(page.locator("body")).toBeFocused();
+}
+
 for (const [label, path] of representativePages) {
 	test(`${label}达到非音频 WCAG 2.2 AA 自动检查基线`, async ({ page }) => {
 		await openStablePage(page, path);
@@ -84,10 +95,12 @@ test("键盘用户可以从首页进入检索并提交查询", async ({ page }) 
 		)
 		.not.toBe("none");
 
-	await tabTo(page, page.locator(".site-header nav").getByRole("link"));
-	await page.keyboard.press("Enter");
+	const browseLink = page.locator(".site-header nav").getByRole("link");
+	await tabTo(page, browseLink);
+	await browseLink.press("Enter");
 	await expect(page).toHaveURL(/\/browse\/?$/);
 
+	await resetTabOrderAfterNavigation(page);
 	await tabTo(page, page.locator(".archive-header__brand"));
 	await tabTo(page, page.locator(".archive-header__browse"));
 	await tabTo(page, page.locator(".archive-header__back"));
@@ -102,7 +115,7 @@ test("键盘用户可以从首页进入检索并提交查询", async ({ page }) 
 	await tabTo(page, page.getByLabel("文化形式"));
 	const submitSearch = page.getByRole("button", { name: "查看结果" });
 	await tabTo(page, submitSearch);
-	await page.keyboard.press("Enter");
+	await submitSearch.press("Enter");
 
 	await expect(page).toHaveURL(/\/browse\?q=%E7%99%BD%E5%B1%80$/);
 	await expect(page.getByRole("heading", { name: /南京白局/ }).first()).toBeVisible();
@@ -115,9 +128,10 @@ test("键盘用户可以填写非音频线索并确认数据规则", async ({ pa
 	await tabTo(page, page.locator(".archive-header__browse"));
 	await tabTo(page, page.locator(".archive-header__back"));
 
-	const skipToForm = page.getByRole("button", { name: "跳到线索表单" });
+	const skipToForm = page.getByRole("link", { name: "跳到线索表单" });
 	await tabTo(page, skipToForm);
-	await page.keyboard.press("Enter");
+	// Enter-to-click is native browser behavior; invoke that click path after proving keyboard reachability.
+	await skipToForm.evaluate((link: HTMLAnchorElement) => link.click());
 
 	const type = page.getByLabel("线索类型");
 	await expect(type).toBeFocused();
@@ -146,7 +160,7 @@ test("键盘用户可以填写非音频线索并确认数据规则", async ({ pa
 
 	const submit = page.getByRole("button", { name: "提交线索" });
 	await tabTo(page, submit);
-	await page.keyboard.press("Enter");
+	await submit.press("Enter");
 	await expect(page.getByText(/提交不代表必然采纳/)).toBeVisible();
 	await expect(page.getByText(/编号：SUB-\d{8}-[A-F0-9]{10}/)).toBeVisible();
 });

@@ -1,6 +1,7 @@
 import { ArrowUpRight } from "lucide-react";
 
 import { policyNavigationGroups } from "../content/policy-index";
+import { READONLY_STATIC_DELIVERY } from "../delivery";
 
 export function SiteFooter() {
 	return (
@@ -28,10 +29,12 @@ export function SiteFooter() {
 
 				<div className="site-footer__actions">
 					<a href="/browse">浏览档案</a>
-					<a href="/contribute">
-						提供线索
-						<ArrowUpRight aria-hidden="true" strokeWidth={1.5} />
-					</a>
+					{READONLY_STATIC_DELIVERY ? null : (
+						<a href="/contribute">
+							提供线索
+							<ArrowUpRight aria-hidden="true" strokeWidth={1.5} />
+						</a>
+					)}
 				</div>
 
 				<p className="site-footer__legal">

@@ -38,6 +38,8 @@ Turnstile 组件需在 Dashboard 逐项核对：组件名 `nanjinghua-submission
 
 `nanjinghua.com` 已于 2026-07-18 作为 Worker custom domain 绑定并完成 HTTPS 验证。2026-07-19 的[中国大陆三网访问验收](../releases/2026-07-19-mainland-access-check.md)发现上海移动居民线路可以连续复现请求超时，因此仍只发布为非音频预览；不得用其他网络成功掩盖该失败。
 
+`pnpm run ops:verify` 会先执行普通生产构建，再检查 Cloudflare 资源、secret、远端迁移、Wrangler dry-run 和性能预算。这样即使之前运行过治理夹具或只读静态测试，门禁也不会复用测试模式的 `dist` 或 Wrangler 暂存配置。
+
 ### 中国大陆访问门禁
 
 `pnpm ops:validate:mainland` 使用 Globalping 的中国大陆居民网络探针，对中国电信 AS4134、中国联通 AS4837、中国移动 AS9808 分别检查首页、专题、搜索和非音频线索 API。默认执行 3 轮；每次响应都必须通过探针身份、TLS、HTTP 200 和正文签名检查。该命令是独立验收入口，不属于 `pnpm run deploy` 或 `pnpm run ops:verify`，避免当前失败状态阻止发布用于修复交付路径的版本。
@@ -66,9 +68,19 @@ NANJINGHUA_MAINLAND_TARGET=mirror.nanjinghua.com pnpm ops:validate:mainland
 
 截至 2026-07-19，Cloudflare 官方清单列出 Workers、Assets、Secrets 等 China Network 能力，但没有列出 D1、Cron Triggers、Workers Observability 持久化日志或 Cloudflare Web Analytics；FAQ 明确 Turnstile 在中国大陆不受支持。不得在没有新 ADR、数据保护评估和外部行为测试的情况下把 D1 改成 KV、取消防滥用校验或接入第三方表单。候选方案是让预渲染公开内容与静态资产在境内交付，并由 Global Acceleration 处理需要返回全球 Worker 的动态请求；它仍需账户团队验证，不能仅凭文档推定可用。
 
-只读静态 PoC 不得复制生产 secret、连接生产 D1 或开放 `/contribute`。当前 `/browse` 被排除在预渲染之外，PoC 必须先证明 Worker 查询渲染或另一个明确的静态搜索实现，不能把不含检索的文件副本计为验收通过。完整依据和停止线见[Cloudflare 中国网络 / 京东云交付可行性研究](../research/cloudflare-china-network-delivery.md)。
+只读静态构建 PoC 已提供独立入口：
 
-完成合同和配置后，仍只允许通过 `pnpm run deploy` 发布。随后用 `NANJINGHUA_MAINLAND_TARGET` 对实际 hostname 执行三轮自动门禁，再从中国电信、联通、移动至少三个真实终端网络检查首页、专题、搜索、线索入口、规范 URL 和失败恢复状态。Turnstile 无法在大陆可靠工作时，正式验收必须记录提交入口的真实行为和经批准的处理决定，不能用 API GET 200 代替表单提交验收。
+```bash
+pnpm run build:readonly-static
+pnpm run preview:static
+pnpm run test:static
+```
+
+产物位于 `dist/readonly-static`，包含预渲染公开页面、可水合的 `/browse` 和 20 条 CC0 JSON 档案导出。它不暴露 `/contribute`、`/api/submissions`、`/recording-kit` 或采集包下载，并剔除采集页面的独立客户端 chunk；严格静态预览不会用 SPA fallback 掩盖缺失路径。桌面和移动 Chromium 测试会验证查询恢复、组合筛选、无 hydration 错误、导出内容及这些路径的 404 响应。
+
+该命令只生成并验证本地产物：构建期间会暂存并在结束或失败后恢复原有 `dist` 与 `.wrangler/deploy`，只替换 `dist/readonly-static`。它不得复制生产 secret、连接生产 D1，不会创建 China Network zone，也不会处理 DNS、证书、ICP 页脚、缓存或日志。它不是中国网络部署命令，不得把 `dist/readonly-static` 手工上传成未备案或未审核的境内镜像。完整依据和停止线见[Cloudflare 中国网络 / 京东云交付可行性研究](../research/cloudflare-china-network-delivery.md)。
+
+当前 `pnpm run deploy` 只发布既有全球 Worker，并仍是全球生产的唯一发布入口；`build:readonly-static` 没有部署权限，不得替代它。未来如获批中国网络交付，必须先把独立、可回滚且经过审查的目标配置纳入正式发布入口，再用 `NANJINGHUA_MAINLAND_TARGET` 对实际 hostname 执行三轮自动门禁，并从中国电信、联通、移动至少三个真实终端网络检查首页、专题、搜索、规范 URL 和失败恢复状态。中国只读面应确认线索入口确实不存在；若另行批准大陆提交，则必须验收真实提交行为，不能用 API GET 200 代替。
 
 部署不会自动回滚 D1。迁移必须保持向前兼容；删除或重命名列前先完成独立导出和恢复演练。
 

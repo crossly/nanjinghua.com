@@ -1,5 +1,5 @@
-import { SITE_ORIGIN } from "../site";
-import type { PublicArchiveEntry, PublishedArchiveEntry } from "./publication";
+import { SITE_ORIGIN } from "../site.ts";
+import type { PublicArchiveEntry, PublishedArchiveEntry } from "./publication.ts";
 
 const archiveBaseUrl = `${SITE_ORIGIN}/archive`;
 const metadataLicenseUrl = "https://creativecommons.org/publicdomain/zero/1.0/";

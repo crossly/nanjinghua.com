@@ -49,6 +49,10 @@ test("受控筛选状态可分享并可进入档案、引用和单条导出", as
 		"href",
 		"https://nanjinghua.com/archive/NJH000015",
 	);
+	await expect(page.getByRole("link", { name: "导出元数据" })).toHaveAttribute(
+		"href",
+		"/api/archive/NJH000015",
+	);
 
 	const exportResponse = await request.get("/api/archive/NJH000015");
 	expect(exportResponse.ok()).toBe(true);

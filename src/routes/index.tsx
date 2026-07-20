@@ -9,6 +9,7 @@ import {
 	getCollection,
 	getPublicArchiveEntry,
 } from "../content/registry";
+import { READONLY_STATIC_DELIVERY } from "../delivery";
 import { SITE_ORIGIN } from "../site";
 
 export const Route = createFileRoute("/")({
@@ -295,10 +296,12 @@ function Home() {
 							<span>查看证据处理示例</span>
 							<ArrowRight aria-hidden="true" strokeWidth={1.5} />
 						</a>
-						<a href="/contribute">
-							<span>提供线索</span>
-							<MessageSquarePlus aria-hidden="true" strokeWidth={1.5} />
-						</a>
+						{READONLY_STATIC_DELIVERY ? null : (
+							<a href="/contribute">
+								<span>提供线索</span>
+								<MessageSquarePlus aria-hidden="true" strokeWidth={1.5} />
+							</a>
+						)}
 					</div>
 				</div>
 				<dl className="evidence-example__status">

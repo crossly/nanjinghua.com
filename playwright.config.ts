@@ -3,6 +3,7 @@ import { defineConfig, devices } from "@playwright/test";
 export default defineConfig({
 	testDir: "./tests",
 	testMatch: "**/*.spec.ts",
+	testIgnore: "**/*.static.spec.ts",
 	fullyParallel: true,
 	forbidOnly: Boolean(process.env.CI),
 	retries: process.env.CI ? 2 : 0,
@@ -14,12 +15,12 @@ export default defineConfig({
 	projects: [
 		{
 			name: "desktop-chromium",
-			testIgnore: "**/*.nojs.spec.ts",
+			testIgnore: ["**/*.nojs.spec.ts", "**/*.static.spec.ts"],
 			use: { ...devices["Desktop Chrome"] },
 		},
 		{
 			name: "mobile-chromium",
-			testIgnore: "**/*.nojs.spec.ts",
+			testIgnore: ["**/*.nojs.spec.ts", "**/*.static.spec.ts"],
 			use: { ...devices["Pixel 7"] },
 		},
 		{

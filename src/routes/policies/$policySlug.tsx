@@ -2,7 +2,8 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 
 import { ArchiveHeader } from "../../components/archive-header";
-import { getPolicyDocument, policyDocuments } from "../../content/policies";
+import { getPolicyDocument, type PolicyLink, policyDocuments } from "../../content/policies";
+import { READONLY_STATIC_DELIVERY } from "../../delivery";
 import { SITE_ORIGIN } from "../../site";
 
 export const Route = createFileRoute("/policies/$policySlug")({
@@ -86,31 +87,40 @@ function PolicyPage() {
 										))}
 									</ul>
 								) : null}
-								{section.links ? (
-									<ul className="policy-links">
-										{section.links.map((link) => {
-											const external = link.href.startsWith("http");
-											return (
-												<li key={link.href}>
-													<a
-														href={link.href}
-														target={external ? "_blank" : undefined}
-														rel={external ? "noreferrer" : undefined}
-													>
-														<span>{link.label}</span>
-														<ArrowRight aria-hidden="true" strokeWidth={1.5} />
-													</a>
-													<p>{link.description}</p>
-												</li>
-											);
-										})}
-									</ul>
-								) : null}
+								{section.links ? <PolicyLinks links={section.links} /> : null}
 							</section>
 						))}
 					</div>
 				</div>
 			</article>
 		</main>
+	);
+}
+
+function PolicyLinks({ links }: { links: PolicyLink[] }) {
+	const visibleLinks = READONLY_STATIC_DELIVERY
+		? links.filter((link) => !link.href.startsWith("/contribute"))
+		: links;
+	if (visibleLinks.length === 0) return null;
+
+	return (
+		<ul className="policy-links">
+			{visibleLinks.map((link) => {
+				const external = link.href.startsWith("http");
+				return (
+					<li key={link.href}>
+						<a
+							href={link.href}
+							target={external ? "_blank" : undefined}
+							rel={external ? "noreferrer" : undefined}
+						>
+							<span>{link.label}</span>
+							<ArrowRight aria-hidden="true" strokeWidth={1.5} />
+						</a>
+						<p>{link.description}</p>
+					</li>
+				);
+			})}
+		</ul>
 	);
 }

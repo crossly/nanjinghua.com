@@ -10,6 +10,7 @@ import {
 } from "../../content/registry";
 import type { ArchiveEntryMetadata } from "../../content/schema";
 import { formatArchiveCitation, toArchiveJsonLd } from "../../content/structured-data";
+import { READONLY_STATIC_DELIVERY } from "../../delivery";
 import { CANONICAL_HOSTNAME, SITE_ORIGIN } from "../../site";
 
 export const Route = createFileRoute("/archive/$archiveId")({
@@ -80,14 +81,21 @@ function ArchiveEntryPage() {
 							<span>查看来源</span>
 							<ArrowUpRight aria-hidden="true" strokeWidth={1.5} />
 						</a>
-						<a href={`/api/archive/${entry.id}`} download={`${entry.id}.json`}>
+						<a
+							href={
+								READONLY_STATIC_DELIVERY ? `/exports/${entry.id}.json` : `/api/archive/${entry.id}`
+							}
+							download={`${entry.id}.json`}
+						>
 							<span>导出元数据</span>
 							<ArrowDownToLine aria-hidden="true" strokeWidth={1.5} />
 						</a>
-						<a href={`/contribute?archiveId=${entry.id}&type=权利请求`}>
-							<span>纠错或权利申诉</span>
-							<MessageSquare aria-hidden="true" strokeWidth={1.5} />
-						</a>
+						{READONLY_STATIC_DELIVERY ? null : (
+							<a href={`/contribute?archiveId=${entry.id}&type=权利请求`}>
+								<span>纠错或权利申诉</span>
+								<MessageSquare aria-hidden="true" strokeWidth={1.5} />
+							</a>
+						)}
 					</div>
 				</header>
 
@@ -298,14 +306,21 @@ function RestrictedArchiveEntryPage({
 					<h1>{entry.title}</h1>
 					<p className="archive-record__summary">{entry.summary}</p>
 					<div className="archive-record__actions">
-						<a href={`/api/archive/${entry.id}`} download={`${entry.id}.json`}>
+						<a
+							href={
+								READONLY_STATIC_DELIVERY ? `/exports/${entry.id}.json` : `/api/archive/${entry.id}`
+							}
+							download={`${entry.id}.json`}
+						>
 							<span>导出公开元数据</span>
 							<ArrowDownToLine aria-hidden="true" strokeWidth={1.5} />
 						</a>
-						<a href={`/contribute?archiveId=${entry.id}&type=权利请求`}>
-							<span>纠错或权利申诉</span>
-							<MessageSquare aria-hidden="true" strokeWidth={1.5} />
-						</a>
+						{READONLY_STATIC_DELIVERY ? null : (
+							<a href={`/contribute?archiveId=${entry.id}&type=权利请求`}>
+								<span>纠错或权利申诉</span>
+								<MessageSquare aria-hidden="true" strokeWidth={1.5} />
+							</a>
+						)}
 					</div>
 				</header>
 

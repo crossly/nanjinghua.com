@@ -46,7 +46,6 @@ export const Route = createFileRoute("/contribute")({
 function ContributePage() {
 	const search = Route.useSearch();
 	const formRef = useRef<HTMLFormElement>(null);
-	const submissionTypeRef = useRef<HTMLSelectElement>(null);
 	const turnstileContainerRef = useRef<HTMLDivElement>(null);
 	const widgetIdRef = useRef<string | undefined>(undefined);
 	const [siteKey, setSiteKey] = useState<string>();
@@ -168,21 +167,9 @@ function ContributePage() {
 		<main className="interior-page">
 			<ArchiveHeader />
 			<section className="contribute" aria-labelledby="contribute-title">
-				<button
-					type="button"
-					className="contribute__skip"
-					onClick={() => {
-						submissionTypeRef.current?.focus();
-					}}
-					onKeyDown={(event) => {
-						if (event.key === "Enter" || event.key === " ") {
-							event.preventDefault();
-							submissionTypeRef.current?.focus();
-						}
-					}}
-				>
+				<a className="contribute__skip" href="#submission-type">
 					跳到线索表单
-				</button>
+				</a>
 				<header className="contribute__lead">
 					<p className="section-label">公众参与</p>
 					<h1 id="contribute-title">提供一条线索</h1>
@@ -232,7 +219,6 @@ function ContributePage() {
 							<span>线索类型</span>
 							<select
 								id="submission-type"
-								ref={submissionTypeRef}
 								name="type"
 								required
 								value={submissionType}

@@ -4,9 +4,10 @@ import viteReact from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 const config = defineConfig(({ mode }) => {
-	if (mode === "production" && process.env.VITE_ARCHIVE_GOVERNANCE_FIXTURES === "1") {
+	if (mode !== "archive-governance-test" && process.env.VITE_ARCHIVE_GOVERNANCE_FIXTURES === "1") {
 		throw new Error("治理测试夹具不能进入 production 构建");
 	}
+	const readonlyStatic = mode === "readonly-static";
 
 	return {
 		resolve: { tsconfigPaths: true },
@@ -23,12 +24,13 @@ const config = defineConfig(({ mode }) => {
 					enabled: true,
 					failOnError: true,
 					crawlLinks: true,
-					// Binary downloads and query-dependent forms must keep their runtime response path.
+					// Binary downloads and submission forms must keep their runtime response path.
 					filter: (page) =>
 						!page.path.startsWith("/api/") &&
 						!page.path.startsWith("/downloads/") &&
+						!page.path.startsWith("/exports/") &&
 						!page.path.startsWith("/contribute") &&
-						!page.path.startsWith("/browse"),
+						(!readonlyStatic || !page.path.startsWith("/recording-kit")),
 				},
 			}),
 			viteReact(),

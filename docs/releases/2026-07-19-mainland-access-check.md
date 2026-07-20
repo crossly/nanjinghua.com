@@ -79,6 +79,10 @@ article: 2n5x3LmgsOfVrnpb100020mjs 2eGqauJdflUXJtQ9500020mjs 2qk88aGMv0spFcILE00
 
 2026-07-19 复核 Cloudflare 官方资料后，China Network 路径不能由当前仓库直接部署：它是 Enterprise 套餐上的独立订阅，要求每个 apex 域名先取得有效 ICP，并由 JD Cloud 完成内容审查。官方支持清单包含 CDN/Cache、Workers、Assets 和 Secrets，但没有列出 D1、Cron Triggers、Workers Observability 持久化日志或 Cloudflare Web Analytics；官方 FAQ 明确 Turnstile 在中国大陆不受支持，全球 zone 的中国访问者也可能受影响。Global Acceleration 可以改善动态 API 进出中国的路径，但同样需要 China Network 权益和账户团队参与。
 
-因此当前不创建无法验证的 `wrangler` 境内配置，也不把 D1/Turnstile 临时替换成弱化的数据或防滥用方案。项目负责人需先提供 ICP 状态、Enterprise/China Network 权益和账户团队确认，再决定静态内容境内交付、全球 Worker/D1 动态源站及提交入口的实际拓扑。只读 PoC 不连接生产 D1、不复制生产 secret，也不开放一个必然失败的提交表单；当前未预渲染的 `/browse` 必须单独证明。任何方案必须继续使用唯一发布入口 `pnpm run deploy`，并补做三网自动门禁和真实终端表单验收。完整研究见[Cloudflare 中国网络 / 京东云交付可行性](../research/cloudflare-china-network-delivery.md)。
+因此当前不创建无法验证的 `wrangler` 境内配置，也不把 D1/Turnstile 临时替换成弱化的数据或防滥用方案。项目负责人需先提供 ICP 状态、Enterprise/China Network 权益和账户团队确认，再决定静态内容境内交付、全球 Worker/D1 动态源站及提交入口的实际拓扑。
+
+仓库随后完成了 `pnpm run build:readonly-static` 本地构建 PoC：隔离产物包含公开预渲染页面、可水合的 `/browse` 和 20 条 CC0 JSON 档案导出；不暴露 `/contribute`、`/api/submissions`、`/recording-kit` 或采集包下载，并剔除采集页面的独立客户端 chunk。桌面和移动 Chromium 的严格静态测试均通过查询恢复、组合筛选、无 hydration 错误、档案导出与排除路径 404 验证。该结果只证明产物边界，不是中国网络部署，不改变 ICP、Enterprise/China Network 合同、JD Cloud 内容审查和账户团队书面拓扑确认等停止线。
+
+当前 `pnpm run deploy` 仍只负责既有全球 Worker；只读构建不得直接上传或作为未备案境内镜像。未来获批的中国交付配置必须进入正式、可回滚的发布入口，并补做三网自动门禁和至少三个真实终端网络的浏览器验收。完整研究见[Cloudflare 中国网络 / 京东云交付可行性](../research/cloudflare-china-network-delivery.md)。
 
 本记录不改变语音范围决定：R2、真人音频、播放器、转写和媒体派生文件继续延期。

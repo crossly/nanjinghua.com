@@ -97,6 +97,7 @@ test("部署门禁包含性能、Cloudflare 配置、秘密与远端迁移检查
 	const packageJson = JSON.parse(readFileSync("package.json", "utf8")) as {
 		scripts: Record<string, string>;
 	};
+	assert.match(packageJson.scripts["ops:verify"], /^pnpm run build &&/);
 	assert.match(packageJson.scripts.deploy, /performance:check/);
 	assert.match(packageJson.scripts.deploy, /validate:cloudflare/);
 	assert.match(packageJson.scripts.deploy, /validate:cloudflare:remote/);

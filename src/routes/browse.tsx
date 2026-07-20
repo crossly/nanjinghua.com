@@ -1,9 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, RotateCcw, Search } from "lucide-react";
+import { useEffect, useState } from "react";
 
 import { ArchiveHeader } from "../components/archive-header";
 import {
 	createDiscoveryItems,
+	type DiscoveryFilters,
 	discoveryContentTypes,
 	discoveryCulturalForms,
 	discoveryEvidenceIdentities,
@@ -32,13 +34,16 @@ export const Route = createFileRoute("/browse")({
 		place: acceptedValue(search.place, discoveryPlaces),
 		culture: acceptedValue(search.culture, discoveryCulturalForms),
 	}),
-	head: () => ({
+	head: ({ match }) => ({
 		meta: [
 			{ title: "浏览与检索｜南京话" },
 			{
 				name: "description",
 				content: "检索南京话档案、专题文章和专题集合，并按受控档案字段组合筛选。",
 			},
+			...(Object.values(match.search).some(Boolean)
+				? []
+				: [{ name: "nanjinghua-static-shell", content: "browse" }]),
 		],
 		links: [{ rel: "canonical", href: `${SITE_ORIGIN}/browse` }],
 	}),
@@ -46,7 +51,14 @@ export const Route = createFileRoute("/browse")({
 });
 
 function BrowsePage() {
-	const filters = Route.useSearch();
+	const requestedFilters = Route.useSearch();
+	const [searchReady, setSearchReady] = useState(
+		() =>
+			typeof document === "undefined" ||
+			!document.querySelector('meta[name="nanjinghua-static-shell"][content="browse"]'),
+	);
+	useEffect(() => setSearchReady(true), []);
+	const filters: DiscoveryFilters = searchReady ? requestedFilters : {};
 	const results = filterDiscoveryItems(discoveryItems, filters);
 	const activeFilterCount = Object.values(filters).filter(Boolean).length;
 
@@ -71,6 +83,7 @@ function BrowsePage() {
 						<div>
 							<Search aria-hidden="true" strokeWidth={1.5} />
 							<input
+								key={filters.q ?? ""}
 								type="search"
 								name="q"
 								defaultValue={filters.q ?? ""}
@@ -189,7 +202,7 @@ function DiscoverySelect({
 	return (
 		<label>
 			<span>{label}</span>
-			<select name={name} defaultValue={value ?? ""}>
+			<select key={`${name}-${value ?? ""}`} name={name} defaultValue={value ?? ""}>
 				<option value="">{allLabel}</option>
 				{options.map((option) => (
 					<option key={option} value={option}>
