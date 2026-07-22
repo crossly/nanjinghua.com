@@ -12,7 +12,7 @@
 - 长沙中国联通 AS4837 `Changsha+AS4837+eyeball`
 - 上海中国移动 AS9808 `Shanghai+AS9808+eyeball`
 
-门禁除国家、ASN 和 `eyeball-network` 标签外，现在还核对返回城市。Globalping 即使返回同一运营商的其他城市，也会以站点验收状态码 1 失败，不能替代固定回归点。
+门禁除国家、ASN 和 `eyeball-network` 标签外，现在还核对返回城市。Globalping 即使返回同一运营商的其他城市，也会以测量基础设施状态码 2 拒绝验收，不能替代固定回归点，也不能据此判定站点失败。
 
 ## 方法
 

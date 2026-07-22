@@ -143,7 +143,7 @@ export type MainlandProbeSummary = {
 };
 
 export type MainlandMeasurementSummary = {
-	id: string;
+	id: string | null;
 	createdAt: string;
 	route: MainlandRoute["id"];
 	path: string;
@@ -152,6 +152,37 @@ export type MainlandMeasurementSummary = {
 	outcome: DiagnosticOutcome;
 	results: MainlandProbeSummary[];
 };
+
+function unavailableMainlandMeasurement(
+	route: MainlandRoute,
+	round: number,
+): MainlandMeasurementSummary {
+	return {
+		id: null,
+		createdAt: new Date().toISOString(),
+		route: route.id,
+		path: route.path,
+		round,
+		passed: false,
+		outcome: "infrastructure-error",
+		results: mainlandNetworks.map((network) => ({
+			network: network.name,
+			asn: network.asn,
+			city: null,
+			provider: null,
+			passed: false,
+			infrastructureError: true,
+			outcome: "infrastructure-error",
+			reasons: ["Globalping API 测量不可用"],
+			status: "missing",
+			statusCode: null,
+			totalMs: null,
+			firstByteMs: null,
+			tlsAuthorized: false,
+			contentMatched: false,
+		})),
+	};
+}
 
 export type MainlandAccessReport = {
 	generatedAt: string;
@@ -272,10 +303,14 @@ export async function runMainlandAccessValidation(
 	const totalMeasurements = options.rounds * mainlandRoutes.length;
 	for (let round = 1; round <= options.rounds; round += 1) {
 		for (const route of mainlandRoutes) {
-			const measurement = await client.measure(
-				createMainlandMeasurementRequest(options.target, route),
-			);
-			measurements.push(summarizeMainlandMeasurement(measurement, route, round));
+			try {
+				const measurement = await client.measure(
+					createMainlandMeasurementRequest(options.target, route),
+				);
+				measurements.push(summarizeMainlandMeasurement(measurement, route, round));
+			} catch {
+				measurements.push(unavailableMainlandMeasurement(route, round));
+			}
 			if (options.delayMs > 0 && measurements.length < totalMeasurements) {
 				await sleep(options.delayMs);
 			}

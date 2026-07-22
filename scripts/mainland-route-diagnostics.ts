@@ -3,6 +3,7 @@ import type { GlobalpingRawMeasurement } from "./globalping-client.ts";
 import { mainlandNetworks } from "./mainland-access.ts";
 import {
 	classifyDiagnosticOutcome,
+	type DiagnosticOutcome,
 	isGlobalpingInfrastructureStatus,
 	safeGlobalpingFailureReason,
 	safeGlobalpingStatus,
@@ -51,7 +52,7 @@ export type MainlandRouteDiagnosticClient = {
 };
 
 type DnsDiagnostic = {
-	measurementId: string;
+	measurementId: string | null;
 	createdAt: string;
 	passed: boolean;
 	infrastructureError: boolean;
@@ -65,7 +66,7 @@ type DnsDiagnostic = {
 };
 
 type HttpsDiagnostic = {
-	measurementId: string;
+	measurementId: string | null;
 	createdAt: string;
 	passed: boolean;
 	infrastructureError: boolean;
@@ -81,7 +82,7 @@ type HttpsDiagnostic = {
 };
 
 type MtrDiagnostic = {
-	measurementId: string;
+	measurementId: string | null;
 	createdAt: string;
 	status: string;
 	reasons: string[];
@@ -102,7 +103,7 @@ export type MainlandRouteDiagnosticReport = {
 		city: string;
 	};
 	passed: boolean;
-	outcome: "passed" | "site-failure" | "infrastructure-error";
+	outcome: DiagnosticOutcome;
 	dns: DnsDiagnostic;
 	addresses: Array<{
 		address: string;
@@ -359,27 +360,90 @@ function summarizeMtr(
 	};
 }
 
+function unavailableDns(): DnsDiagnostic {
+	return {
+		measurementId: null,
+		createdAt: new Date().toISOString(),
+		passed: false,
+		infrastructureError: true,
+		reasons: ["Globalping DNS 测量不可用"],
+		status: "missing",
+		statusCode: null,
+		statusCodeName: null,
+		resolver: null,
+		totalMs: null,
+		addresses: [],
+	};
+}
+
+function unavailableHttps(): HttpsDiagnostic {
+	return {
+		measurementId: null,
+		createdAt: new Date().toISOString(),
+		passed: false,
+		infrastructureError: true,
+		reasons: ["Globalping HTTPS 测量不可用"],
+		status: "missing",
+		statusCode: null,
+		resolvedAddress: null,
+		totalMs: null,
+		tcpMs: null,
+		tlsMs: null,
+		firstByteMs: null,
+		tlsAuthorized: false,
+	};
+}
+
+function unavailableMtr(): MtrDiagnostic {
+	return {
+		measurementId: null,
+		createdAt: new Date().toISOString(),
+		status: "missing",
+		reasons: ["Globalping MTR 测量不可用"],
+		infrastructureError: true,
+		targetReached: false,
+		hopCount: 0,
+		respondingAsns: [],
+		lastRespondingAsn: null,
+	};
+}
+
 export async function runMainlandRouteDiagnostics(
 	client: MainlandRouteDiagnosticClient,
 	options: { target: string; network: MainlandNetwork },
 ): Promise<MainlandRouteDiagnosticReport> {
-	const dnsMeasurement = await client.measureRaw(
-		createDnsDiagnosticRequest(options.target, options.network),
-	);
-	const dns = summarizeDns(dnsMeasurement, options.network);
+	let dnsMeasurement: GlobalpingRawMeasurement | null = null;
+	let dns: DnsDiagnostic;
+	try {
+		dnsMeasurement = await client.measureRaw(
+			createDnsDiagnosticRequest(options.target, options.network),
+		);
+		dns = summarizeDns(dnsMeasurement, options.network);
+	} catch {
+		dns = unavailableDns();
+	}
 	const addresses: MainlandRouteDiagnosticReport["addresses"] = [];
-	if (dns.passed) {
+	if (dns.passed && dnsMeasurement) {
 		for (const address of dns.addresses) {
-			const httpsMeasurement = await client.measureRaw(
-				createHttpsDiagnosticRequest(options.target, address, dnsMeasurement.id),
-			);
-			const https = summarizeHttps(httpsMeasurement, options.network, address);
+			let https: HttpsDiagnostic;
+			try {
+				const httpsMeasurement = await client.measureRaw(
+					createHttpsDiagnosticRequest(options.target, address, dnsMeasurement.id),
+				);
+				https = summarizeHttps(httpsMeasurement, options.network, address);
+			} catch {
+				https = unavailableHttps();
+			}
 			let mtr: MtrDiagnostic | null = null;
 			if (!https.passed && !https.infrastructureError) {
-				const mtrMeasurement = await client.measureRaw(
-					createMtrDiagnosticRequest(address, dnsMeasurement.id),
-				);
-				mtr = summarizeMtr(mtrMeasurement, options.network, address);
+				try {
+					const mtrMeasurement = await client.measureRaw(
+						createMtrDiagnosticRequest(address, dnsMeasurement.id),
+					);
+					mtr = summarizeMtr(mtrMeasurement, options.network, address);
+				} catch {
+					mtr = unavailableMtr();
+				}
 			}
 			addresses.push({ address, https, mtr });
 		}

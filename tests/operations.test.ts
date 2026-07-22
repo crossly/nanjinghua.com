@@ -117,6 +117,15 @@ test("定时大陆门禁只读运行并始终保留跨时间报告", () => {
 	assert.match(workflow, /NANJINGHUA_MAINLAND_ROUNDS: "3"/);
 	assert.match(workflow, /if: always\(\)/);
 	assert.match(workflow, /retention-days: 30/);
+	assert.match(workflow, /name: Initialize evidence[\s\S]*validation step did not complete/);
+	assert.match(workflow, /if-no-files-found: error/);
+	const jobEnvironment = workflow.slice(workflow.indexOf("jobs:"), workflow.indexOf("    steps:"));
+	assert.doesNotMatch(jobEnvironment, /GLOBALPING_TOKEN/);
+	const gateStep = workflow.slice(
+		workflow.indexOf("      - name: Run three-network gate"),
+		workflow.indexOf("      - name: Upload evidence"),
+	);
+	assert.match(gateStep, /GLOBALPING_TOKEN: \$\{\{ secrets\.GLOBALPING_TOKEN \}\}/);
 	assert.doesNotMatch(workflow, /wrangler deploy|pnpm run deploy|db:migrate/);
 	for (const action of workflow.matchAll(/uses: ([^\s#]+)/g)) {
 		assert.match(action[1], /@[0-9a-f]{40}$/);
