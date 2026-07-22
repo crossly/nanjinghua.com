@@ -48,6 +48,7 @@ type DnsDiagnostic = {
 	measurementId: string;
 	createdAt: string;
 	passed: boolean;
+	infrastructureError: boolean;
 	reasons: string[];
 	status: string;
 	statusCode: number | null;
@@ -61,6 +62,7 @@ type HttpsDiagnostic = {
 	measurementId: string;
 	createdAt: string;
 	passed: boolean;
+	infrastructureError: boolean;
 	reasons: string[];
 	status: string;
 	statusCode: number | null;
@@ -77,6 +79,7 @@ type MtrDiagnostic = {
 	createdAt: string;
 	status: string;
 	reasons: string[];
+	infrastructureError: boolean;
 	targetReached: boolean;
 	hopCount: number;
 	respondingAsns: number[];
@@ -93,6 +96,7 @@ export type MainlandRouteDiagnosticReport = {
 		city: string;
 	};
 	passed: boolean;
+	outcome: "passed" | "site-failure" | "infrastructure-error";
 	dns: DnsDiagnostic;
 	addresses: Array<{
 		address: string;
@@ -157,6 +161,10 @@ function safeFailureReason(label: "DNS" | "HTTPS" | "MTR", status: string, raw: 
 	if (rawOutput && /tim(?:e|ed)[ -]?out/i.test(rawOutput)) return `${label} 请求超时`;
 	if (status === "offline") return `${label} 固定探针离线`;
 	return `${label} 状态为 ${status}`;
+}
+
+function isInfrastructureStatus(status: string): boolean {
+	return status !== "finished" && status !== "failed";
 }
 
 export function selectMainlandNetwork(id: string): MainlandNetwork {
@@ -246,6 +254,7 @@ function summarizeDns(
 	const { probe, result } = resultItem(measurement);
 	const reasons = probeReasons(probe, network);
 	const status = safeStatus(result.status);
+	const infrastructureError = reasons.length > 0 || isInfrastructureStatus(status);
 	const statusCode = numberValue(result.statusCode);
 	if (status !== "finished") reasons.push(safeFailureReason("DNS", status, result.rawOutput));
 	if (status === "finished" && statusCode !== 0) {
@@ -268,6 +277,7 @@ function summarizeDns(
 		measurementId: measurement.id,
 		createdAt: measurement.createdAt,
 		passed: reasons.length === 0,
+		infrastructureError,
 		reasons,
 		status,
 		statusCode,
@@ -286,6 +296,7 @@ function summarizeHttps(
 	const { probe, result } = resultItem(measurement);
 	const reasons = probeReasons(probe, network);
 	const status = safeStatus(result.status);
+	const infrastructureError = reasons.length > 0 || isInfrastructureStatus(status);
 	const statusCode = numberValue(result.statusCode);
 	const resolvedAddress = stringValue(result.resolvedAddress);
 	if (status !== "finished") {
@@ -304,6 +315,7 @@ function summarizeHttps(
 		measurementId: measurement.id,
 		createdAt: measurement.createdAt,
 		passed: reasons.length === 0,
+		infrastructureError,
 		reasons,
 		status,
 		statusCode,
@@ -324,6 +336,7 @@ function summarizeMtr(
 	const { probe, result } = resultItem(measurement);
 	const reasons = probeReasons(probe, network);
 	const status = safeStatus(result.status);
+	const infrastructureError = reasons.length > 0 || isInfrastructureStatus(status);
 	if (status !== "finished") reasons.push(safeFailureReason("MTR", status, result.rawOutput));
 	const hops = Array.isArray(result.hops) ? result.hops.filter(isRecord) : [];
 	const respondingHops = hops.filter((hop) => {
@@ -344,6 +357,7 @@ function summarizeMtr(
 		createdAt: measurement.createdAt,
 		status,
 		reasons,
+		infrastructureError,
 		targetReached: respondingHops.some((hop) => hop.resolvedAddress === address),
 		hopCount: hops.length,
 		respondingAsns,
@@ -367,7 +381,7 @@ export async function runMainlandRouteDiagnostics(
 			);
 			const https = summarizeHttps(httpsMeasurement, options.network, address);
 			let mtr: MtrDiagnostic | null = null;
-			if (!https.passed) {
+			if (!https.passed && !https.infrastructureError) {
 				const mtrMeasurement = await client.measureRaw(
 					createMtrDiagnosticRequest(address, dnsMeasurement.id),
 				);
@@ -376,6 +390,16 @@ export async function runMainlandRouteDiagnostics(
 			addresses.push({ address, https, mtr });
 		}
 	}
+	const infrastructureError =
+		dns.infrastructureError ||
+		addresses.some(
+			(item) => item.https.infrastructureError || item.mtr?.infrastructureError === true,
+		);
+	const passed =
+		!infrastructureError &&
+		dns.passed &&
+		addresses.length === dns.addresses.length &&
+		addresses.every((item) => item.https.passed);
 	return {
 		generatedAt: new Date().toISOString(),
 		target: options.target,
@@ -385,10 +409,8 @@ export async function runMainlandRouteDiagnostics(
 			asn: options.network.asn,
 			city: options.network.city,
 		},
-		passed:
-			dns.passed &&
-			addresses.length === dns.addresses.length &&
-			addresses.every((item) => item.https.passed),
+		passed,
+		outcome: infrastructureError ? "infrastructure-error" : passed ? "passed" : "site-failure",
 		dns,
 		addresses,
 	};

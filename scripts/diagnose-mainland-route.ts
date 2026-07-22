@@ -37,9 +37,12 @@ try {
 	delete process.env.GLOBALPING_TOKEN;
 	const report = await runMainlandRouteDiagnostics(client, { target, network });
 	console.log(JSON.stringify(report, null, 2));
-	if (!report.passed) {
+	if (report.outcome === "site-failure") {
 		console.error("大陆地址级路由诊断发现至少一个解析地址不可达；该报告不能计作访问验收通过。");
 		process.exitCode = 1;
+	} else if (report.outcome === "infrastructure-error") {
+		console.error("大陆地址级路由诊断遇到测量基础设施错误；不能据此判定站点通过或失败。");
+		process.exitCode = 2;
 	}
 } catch (error) {
 	console.error(error instanceof Error ? error.message : String(error));

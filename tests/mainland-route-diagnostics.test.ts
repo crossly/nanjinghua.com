@@ -22,6 +22,7 @@ type FakeGlobalpingOptions = {
 	addresses: string[];
 	failingAddress?: string;
 	sensitiveFailureDetails?: boolean;
+	httpInfrastructureFailure?: "offline" | "wrong-probe";
 };
 
 async function readJson(request: IncomingMessage): Promise<unknown> {
@@ -114,7 +115,11 @@ async function withFakeGlobalping(
 					measurementRequest.type === "dns" || measurementRequest.locations === "diagnostic-1";
 				const probe = {
 					country: "CN",
-					city: "Shanghai",
+					city:
+						options.httpInfrastructureFailure === "wrong-probe" &&
+						measurementRequest.type === "http"
+							? "Nanjing"
+							: "Shanghai",
 					asn: 9808,
 					network: "China Mobile Communications Group",
 					latitude: reusesDnsProbe ? 31.22 : 31.23,
@@ -140,28 +145,34 @@ async function withFakeGlobalping(
 					};
 				} else if (measurementRequest.type === "http") {
 					const failed = measurementRequest.target === options.failingAddress;
-					result = failed
-						? {
-								status: "failed",
-								resolvedAddress: null,
-								rawOutput: options.sensitiveFailureDetails
-									? "Request timeout via probe 203.0.113.44."
-									: "Request timeout.",
-								timings: {
-									total: null,
-									dns: null,
-									tcp: null,
-									tls: null,
-									firstByte: null,
-								},
-							}
-						: {
-								status: "finished",
-								resolvedAddress: measurementRequest.target,
-								statusCode: 200,
-								timings: { total: 962, tcp: 202, tls: 482, firstByte: 277 },
-								tls: { authorized: true },
-							};
+					result =
+						options.httpInfrastructureFailure === "offline"
+							? {
+									status: "offline",
+									rawOutput: "Probe 203.0.113.46 is offline.",
+								}
+							: failed
+								? {
+										status: "failed",
+										resolvedAddress: null,
+										rawOutput: options.sensitiveFailureDetails
+											? "Request timeout via probe 203.0.113.44."
+											: "Request timeout.",
+										timings: {
+											total: null,
+											dns: null,
+											tcp: null,
+											tls: null,
+											firstByte: null,
+										},
+									}
+								: {
+										status: "finished",
+										resolvedAddress: measurementRequest.target,
+										statusCode: 200,
+										timings: { total: 962, tcp: 202, tls: 482, firstByte: 277 },
+										tls: { authorized: true },
+									};
 				} else {
 					result = {
 						status: "finished",
@@ -230,10 +241,12 @@ test("大陆路由诊断确认固定探针的全部 A 地址均可通过 HTTPS",
 		assert.doesNotMatch(result.stdout, /diagnostic-test-token/);
 		const report = JSON.parse(result.stdout) as {
 			passed: boolean;
+			outcome: string;
 			dns: { addresses: string[]; passed: boolean };
 			addresses: Array<{ https: { passed: boolean }; mtr: unknown }>;
 		};
 		assert.equal(report.passed, true);
+		assert.equal(report.outcome, "passed");
 		assert.deepEqual(report.dns.addresses, ["104.21.10.37"]);
 		assert.equal(report.addresses[0].https.passed, true);
 		assert.equal(report.addresses[0].mtr, null);
@@ -268,6 +281,7 @@ test("大陆路由诊断对不可达 A 地址追加 TCP MTR 并拒绝通过", as
 			assert.match(result.stderr, /至少一个解析地址不可达/);
 			const report = JSON.parse(result.stdout) as {
 				passed: boolean;
+				outcome: string;
 				network: { id: string; asn: number; city: string };
 				addresses: Array<{
 					address: string;
@@ -280,6 +294,7 @@ test("大陆路由诊断对不可达 A 地址追加 TCP MTR 并拒绝通过", as
 				}>;
 			};
 			assert.equal(report.passed, false);
+			assert.equal(report.outcome, "site-failure");
 			assert.deepEqual(report.network, {
 				id: "mobile",
 				name: "中国移动",
@@ -318,6 +333,36 @@ test("大陆路由诊断对不可达 A 地址追加 TCP MTR 并拒绝通过", as
 		},
 	);
 });
+
+for (const failure of ["offline", "wrong-probe"] as const) {
+	test(`大陆路由诊断把${failure}固定探针归为基础设施错误`, async () => {
+		await withFakeGlobalping(
+			{ addresses: ["104.21.10.37"], httpInfrastructureFailure: failure },
+			async (context) => {
+				const result = await runDiagnostic("mobile", {
+					GLOBALPING_API_BASE_URL: context.baseUrl,
+					NANJINGHUA_MAINLAND_TARGET: "nanjinghua.com",
+				});
+				assert.equal(result.code, 2);
+				assert.match(result.stderr, /测量基础设施错误/);
+				assert.doesNotMatch(result.stdout, /203\.0\.113\.46/);
+				const report = JSON.parse(result.stdout) as {
+					passed: boolean;
+					outcome: string;
+					addresses: Array<{ https: { infrastructureError: boolean }; mtr: unknown }>;
+				};
+				assert.equal(report.passed, false);
+				assert.equal(report.outcome, "infrastructure-error");
+				assert.equal(report.addresses[0].https.infrastructureError, true);
+				assert.equal(report.addresses[0].mtr, null);
+				assert.deepEqual(
+					context.requests.map((request) => request.type),
+					["dns", "http"],
+				);
+			},
+		);
+	});
+}
 
 test("大陆路由诊断在运营商参数错误时不发起网络测量", async () => {
 	const result = await runDiagnostic("unknown", {
