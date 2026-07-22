@@ -16,6 +16,7 @@ import {
 	parseSearchResultCount,
 	redactTerminalDiagnostic,
 	serializePublicTerminalReport,
+	shouldRecordTerminalRequestFailure,
 	type TerminalNetworkEvidence,
 	type TerminalRecoveryResult,
 	terminalRoutes,
@@ -185,7 +186,7 @@ async function measureRoute(
 		pageErrors.push(redactTerminalDiagnostic(error.message, options.clientIps)),
 	);
 	page.on("requestfailed", (request) => {
-		if (sameTarget(request.url(), targetOrigin)) {
+		if (shouldRecordTerminalRequestFailure(request.url(), request.resourceType(), targetOrigin)) {
 			resourceFailures.push(`${request.resourceType()} ${new URL(request.url()).pathname}`);
 		}
 	});

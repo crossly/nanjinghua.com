@@ -1,6 +1,6 @@
 # Cloudflare 生产运行手册
 
-日期：2026-07-18
+日期：2026-07-18；最近复验：2026-07-22
 
 ## 当前边界
 
@@ -36,7 +36,9 @@ Turnstile 组件需在 Dashboard 逐项核对：组件名 `nanjinghua-submission
 4. 记录输出的 Worker Version ID，并检查首页、检索、制度页、线索配置接口和 `sitemap.xml`。
 5. 检查正式域名不含 `X-Robots-Tag: noindex`、Worker 预览域名包含该响应头，并核对规范 URL、尾斜杠重定向与 Analytics 只注入一次。
 
-`nanjinghua.com` 与 `www.nanjinghua.com` 已作为 Worker custom domain 绑定并完成 HTTPS 验证。当前配置目标是让 `www` 以 `308` 永久跳转至 `https://nanjinghua.com` 并保留路径和查询参数；每次发布都必须在线复验，不能仅凭仓库配置宣称生效。2026-07-19 的[中国大陆三网访问验收](../releases/2026-07-19-mainland-access-check.md)发现上海移动居民线路可以连续复现请求超时，因此仍只发布为非音频预览；不得用其他网络成功掩盖该失败。
+`nanjinghua.com` 与 `www.nanjinghua.com` 已作为 Worker custom domain 绑定并完成 HTTPS 验证。`www` 以 `308` 永久跳转至 `https://nanjinghua.com` 并保留路径和查询参数；每次发布都必须在线复验，不能仅凭仓库配置宣称生效。AI Crawl Control / Signals 下的 Managed `robots.txt` 必须保持关闭，否则 Cloudflare 会直接接管两个 hostname 的 `/robots.txt`，导致 `www/robots.txt` 绕过 Worker 重定向。2026-07-19 的[中国大陆三网访问验收](../releases/2026-07-19-mainland-access-check.md)发现上海移动居民线路可以连续复现请求超时，因此仍只发布为非音频预览；不得用其他网络成功掩盖该失败。
+
+当前生产源提交为 `76e855f73e76eaa376981fc93461456d4e0e4747`；Worker Version `39918078-a466-4692-86c4-a30377c9adca` 自 `2026-07-22T02:46:36.404303Z` 起承载 100% 流量。部署后约一分钟曾出现新旧版本传播混合，最终线上矩阵与 Managed `robots.txt` 修复证据见[非语音只读交付验证记录](../releases/2026-07-20-readonly-delivery-proof.md)。
 
 `pnpm run ops:verify` 会先执行普通生产构建，再检查 Cloudflare 资源、secret、远端迁移、Wrangler dry-run 和性能预算。这样即使之前运行过治理夹具或只读静态测试，门禁也不会复用测试模式的 `dist` 或 Wrangler 暂存配置。
 
@@ -57,7 +59,7 @@ NANJINGHUA_MAINLAND_TARGET=mirror.nanjinghua.com pnpm ops:validate:mainland
 
 可通过 `GLOBALPING_TOKEN` 提高 API 配额；脚本不会把 token 写入报告，并会在创建客户端后从进程环境删除。`NANJINGHUA_MAINLAND_ROUNDS` 和 `NANJINGHUA_MAINLAND_DELAY_MS` 只用于受控复验，不得通过减少轮数掩盖稳定性问题。自动社区探针用于可重复筛查，不替代正式上线前至少三个真实终端网络上的手动浏览器验收。
 
-2026-07-20 起的[固定三网恢复复验](../releases/2026-07-20-mainland-recovery-recheck.md)首个窗口三轮 36/36 通过，第二窗口为 35/36；把 `www` 设为规范内容域后的第三窗口只有 24/36，上海移动对 `www` 的 12 次请求全部超时。实现已恢复裸域为规范内容域，但仍需部署后在相同回归点验证。原因未定的 Globalping 调用 `fetch failed` 或当前无匹配探针均按基础设施错误与站点结果分开记录。标准 Cloudflare 路径仍未通过跨时间稳定性和真实终端体验门槛，继续保持非音频预览。
+2026-07-20 起的[固定三网恢复复验](../releases/2026-07-20-mainland-recovery-recheck.md)首个窗口三轮 36/36 通过，第二窗口为 35/36；把 `www` 设为规范内容域后的第三窗口只有 24/36，上海移动对 `www` 的 12 次请求全部超时。恢复裸域并部署后，`2026-07-22T02:55:37Z` 至 `02:56:17Z` 的新窗口在深圳电信、长沙联通、上海移动取得 36/36。原因未定的 Globalping 调用 `fetch failed` 或当前无匹配探针均按基础设施错误与站点结果分开记录。单个新窗口不能替代跨时间稳定性和真实终端体验门槛，继续保持非音频预览。
 
 ### 真实终端浏览器验收
 
@@ -69,7 +71,7 @@ pnpm ops:validate:terminal -- unicom
 pnpm ops:validate:terminal -- mobile
 ```
 
-执行前关闭 VPN、代理、iCloud Private Relay 和会改变浏览器出口的安全网关。命令会打开可见 Chromium，默认执行三轮首页、专题、搜索和尾斜杠规范 URL 检查，实际提交一次搜索表单，记录同源脚本、样式、图片、控制台错误与耗时，并模拟离线后重新联网。首轮四个页面和恢复页面会一直保留为浏览器标签页；操作者逐项复核后，必须返回终端分别输入 `YES` 确认页面可读和交互正常，并输入 `DIRECT` 声明终端直接连接所选运营商且上述出口改写服务均已关闭。两项声明互不替代；headless 模式只能冒烟，两项均不能成立。
+执行前关闭 VPN、代理、iCloud Private Relay 和会改变浏览器出口的安全网关。命令会打开可见 Chromium，默认执行三轮首页、专题、搜索和尾斜杠规范 URL 检查，实际提交一次搜索表单，记录同源脚本、样式、图片、控制台错误与耗时，并模拟离线后重新联网。可选的 Cloudflare Web Analytics `ping /cdn-cgi/rum` 失败不计为页面资源失败；其他同源请求失败仍会阻断验收。首轮四个页面和恢复页面会一直保留为浏览器标签页；操作者逐项复核后，必须返回终端分别输入 `YES` 确认页面可读和交互正常，并输入 `DIRECT` 声明终端直接连接所选运营商且上述出口改写服务均已关闭。两项声明互不替代；headless 模式只能冒烟，两项均不能成立。
 
 命令通过目标域名的 `/cdn-cgi/trace` 取得该 Chromium 的实际出口 IP，并只用它向 Team Cymru 查询 ASN。报告不保存或输出客户端 IP，只保存 ASN、AS 名称、聚合前缀、注册国家、Cloudflare 识别国家和 PoP。当前固定验收身份为电信 AS4134、联通 AS4837、移动 AS9808；错误 ASN、非 CN 位置、验收期间网络切换、不是恰好三轮、缺少任一轮页面、资源失败、恢复失败、缺少可见页面确认或缺少直连声明都会以状态码 1 退出。ASN 与 CN 检查只能证明所观察出口，不能单独排除代理；因此直连声明也是正式通过条件。若真实运营商终端使用其他 ASN，不得手工改报告或仅凭运营商名称放行；先保存失败报告并以注册信息和运营商材料单独审查是否扩展允许身份。
 

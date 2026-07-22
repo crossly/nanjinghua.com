@@ -70,19 +70,14 @@ function ContributePage() {
 	}, []);
 
 	useEffect(() => {
-		let frame: number | undefined;
 		const focusSubmissionType = () => {
 			if (!clientReady || window.location.hash !== "#submission-type") return;
-			if (frame !== undefined) window.cancelAnimationFrame(frame);
-			frame = window.requestAnimationFrame(() => {
-				document.getElementById("submission-type")?.focus();
-			});
+			document.getElementById("submission-type")?.focus();
 		};
 		focusSubmissionType();
 		window.addEventListener("hashchange", focusSubmissionType);
 		return () => {
 			window.removeEventListener("hashchange", focusSubmissionType);
-			if (frame !== undefined) window.cancelAnimationFrame(frame);
 		};
 	}, [clientReady]);
 
@@ -184,7 +179,17 @@ function ContributePage() {
 		<main className="interior-page">
 			<ArchiveHeader />
 			<section className="contribute" aria-labelledby="contribute-title">
-				<a className="contribute__skip" href="#submission-type">
+				{/* biome-ignore lint/a11y/useValidAnchor: This is fragment navigation with a no-script fallback. */}
+				<a
+					className="contribute__skip"
+					href="#submission-type"
+					onClick={(event) => {
+						if (!clientReady) return;
+						event.preventDefault();
+						window.history.pushState(null, "", "#submission-type");
+						document.getElementById("submission-type")?.focus();
+					}}
+				>
 					跳到线索表单
 				</a>
 				<header className="contribute__lead">

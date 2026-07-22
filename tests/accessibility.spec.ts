@@ -47,8 +47,21 @@ async function openStablePage(page: Page, path: string) {
 	}
 }
 
-async function tabTo(page: Page, target: Locator) {
+async function tabTo(page: Page, target: Locator, settleFrames = 0) {
 	await page.keyboard.press("Tab");
+	if (settleFrames > 0) {
+		await page.evaluate(
+			(frames) =>
+				new Promise<void>((resolve) => {
+					const waitForFrame = (remaining: number) => {
+						if (remaining === 0) resolve();
+						else window.requestAnimationFrame(() => waitForFrame(remaining - 1));
+					};
+					waitForFrame(frames);
+				}),
+			settleFrames,
+		);
+	}
 	await expect(target).toBeFocused();
 	await expect(target).toHaveCSS("outline-style", "solid");
 	await expect(target).toHaveCSS("outline-width", "2px");
@@ -141,7 +154,7 @@ test("键盘用户可以填写非音频线索并确认数据规则", async ({ pa
 	await expect(type).toHaveValue("词语");
 
 	const description = page.getByLabel("说明");
-	await tabTo(page, description);
+	await tabTo(page, description, 2);
 	await page.keyboard.type("这是一条只用于键盘流程验收的南京话词语线索说明。");
 	await tabTo(page, page.getByLabel("材料链接（可选）"));
 	await tabTo(page, page.getByLabel("关联档案编号（可选）"));

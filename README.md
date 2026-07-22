@@ -6,8 +6,10 @@
 
 - 正式域名：[https://nanjinghua.com](https://nanjinghua.com)
 - Worker 预览：[https://nanjinghua-com.xflash.workers.dev](https://nanjinghua-com.xflash.workers.dev)
+- 已部署源提交：`76e855f73e76eaa376981fc93461456d4e0e4747`
+- Cloudflare Worker Version：`39918078-a466-4692-86c4-a30377c9adca`
 
-裸域与 `www` 均由 Cloudflare Worker 接入。当前线上版本仍由裸域跳转到 `www`；本工作区将恢复 `https://nanjinghua.com` 为规范地址，并让 `www` 永久跳转至裸域，部署与线上复验完成前不把该修复表述为已生效。当前版本不含真人语音，仍只称为非音频预览；Worker 预览域名只用于验收，其内容页面不允许搜索引擎收录。
+裸域与 `www` 均由 Cloudflare Worker 接入。`https://nanjinghua.com` 是规范地址，`www` 以 `308` 永久跳转至裸域并保留路径与查询；Cloudflare 的 Managed `robots.txt` 已关闭，避免平台托管响应绕过该跳转。当前版本不含真人语音，仍只称为非音频预览；Worker 预览域名只用于验收，其内容页面不允许搜索引擎收录。
 
 最新部署与验收边界见 [2026-07-20 非语音只读交付验证记录](./docs/releases/2026-07-20-readonly-delivery-proof.md)。
 

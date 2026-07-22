@@ -10,6 +10,7 @@ import {
 	parseSearchResultCount,
 	redactTerminalDiagnostic,
 	serializePublicTerminalReport,
+	shouldRecordTerminalRequestFailure,
 	terminalRoutes,
 } from "../scripts/terminal-access.ts";
 
@@ -128,6 +129,41 @@ test("搜索结果计数和远端诊断脱敏不依赖浏览器运行", () => {
 			"2001:db8::1",
 		]),
 		"client [redacted-ip] and [redacted-ip]; encoded [redacted-ip]",
+	);
+});
+
+test("终端验收只忽略可选的 Cloudflare Web Analytics ping 失败", () => {
+	assert.equal(
+		shouldRecordTerminalRequestFailure(
+			"https://nanjinghua.com/cdn-cgi/rum?token=public",
+			"ping",
+			"https://nanjinghua.com",
+		),
+		false,
+	);
+	assert.equal(
+		shouldRecordTerminalRequestFailure(
+			"https://nanjinghua.com/cdn-cgi/rum",
+			"script",
+			"https://nanjinghua.com",
+		),
+		true,
+	);
+	assert.equal(
+		shouldRecordTerminalRequestFailure(
+			"https://nanjinghua.com/api/archive/NJH000015",
+			"fetch",
+			"https://nanjinghua.com",
+		),
+		true,
+	);
+	assert.equal(
+		shouldRecordTerminalRequestFailure(
+			"https://example.com/cdn-cgi/rum",
+			"ping",
+			"https://nanjinghua.com",
+		),
+		false,
 	);
 });
 

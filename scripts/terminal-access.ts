@@ -222,6 +222,20 @@ export function parseSearchResultCount(bodyText: string): number | null {
 	return match ? Number(match[1]) : null;
 }
 
+export function shouldRecordTerminalRequestFailure(
+	url: string,
+	resourceType: string,
+	targetOrigin: string,
+): boolean {
+	try {
+		const requestUrl = new URL(url);
+		if (requestUrl.origin !== targetOrigin) return false;
+		return !(resourceType === "ping" && requestUrl.pathname === "/cdn-cgi/rum");
+	} catch {
+		return false;
+	}
+}
+
 function redactKnownClientIps(message: string, clientIps: string[]): string {
 	const normalizedClientIps = new Set(
 		clientIps.filter((clientIp) => isIP(clientIp) !== 0).map(normalizedIpAddress),
