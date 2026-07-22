@@ -32,8 +32,8 @@
 ## 验收证据
 
 - `pnpm check`、`pnpm run typecheck` 与 `git diff --check` 通过；Biome 只有 48 条既有 CSS specificity warning。
-- 79 个单元测试通过。
-- 74 个 Worker 浏览器测试通过，2 个条件性用例跳过。
+- 80 个单元测试通过。
+- 76 个 Worker 浏览器测试通过，2 个条件性用例跳过。
 - 4 个严格静态桌面/移动浏览器测试通过。
 - `pnpm run ops:verify` 通过：远端 D1 名称与 ID、2 个 Worker secret、无待执行迁移、生产 dry-run 和性能预算均正常。
 - 部署后的 `/`、专题、`/browse?q=nanjing%20baiju`、`/api/archive/NJH000015`、`/api/submissions`、`/sitemap.xml`、`/robots.txt`、manifest、哈希资源和首页图片均为 200；搜索正文包含“南京白局”，页面 canonical 指向裸域。
@@ -41,7 +41,7 @@
 - 正式域名不含 `X-Robots-Tag`，Workers 预览域名的首页和 `robots.txt` 均包含 `noindex, nofollow`。
 - 部署后约一分钟的全球传播期曾观察到新旧版本混合，随后普通路径稳定到新版本。Cloudflare Managed `robots.txt` 另行绕过 Worker；于 `2026-07-22T02:52Z` 在 AI Crawl Control / Signals 关闭后，连续 5 轮验证裸域返回仓库规则且 `www/robots.txt` 正确 308。
 - `pnpm ops:validate:mainland` 在 `2026-07-22T02:55:37Z` 至 `02:56:17Z` 对深圳电信 AS4134、长沙联通 AS4837、上海移动 AS9808 完成 3 轮固定探针验证，首页、专题、搜索与线索 API 共 36/36 通过。
-- Headless 终端工具冒烟完成首页、专题、搜索表单真实提交、规范 URL 和离线恢复；4 个页面检查全部通过，搜索返回 7 条结果。报告因当前出口 AS41378、HK/TW 位置、仅 1 轮及缺少两项人工声明而以状态码 1 正确拒绝，不计入真实三网。工具只忽略可选的同源 `ping /cdn-cgi/rum` 统计信标失败，其他同源资源和 API 失败仍阻断验收。
+- Headless 终端工具冒烟完成首页、专题、搜索表单真实提交、规范 URL 和离线恢复；4 个页面检查全部通过，搜索返回 7 条结果。报告因当前出口 AS41378、HK/TW 位置、仅 1 轮及缺少两项人工声明而以状态码 1 正确拒绝，不计入真实三网。工具只忽略可选的同源 `ping /cdn-cgi/rum` 统计信标失败；其他同源网络失败或 HTTP `>=400` 响应（包括 API），以及人工复核期间出现的延迟资源、控制台和页面错误，仍会在关闭复核标签页后重新汇总并阻断验收。
 
 ## 已知限制与停止线
 

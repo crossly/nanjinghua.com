@@ -236,6 +236,33 @@ export function shouldRecordTerminalRequestFailure(
 	}
 }
 
+export function shouldRecordTerminalResponseFailure(
+	url: string,
+	resourceType: string,
+	status: number,
+	targetOrigin: string,
+): boolean {
+	return status >= 400 && shouldRecordTerminalRequestFailure(url, resourceType, targetOrigin);
+}
+
+export function refreshTerminalMeasurementFailures(measurement: {
+	resourceFailures: string[];
+	consoleErrors: string[];
+	pageErrors: string[];
+	reasons: string[];
+	passed: boolean;
+}): void {
+	const dynamicReasons = [
+		measurement.resourceFailures.length > 0 ? "同源资源或 API 请求失败" : null,
+		measurement.consoleErrors.length > 0 ? "浏览器控制台出现 error" : null,
+		measurement.pageErrors.length > 0 ? "页面出现未捕获错误" : null,
+	].filter((reason): reason is string => reason !== null);
+	for (const reason of dynamicReasons) {
+		if (!measurement.reasons.includes(reason)) measurement.reasons.push(reason);
+	}
+	measurement.passed = measurement.reasons.length === 0;
+}
+
 function redactKnownClientIps(message: string, clientIps: string[]): string {
 	const normalizedClientIps = new Set(
 		clientIps.filter((clientIp) => isIP(clientIp) !== 0).map(normalizedIpAddress),

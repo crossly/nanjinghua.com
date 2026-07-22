@@ -15,8 +15,10 @@ import {
 	parseCymruOriginRecords,
 	parseSearchResultCount,
 	redactTerminalDiagnostic,
+	refreshTerminalMeasurementFailures,
 	serializePublicTerminalReport,
 	shouldRecordTerminalRequestFailure,
+	shouldRecordTerminalResponseFailure,
 	type TerminalNetworkEvidence,
 	type TerminalRecoveryResult,
 	terminalRoutes,
@@ -192,9 +194,17 @@ async function measureRoute(
 	});
 	page.on("response", (response) => {
 		const resourceType = response.request().resourceType();
-		if (!sameTarget(response.url(), targetOrigin) || !staticResourceTypes.has(resourceType)) return;
-		resourceTypes.add(resourceType);
-		if (response.status() >= 400) {
+		if (sameTarget(response.url(), targetOrigin) && staticResourceTypes.has(resourceType)) {
+			resourceTypes.add(resourceType);
+		}
+		if (
+			shouldRecordTerminalResponseFailure(
+				response.url(),
+				resourceType,
+				response.status(),
+				targetOrigin,
+			)
+		) {
 			resourceFailures.push(`${response.status()} ${new URL(response.url()).pathname}`);
 		}
 	});
@@ -273,32 +283,31 @@ async function measureRoute(
 	if (options.route.id === "home" && !resourceTypes.has("image")) {
 		reasons.push("首页没有观察到同源 image 资源");
 	}
-	if (resourceFailures.length > 0) reasons.push("同源资源请求失败");
-	if (consoleErrors.length > 0) reasons.push("浏览器控制台出现 error");
-	if (pageErrors.length > 0) reasons.push("页面出现未捕获错误");
 	const reviewPage = options.round === 1 && !options.headless ? page : null;
 	if (!reviewPage) await page.close();
+	const measurement: TerminalMeasurement = {
+		route: options.route.id,
+		path: options.route.path,
+		round: options.round,
+		startedAt,
+		durationMs: Math.round(performance.now() - started),
+		statusCode,
+		finalUrl,
+		contentMatched,
+		canonicalMatched,
+		interactionMatched,
+		searchResultCount,
+		resourceTypes: [...resourceTypes].sort(),
+		resourceFailures,
+		consoleErrors,
+		pageErrors,
+		screenshot,
+		passed: false,
+		reasons,
+	};
+	refreshTerminalMeasurementFailures(measurement);
 	return {
-		measurement: {
-			route: options.route.id,
-			path: options.route.path,
-			round: options.round,
-			startedAt,
-			durationMs: Math.round(performance.now() - started),
-			statusCode,
-			finalUrl,
-			contentMatched,
-			canonicalMatched,
-			interactionMatched,
-			searchResultCount,
-			resourceTypes: [...resourceTypes].sort(),
-			resourceFailures,
-			consoleErrors,
-			pageErrors,
-			screenshot,
-			passed: reasons.length === 0,
-			reasons,
-		},
+		measurement,
 		reviewPage,
 	};
 }
@@ -481,6 +490,7 @@ try {
 			await Promise.all(reviewPages.map((page) => page.close()));
 			await recovery.page.close();
 		}
+		for (const measurement of measurements) refreshTerminalMeasurementFailures(measurement);
 		const finalIdentityPage = await context.newPage();
 		let endNetwork: TerminalNetworkEvidence | null = null;
 		let endNetworkError: string | null = null;

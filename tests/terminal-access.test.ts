@@ -9,8 +9,10 @@ import {
 	parseCymruOriginRecords,
 	parseSearchResultCount,
 	redactTerminalDiagnostic,
+	refreshTerminalMeasurementFailures,
 	serializePublicTerminalReport,
 	shouldRecordTerminalRequestFailure,
+	shouldRecordTerminalResponseFailure,
 	terminalRoutes,
 } from "../scripts/terminal-access.ts";
 
@@ -165,6 +167,53 @@ test("终端验收只忽略可选的 Cloudflare Web Analytics ping 失败", () =
 		),
 		false,
 	);
+	assert.equal(
+		shouldRecordTerminalResponseFailure(
+			"https://nanjinghua.com/api/submissions",
+			"fetch",
+			503,
+			"https://nanjinghua.com",
+		),
+		true,
+	);
+	assert.equal(
+		shouldRecordTerminalResponseFailure(
+			"https://nanjinghua.com/api/submissions",
+			"fetch",
+			200,
+			"https://nanjinghua.com",
+		),
+		false,
+	);
+	assert.equal(
+		shouldRecordTerminalResponseFailure(
+			"https://nanjinghua.com/cdn-cgi/rum",
+			"ping",
+			503,
+			"https://nanjinghua.com",
+		),
+		false,
+	);
+});
+
+test("终端验收在人工复核结束后重新汇总延迟失败", () => {
+	const measurement = {
+		resourceFailures: [] as string[],
+		consoleErrors: [] as string[],
+		pageErrors: [] as string[],
+		reasons: [] as string[],
+		passed: true,
+	};
+	refreshTerminalMeasurementFailures(measurement);
+	assert.equal(measurement.passed, true);
+
+	measurement.resourceFailures.push("503 /api/submissions");
+	refreshTerminalMeasurementFailures(measurement);
+	assert.equal(measurement.passed, false);
+	assert.deepEqual(measurement.reasons, ["同源资源或 API 请求失败"]);
+
+	refreshTerminalMeasurementFailures(measurement);
+	assert.deepEqual(measurement.reasons, ["同源资源或 API 请求失败"]);
 });
 
 test("trace 与 Cymru 缺少决定性字段时拒绝生成证据", () => {
