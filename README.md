@@ -7,7 +7,7 @@
 - 正式域名：[https://nanjinghua.com](https://nanjinghua.com)
 - Worker 预览：[https://nanjinghua-com.xflash.workers.dev](https://nanjinghua-com.xflash.workers.dev)
 
-正式域名已于 2026-07-18 绑定 Cloudflare Worker 并完成 HTTPS 与真实浏览器验证。当前版本不含真人语音，仍只称为非音频预览；Worker 预览域名只用于验收，其内容页面不允许搜索引擎收录。
+裸域与 `www` 均由 Cloudflare Worker 接入。当前线上版本仍由裸域跳转到 `www`；本工作区将恢复 `https://nanjinghua.com` 为规范地址，并让 `www` 永久跳转至裸域，部署与线上复验完成前不把该修复表述为已生效。当前版本不含真人语音，仍只称为非音频预览；Worker 预览域名只用于验收，其内容页面不允许搜索引擎收录。
 
 最新部署与验收边界见 [2026-07-20 非语音只读交付验证记录](./docs/releases/2026-07-20-readonly-delivery-proof.md)。
 
@@ -40,7 +40,7 @@ pnpm build
 ## Cloudflare
 
 首次配置提交服务时，先创建 D1 数据库和 Turnstile Managed 组件，将公开 site key 写入
-`wrangler.jsonc`。Turnstile 组件需允许正式域名和 Worker 预览域名。两个私密值使用 Wrangler
+`wrangler.jsonc`。Turnstile 组件需允许 `www.nanjinghua.com`、`nanjinghua.com` 和 Worker 预览域名。两个私密值使用 Wrangler
 secret 保存，不写入仓库：
 
 ```bash

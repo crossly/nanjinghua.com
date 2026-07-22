@@ -1,8 +1,12 @@
-import { CANONICAL_HOSTNAME, SITE_ORIGIN } from "./site";
+import { ALTERNATE_HOSTNAME, CANONICAL_HOSTNAME, SITE_ORIGIN } from "./site.ts";
 
-export function redirectCanonicalHttpRequest(request: Request): Response | null {
+export function redirectCanonicalRequest(request: Request): Response | null {
 	const requestUrl = new URL(request.url);
-	if (requestUrl.hostname.toLowerCase() !== CANONICAL_HOSTNAME || requestUrl.protocol !== "http:") {
+	const hostname = requestUrl.hostname.toLowerCase();
+	const isAlternateRequest = hostname === ALTERNATE_HOSTNAME;
+	const isInsecureCanonicalRequest =
+		hostname === CANONICAL_HOSTNAME && requestUrl.protocol === "http:";
+	if (!isAlternateRequest && !isInsecureCanonicalRequest) {
 		return null;
 	}
 

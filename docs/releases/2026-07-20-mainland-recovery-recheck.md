@@ -1,6 +1,6 @@
 # 2026-07-20 中国大陆固定三网恢复复验
 
-结论：固定城市的首个三轮非音频自动门禁窗口 36/36 通过，但分开的第二窗口只有 35/36 通过，上海移动访问非音频线索配置 API 再次超时。标准 Cloudflare 路径尚未通过跨时间稳定性门槛；网站继续保持非音频预览，也不以自动探针替代三家真实终端网络的浏览器验收。
+结论：固定城市的首个三轮非音频自动门禁窗口 36/36 通过，第二窗口只有 35/36；把 `www` 改成规范内容域后的第三窗口进一步降至 24/36，上海移动对 `www` 的 12 次请求全部超时。标准 Cloudflare 路径尚未通过跨时间稳定性门槛；网站继续保持非音频预览，也不以自动探针替代三家真实终端网络的浏览器验收。
 
 ## 为什么加固门禁
 
@@ -85,9 +85,47 @@ search:  2Ldkfi2mHXmytULXC00020nH4
 api:     2Fq6FPl6wBjJSEIKH00020nH4
 ```
 
+## 第三窗口与规范域回归
+
+- 时间窗口：2026-07-21 15:12:24 至 15:14:37（Asia/Shanghai）。
+- 线上 Worker Version：`d07ffcb4-77b2-471f-bd22-7b09a328c3e4`，Cloudflare 部署时间 `2026-07-21T03:33:23.050973Z`。
+- 该版本把 `www.nanjinghua.com` 设为规范内容域，并让裸域返回 `308`。对 `www` 执行固定三网三轮门禁时，深圳电信 12/12、长沙联通 12/12、上海移动 0/12，总计 24/36。
+- 上海移动的 12 次失败均为 `Request timeout.`，没有 HTTP 状态码或 `resolvedAddress`；四条路径和三轮全部失败，因此不能归因于某个 TanStack 路由或 D1 API。
+
+测量 ID：
+
+```text
+round 1
+home:    2rarxEw5ZASKeQsyf00020ng0
+article: 2GVHYFwUR28zT9XcR00020ng0
+search:  2qnxIHPJaeMyyZvB900020ng0
+api:     2luItDX4e0PITDG8h00020ng1
+
+round 2
+home:    2HgSl2klW8iYkBt1B00020ng1
+article: 27kAf0H7BcSmo9ZAv00020ng1
+search:  2NXZNjPJLaQeuFbwp00020ng1
+api:     2r2946cZrFqDdVpy900020ng1
+
+round 3
+home:    2x9fZkIIQLAvk7nzn00020ng1
+article: 2qodElKAnXz3NXPbG00020ng2
+search:  29zfeVTkHnN7BvjiZ00020ng2
+api:     2FpHg8ltVljkq6HtW00020ng2
+```
+
+同一上海移动探针对照进一步定位到 hostname 路径：
+
+- 裸域首页测量 `2GSEA9z8HgBmUKCtr00020ng3` 解析为 `104.21.10.37`，在 1,564 ms 内完成 TCP/TLS 并返回指向 `www` 的 `308`。
+- 紧接着的 `www` 首页测量 `2ltyZXfwFp4yLqcHw00020ng3` 超时，`resolvedAddress` 为 `null`。
+- 系统解析对照 `2P6jqGntayiNcmhss00020ng6` 与 `2iBGf5uTfApqWPqUQ00020ng6` 均返回 `104.21.10.37`、`172.67.189.230`，说明同一探针对两个 hostname 的 A 查询都成功。
+- 2026-07-22 追加强制 IPv4 HTTP 测量时，Globalping 返回 `No matching IPv4 probes available.`；实时探针清单已没有上海 AS9808，未把该基础设施空缺记作站点成功或失败。
+
+运行时证据不支持继续把 `www` 作为规范内容域。实现因此恢复 `https://nanjinghua.com` 为规范内容域，并把 `www` 改为到裸域的永久跳转；发布后必须重新运行固定三网窗口，不能把这项配置调整本身当作恢复证明。
+
 ## 发布判断
 
-首个窗口推翻的是“上海移动当前仍然连续 0/10 超时”这一过强的运行时判断，不删除或改写 2026-07-19 的失败证据。第二窗口又复现一次上海移动超时，证明成功窗口不能外推为跨时间稳定。同日较早从当前工作网络直接访问搜索页，四次仍出现两次 20 秒连接超时，而且该网络身份没有独立确认。自动社区探针也不能称为真实终端验收。
+首个窗口推翻的是“上海移动当前仍然连续 0/10 超时”这一过强的运行时判断，不删除或改写 2026-07-19 的失败证据。第二窗口又复现一次上海移动超时，第三窗口则证明把 `www` 设为规范域会稳定扩大上海移动失败面。成功窗口不能外推为跨时间稳定，配置改动也必须在相同固定回归点复验。同日较早从当前工作网络直接访问搜索页，四次仍出现两次 20 秒连接超时，而且该网络身份没有独立确认。自动社区探针也不能称为真实终端验收。
 
 后续判断顺序：
 
@@ -95,3 +133,11 @@ api:     2Fq6FPl6wBjJSEIKH00020nH4
 2. 从中国电信、联通、移动至少三个真实终端网络，用浏览器检查首页、专题、搜索、规范 URL、静态资源和失败恢复。
 3. 只有标准 Cloudflare 路径持续不达标时，才进入需要 ICP、Enterprise + China Network、JD Cloud 审核和账户团队确认的替代交付；本次恢复窗口不构成采购或启用批准。
 4. 语音采集、真人音频、播放器、转写、R2 媒体及其直接依赖继续延期，不进入本次验收。
+
+## 真实终端证据入口
+
+仓库随后新增 `pnpm ops:validate:terminal -- <telecom|unicom|mobile>`，让每个真实终端在可见 Chromium 中执行三轮非音频页面、同源静态资源、搜索表单交互、规范 URL 和离线恢复检查。首轮四个页面与恢复页面会保留为浏览器标签页，直到操作者逐项复核并返回终端确认。命令从目标域名的 Cloudflare trace 获取实际浏览器出口，并用 Team Cymru 校验固定运营商 ASN；报告不保存客户端 IP。正式通过还要求操作者分别确认页面可见可读，并声明终端直连目标运营商且 VPN、代理、iCloud Private Relay 与出口改写安全网关均已关闭；headless 两项都不能成立。
+
+2026-07-20 15:48（Asia/Shanghai）从当前工作连接执行默认三轮 headless 冒烟：12/12 页面测量、脚本、样式、图片、规范 URL 和离线恢复全部通过，三轮搜索均保留 `q=白局` 且取得 7 项结果，5 张截图均记录 SHA-256，报告没有客户端 `ip` 字段，并保留 Team Cymru 返回的 `/23` 聚合前缀。但出口为 AS41378、Cloudflare 识别位置为 HK，不是电信 AS4134/CN；headless 也无法完成可见页面确认和直连声明。因此命令按预期以状态码 1 拒绝该报告。该结果只证明验收器能够拒绝代理、错误网络或非人工运行，不能计入三家真实终端完成数。
+
+同日另用不存在的 Chromium 路径模拟浏览器基础设施故障：命令以状态码 2 退出，并在已创建目录中写入 schema v2、`outcome: infrastructure-error`、`passed: null` 且无客户端 `ip` 的最小化报告；该报告只证明故障证据路径工作，不计作站点通过或失败。

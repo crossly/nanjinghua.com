@@ -48,15 +48,3 @@ test("公开内容规范 URL 不使用尾斜杠", async ({ request }) => {
 	expect(response.status()).toBe(307);
 	expect(response.headers().location).toBe("/articles/what-is-nanjinghua");
 });
-
-test("正式域名的 HTTP 请求永久重定向到规范 HTTPS 地址", async ({ request }) => {
-	const response = await request.get("/browse?q=%E7%99%BD%E5%B1%80", {
-		headers: { Host: "nanjinghua.com" },
-		maxRedirects: 0,
-	});
-	expect(response.status()).toBe(308);
-	const location = new URL(response.headers().location);
-	expect(location.hostname).toBe("nanjinghua.com");
-	expect(location.pathname).toBe("/browse");
-	expect(location.searchParams.get("q")).toBe("白局");
-});

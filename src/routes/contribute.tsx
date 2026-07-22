@@ -70,6 +70,23 @@ function ContributePage() {
 	}, []);
 
 	useEffect(() => {
+		let frame: number | undefined;
+		const focusSubmissionType = () => {
+			if (!clientReady || window.location.hash !== "#submission-type") return;
+			if (frame !== undefined) window.cancelAnimationFrame(frame);
+			frame = window.requestAnimationFrame(() => {
+				document.getElementById("submission-type")?.focus();
+			});
+		};
+		focusSubmissionType();
+		window.addEventListener("hashchange", focusSubmissionType);
+		return () => {
+			window.removeEventListener("hashchange", focusSubmissionType);
+			if (frame !== undefined) window.cancelAnimationFrame(frame);
+		};
+	}, [clientReady]);
+
+	useEffect(() => {
 		if (!siteKey) return;
 		const frame = window.requestAnimationFrame(() => setClientReady(true));
 		return () => window.cancelAnimationFrame(frame);

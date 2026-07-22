@@ -21,7 +21,7 @@ function violationSummary(violations: Awaited<ReturnType<AxeBuilder["analyze"]>>
 }
 
 async function openStablePage(page: Page, path: string) {
-	if (path === "/contribute") {
+	if (path.startsWith("/contribute")) {
 		await page.addInitScript(() => {
 			window.turnstile = {
 				render: (container, options) => {
@@ -42,7 +42,7 @@ async function openStablePage(page: Page, path: string) {
 		});
 	}
 	await page.goto(path);
-	if (path === "/contribute") {
+	if (path.startsWith("/contribute")) {
 		await expect(page.locator(".contribute-form fieldset")).toBeEnabled();
 	}
 }
@@ -130,8 +130,8 @@ test("键盘用户可以填写非音频线索并确认数据规则", async ({ pa
 
 	const skipToForm = page.getByRole("link", { name: "跳到线索表单" });
 	await tabTo(page, skipToForm);
-	// Enter-to-click is native browser behavior; invoke that click path after proving keyboard reachability.
-	await skipToForm.evaluate((link: HTMLAnchorElement) => link.click());
+	await skipToForm.press("Enter");
+	await expect(page).toHaveURL(/\/contribute#submission-type$/);
 
 	const type = page.getByLabel("线索类型");
 	await expect(type).toBeFocused();
@@ -163,6 +163,12 @@ test("键盘用户可以填写非音频线索并确认数据规则", async ({ pa
 	await submit.press("Enter");
 	await expect(page.getByText(/提交不代表必然采纳/)).toBeVisible();
 	await expect(page.getByText(/编号：SUB-\d{8}-[A-F0-9]{10}/)).toBeVisible();
+});
+
+test("直接打开线索表单 fragment 会在控件启用后聚焦线索类型", async ({ page }) => {
+	await openStablePage(page, "/contribute#submission-type");
+
+	await expect(page.getByLabel("线索类型")).toBeFocused();
 });
 
 test("地图、历史路径和扫描件都有等价文本入口", async ({ page }) => {
