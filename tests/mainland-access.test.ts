@@ -26,6 +26,8 @@ type FakeGlobalpingOptions = {
 	createStatus?: number;
 	failingHomeMobile?: boolean;
 	wrongMobileCity?: boolean;
+	offlineMobilePath?: string;
+	missingMobilePath?: string;
 };
 
 const expectedLocations = [
@@ -142,7 +144,7 @@ async function withFakeGlobalping(
 					respond(response, 404, { error: { message: "Measurement not found" } });
 					return;
 				}
-				const results = networks.map((network, index) => ({
+				let results = networks.map((network, index) => ({
 					probe: {
 						country: "CN",
 						city: options.wrongMobileCity && network.asn === 9808 ? "Kunming" : network.city,
@@ -169,7 +171,22 @@ async function withFakeGlobalping(
 						timings: { total: 0, firstByte: 0 },
 						tls: { authorized: false },
 					};
-					Object.assign(results[2].result, { rawOutput: "Request timeout." });
+					Object.assign(results[2].result, {
+						rawOutput: "Request timeout via probe 203.0.113.48.",
+					});
+				}
+				if (options.offlineMobilePath === measurementRequest.measurementOptions.request.path) {
+					results[2].result = {
+						status: "offline",
+						statusCode: 0,
+						rawBody: "",
+						timings: { total: 0, firstByte: 0 },
+						tls: { authorized: false },
+					};
+					Object.assign(results[2].result, { rawOutput: "Probe 203.0.113.49 is offline." });
+				}
+				if (options.missingMobilePath === measurementRequest.measurementOptions.request.path) {
+					results = results.slice(0, 2);
 				}
 				respond(response, 200, {
 					id: match[1],
@@ -222,12 +239,14 @@ test("公开命令从三网检查四条路径并输出可审计成功报告", as
 		assert.doesNotMatch(result.stdout, /integration-test-token/);
 		const report = JSON.parse(result.stdout) as {
 			passed: boolean;
+			outcome: string;
 			target: string;
 			measurements: Array<{ id: string; passed: boolean }>;
 			byRoute: Record<string, { passed: number; total: number }>;
 			byNetwork: Record<string, { passed: number; total: number }>;
 		};
 		assert.equal(report.passed, true);
+		assert.equal(report.outcome, "passed");
 		assert.equal(report.target, "mirror.nanjinghua.com");
 		assert.deepEqual(report.byRoute.home, { passed: 1, total: 1 });
 		assert.deepEqual(report.byNetwork["9808"], { passed: 4, total: 4 });
@@ -265,17 +284,20 @@ test("公开命令把居民线路超时报告为站点失败状态码 1", async 
 		assert.match(result.stderr, /三网访问验收未通过/);
 		const report = JSON.parse(result.stdout) as {
 			passed: boolean;
+			outcome: string;
 			byNetwork: Record<string, { passed: number; total: number }>;
 			measurements: Array<{
 				results: Array<{ asn: number; passed: boolean; reasons: string[] }>;
 			}>;
 		};
 		assert.equal(report.passed, false);
+		assert.equal(report.outcome, "site-failure");
+		assert.doesNotMatch(result.stdout, /203\.0\.113\.48/);
 		assert.deepEqual(report.byNetwork["9808"], { passed: 3, total: 4 });
 		const mobile = report.measurements[0].results.find((probe) => probe.asn === 9808);
 		assert.ok(mobile);
 		assert.equal(mobile.passed, false);
-		assert.match(mobile.reasons.join(" "), /Request timeout/);
+		assert.match(mobile.reasons.join(" "), /HTTPS 请求超时/);
 	});
 });
 
@@ -286,19 +308,73 @@ test("公开命令拒绝用其他城市的同运营商探针替代固定回归�
 			NANJINGHUA_MAINLAND_ROUNDS: "1",
 			NANJINGHUA_MAINLAND_DELAY_MS: "0",
 		});
-		assert.equal(result.code, 1);
+		assert.equal(result.code, 2);
+		assert.match(result.stderr, /测量基础设施错误/);
 		const report = JSON.parse(result.stdout) as {
+			outcome: string;
 			measurements: Array<{
-				results: Array<{ asn: number; passed: boolean; reasons: string[] }>;
+				results: Array<{
+					asn: number;
+					passed: boolean;
+					infrastructureError: boolean;
+					reasons: string[];
+				}>;
 			}>;
 		};
+		assert.equal(report.outcome, "infrastructure-error");
 		for (const measurement of report.measurements) {
 			const mobile = measurement.results.find((probe) => probe.asn === 9808);
 			assert.ok(mobile);
 			assert.equal(mobile.passed, false);
+			assert.equal(mobile.infrastructureError, true);
 			assert.match(mobile.reasons.join(" "), /固定回归点 Shanghai.*实际 Kunming/);
 		}
 	});
+});
+
+for (const failure of ["offline", "missing"] as const) {
+	test(`公开命令把${failure}居民探针归为测量基础设施错误`, async () => {
+		await withFakeGlobalping(
+			failure === "offline" ? { offlineMobilePath: "/browse" } : { missingMobilePath: "/browse" },
+			async ({ baseUrl }) => {
+				const result = await runValidator({
+					GLOBALPING_API_BASE_URL: baseUrl,
+					NANJINGHUA_MAINLAND_ROUNDS: "1",
+					NANJINGHUA_MAINLAND_DELAY_MS: "0",
+				});
+				assert.equal(result.code, 2);
+				assert.match(result.stderr, /测量基础设施错误/);
+				assert.doesNotMatch(result.stdout, /203\.0\.113\.49/);
+				const report = JSON.parse(result.stdout) as {
+					passed: boolean;
+					outcome: string;
+					measurements: Array<{ route: string; outcome: string }>;
+				};
+				assert.equal(report.passed, false);
+				assert.equal(report.outcome, "infrastructure-error");
+				assert.equal(
+					report.measurements.find((measurement) => measurement.route === "search")?.outcome,
+					"infrastructure-error",
+				);
+			},
+		);
+	});
+}
+
+test("公开命令不会让另一测量的探针故障覆盖已确认的站点失败", async () => {
+	await withFakeGlobalping(
+		{ failingHomeMobile: true, offlineMobilePath: "/browse" },
+		async ({ baseUrl }) => {
+			const result = await runValidator({
+				GLOBALPING_API_BASE_URL: baseUrl,
+				NANJINGHUA_MAINLAND_ROUNDS: "1",
+				NANJINGHUA_MAINLAND_DELAY_MS: "0",
+			});
+			assert.equal(result.code, 1);
+			const report = JSON.parse(result.stdout) as { outcome: string };
+			assert.equal(report.outcome, "site-failure");
+		},
+	);
 });
 
 test("公开命令把 Globalping API 故障报告为状态码 2", async () => {

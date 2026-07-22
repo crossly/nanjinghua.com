@@ -6,7 +6,7 @@ if (process.argv.includes("--help")) {
 
 从深圳电信 AS4134、长沙联通 AS4837、上海移动 AS9808 的固定中国大陆居民网络探针，
 对首页、专题、搜索和非音频线索 API 执行多轮 HTTPS GET。任一 TLS、HTTP 200、
-正文签名或探针身份检查失败时以状态码 1 退出；Globalping API 故障以状态码 2 退出。
+正文签名失败时以状态码 1 退出；探针身份、缺结果或 Globalping API 故障以状态码 2 退出。
 
 可选环境变量：
   NANJINGHUA_MAINLAND_TARGET       待验收 hostname，默认 nanjinghua.com
@@ -47,9 +47,12 @@ try {
 	delete process.env.GLOBALPING_TOKEN;
 	const report = await runMainlandAccessValidation(client, { target, rounds, delayMs });
 	console.log(JSON.stringify(report, null, 2));
-	if (!report.passed) {
+	if (report.outcome === "site-failure") {
 		console.error("中国大陆三网访问验收未通过；保持预览状态并检查报告中的失败探针。");
 		process.exitCode = 1;
+	} else if (report.outcome === "infrastructure-error") {
+		console.error("中国大陆三网访问验收遇到测量基础设施错误；不能据此判定站点通过或失败。");
+		process.exitCode = 2;
 	}
 } catch (error) {
 	console.error(error instanceof Error ? error.message : String(error));

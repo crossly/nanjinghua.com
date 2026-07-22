@@ -1,4 +1,11 @@
 import { setTimeout as sleep } from "node:timers/promises";
+import {
+	classifyDiagnosticOutcome,
+	type DiagnosticOutcome,
+	isGlobalpingInfrastructureStatus,
+	safeGlobalpingFailureReason,
+	safeGlobalpingStatus,
+} from "./network-diagnostics.ts";
 
 export const mainlandNetworks = [
 	{
@@ -124,6 +131,8 @@ export type MainlandProbeSummary = {
 	city: string | null;
 	provider: string | null;
 	passed: boolean;
+	infrastructureError: boolean;
+	outcome: DiagnosticOutcome;
 	reasons: string[];
 	status: string;
 	statusCode: number | null;
@@ -140,6 +149,7 @@ export type MainlandMeasurementSummary = {
 	path: string;
 	round: number;
 	passed: boolean;
+	outcome: DiagnosticOutcome;
 	results: MainlandProbeSummary[];
 };
 
@@ -148,6 +158,7 @@ export type MainlandAccessReport = {
 	target: string;
 	rounds: number;
 	passed: boolean;
+	outcome: DiagnosticOutcome;
 	measurements: MainlandMeasurementSummary[];
 	byRoute: Record<MainlandRoute["id"], { passed: number; total: number }>;
 	byNetwork: Record<number, { passed: number; total: number }>;
@@ -192,6 +203,8 @@ export function summarizeMainlandMeasurement(
 				city: null,
 				provider: null,
 				passed: false,
+				infrastructureError: true,
+				outcome: "infrastructure-error",
 				reasons: [`缺少 AS${network.asn} ${network.name} 探针结果`],
 				status: "missing",
 				statusCode: null,
@@ -209,22 +222,27 @@ export function summarizeMainlandMeasurement(
 			reasons.push(`探针不在固定回归点 ${network.city}：实际 ${probe.city ?? "未知"}`);
 		}
 		if (!probe.tags.includes("eyeball-network")) reasons.push("探针不是居民网络");
-		if (result.status !== "finished") {
-			reasons.push(result.rawOutput || `测量状态为 ${result.status}`);
+		const status = safeGlobalpingStatus(result.status);
+		const infrastructureError = reasons.length > 0 || isGlobalpingInfrastructureStatus(status);
+		if (status !== "finished") {
+			reasons.push(safeGlobalpingFailureReason("HTTPS", status, result.rawOutput));
 		} else {
 			if (result.statusCode !== 200) reasons.push(`HTTP 状态为 ${String(result.statusCode)}`);
 			if (result.tls?.authorized !== true) reasons.push("TLS 证书未通过验证");
 			if (!result.rawBody?.includes(route.expectedContent)) reasons.push("响应正文签名不匹配");
 		}
 
+		const passed = reasons.length === 0;
 		return {
 			network: network.name,
 			asn: network.asn,
 			city: probe.city,
 			provider: probe.network,
-			passed: reasons.length === 0,
+			passed,
+			infrastructureError,
+			outcome: infrastructureError ? "infrastructure-error" : passed ? "passed" : "site-failure",
 			reasons,
-			status: result.status,
+			status,
 			statusCode: result.statusCode ?? null,
 			totalMs: result.timings?.total ?? null,
 			firstByteMs: result.timings?.firstByte ?? null,
@@ -233,13 +251,15 @@ export function summarizeMainlandMeasurement(
 		};
 	});
 
+	const outcome = classifyDiagnosticOutcome(results);
 	return {
 		id: measurement.id,
 		createdAt: measurement.createdAt,
 		route: route.id,
 		path: route.path,
 		round,
-		passed: results.every((result) => result.passed),
+		passed: outcome === "passed",
+		outcome,
 		results,
 	};
 }
@@ -277,11 +297,15 @@ export async function runMainlandAccessValidation(
 		}
 	}
 
+	const outcome = classifyDiagnosticOutcome(
+		measurements.flatMap((measurement) => measurement.results),
+	);
 	return {
 		generatedAt: new Date().toISOString(),
 		target: options.target,
 		rounds: options.rounds,
-		passed: measurements.every((measurement) => measurement.passed),
+		passed: outcome === "passed",
+		outcome,
 		measurements,
 		byRoute,
 		byNetwork,

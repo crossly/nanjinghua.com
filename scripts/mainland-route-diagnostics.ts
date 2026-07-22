@@ -1,6 +1,12 @@
 import { isIP } from "node:net";
 import type { GlobalpingRawMeasurement } from "./globalping-client.ts";
 import { mainlandNetworks } from "./mainland-access.ts";
+import {
+	classifyDiagnosticOutcome,
+	isGlobalpingInfrastructureStatus,
+	safeGlobalpingFailureReason,
+	safeGlobalpingStatus,
+} from "./network-diagnostics.ts";
 
 type MainlandNetwork = (typeof mainlandNetworks)[number];
 export type MainlandNetworkId = MainlandNetwork["id"];
@@ -140,11 +146,6 @@ function reusableMeasurementLocation(measurementId: string): string {
 	return measurementId;
 }
 
-function safeStatus(value: unknown): string {
-	const status = stringValue(value);
-	return status && /^(?:failed|finished|in-progress|offline)$/.test(status) ? status : "missing";
-}
-
 function safeDnsStatusCodeName(value: unknown): string | null {
 	const name = stringValue(value);
 	return name && /^[A-Z0-9_-]{1,32}$/.test(name) ? name : null;
@@ -154,17 +155,6 @@ function safeResolver(value: unknown): string | null {
 	const resolver = stringValue(value);
 	if (resolver === null) return null;
 	return resolver === "private" ? "private" : "redacted";
-}
-
-function safeFailureReason(label: "DNS" | "HTTPS" | "MTR", status: string, raw: unknown): string {
-	const rawOutput = stringValue(raw);
-	if (rawOutput && /tim(?:e|ed)[ -]?out/i.test(rawOutput)) return `${label} 请求超时`;
-	if (status === "offline") return `${label} 固定探针离线`;
-	return `${label} 状态为 ${status}`;
-}
-
-function isInfrastructureStatus(status: string): boolean {
-	return status !== "finished" && status !== "failed";
 }
 
 export function selectMainlandNetwork(id: string): MainlandNetwork {
@@ -253,10 +243,12 @@ function summarizeDns(
 ): DnsDiagnostic {
 	const { probe, result } = resultItem(measurement);
 	const reasons = probeReasons(probe, network);
-	const status = safeStatus(result.status);
-	const infrastructureError = reasons.length > 0 || isInfrastructureStatus(status);
+	const status = safeGlobalpingStatus(result.status);
+	const infrastructureError = reasons.length > 0 || isGlobalpingInfrastructureStatus(status);
 	const statusCode = numberValue(result.statusCode);
-	if (status !== "finished") reasons.push(safeFailureReason("DNS", status, result.rawOutput));
+	if (status !== "finished") {
+		reasons.push(safeGlobalpingFailureReason("DNS", status, result.rawOutput));
+	}
 	if (status === "finished" && statusCode !== 0) {
 		reasons.push(`DNS 状态码为 ${String(statusCode)}`);
 	}
@@ -295,12 +287,12 @@ function summarizeHttps(
 ): HttpsDiagnostic {
 	const { probe, result } = resultItem(measurement);
 	const reasons = probeReasons(probe, network);
-	const status = safeStatus(result.status);
-	const infrastructureError = reasons.length > 0 || isInfrastructureStatus(status);
+	const status = safeGlobalpingStatus(result.status);
+	const infrastructureError = reasons.length > 0 || isGlobalpingInfrastructureStatus(status);
 	const statusCode = numberValue(result.statusCode);
 	const resolvedAddress = stringValue(result.resolvedAddress);
 	if (status !== "finished") {
-		reasons.push(safeFailureReason("HTTPS", status, result.rawOutput));
+		reasons.push(safeGlobalpingFailureReason("HTTPS", status, result.rawOutput));
 	} else {
 		if (statusCode !== 200) reasons.push(`HTTPS 状态为 ${String(statusCode)}`);
 		if (resolvedAddress !== address) {
@@ -335,9 +327,11 @@ function summarizeMtr(
 ): MtrDiagnostic {
 	const { probe, result } = resultItem(measurement);
 	const reasons = probeReasons(probe, network);
-	const status = safeStatus(result.status);
-	const infrastructureError = reasons.length > 0 || isInfrastructureStatus(status);
-	if (status !== "finished") reasons.push(safeFailureReason("MTR", status, result.rawOutput));
+	const status = safeGlobalpingStatus(result.status);
+	const infrastructureError = reasons.length > 0 || isGlobalpingInfrastructureStatus(status);
+	if (status !== "finished") {
+		reasons.push(safeGlobalpingFailureReason("MTR", status, result.rawOutput));
+	}
 	const hops = Array.isArray(result.hops) ? result.hops.filter(isRecord) : [];
 	const respondingHops = hops.filter((hop) => {
 		const stats = isRecord(hop.stats) ? hop.stats : {};
@@ -390,14 +384,9 @@ export async function runMainlandRouteDiagnostics(
 			addresses.push({ address, https, mtr });
 		}
 	}
-	const hasDecisiveSiteFailure =
-		(!dns.passed && !dns.infrastructureError) ||
-		addresses.some((item) => !item.https.passed && !item.https.infrastructureError);
-	const hasDecisiveInfrastructureError =
-		dns.infrastructureError || addresses.some((item) => item.https.infrastructureError);
+	const outcome = classifyDiagnosticOutcome([dns, ...addresses.map((item) => item.https)]);
 	const passed =
-		!hasDecisiveSiteFailure &&
-		!hasDecisiveInfrastructureError &&
+		outcome === "passed" &&
 		dns.passed &&
 		addresses.length === dns.addresses.length &&
 		addresses.every((item) => item.https.passed);
@@ -411,13 +400,7 @@ export async function runMainlandRouteDiagnostics(
 			city: options.network.city,
 		},
 		passed,
-		outcome: hasDecisiveSiteFailure
-			? "site-failure"
-			: hasDecisiveInfrastructureError
-				? "infrastructure-error"
-				: passed
-					? "passed"
-					: "site-failure",
+		outcome,
 		dns,
 		addresses,
 	};
