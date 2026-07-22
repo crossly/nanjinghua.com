@@ -38,7 +38,7 @@ Turnstile 组件需在 Dashboard 逐项核对：组件名 `nanjinghua-submission
 
 `nanjinghua.com` 与 `www.nanjinghua.com` 已作为 Worker custom domain 绑定并完成 HTTPS 验证。`www` 以 `308` 永久跳转至 `https://nanjinghua.com` 并保留路径和查询参数；每次发布都必须在线复验，不能仅凭仓库配置宣称生效。AI Crawl Control / Signals 下的 Managed `robots.txt` 必须保持关闭，否则 Cloudflare 会直接接管两个 hostname 的 `/robots.txt`，导致 `www/robots.txt` 绕过 Worker 重定向。2026-07-19 的[中国大陆三网访问验收](../releases/2026-07-19-mainland-access-check.md)发现上海移动居民线路可以连续复现请求超时，因此仍只发布为非音频预览；不得用其他网络成功掩盖该失败。
 
-当前生产源提交为 `76e855f73e76eaa376981fc93461456d4e0e4747`；Worker Version `39918078-a466-4692-86c4-a30377c9adca` 自 `2026-07-22T02:46:36.404303Z` 起承载 100% 流量。部署后约一分钟曾出现新旧版本传播混合，最终线上矩阵与 Managed `robots.txt` 修复证据见[非语音只读交付验证记录](../releases/2026-07-20-readonly-delivery-proof.md)。
+当前生产源提交为 `36ca804c34106753002f342d3052e8c2b5089308`；Worker Version `5656cbfa-9c89-4c96-8cc4-dfbce03bc0d9`（版本 28）由 Deployment `cdd0510e-dbe4-4c5e-b032-b5649fc77fb0` 自 `2026-07-22T03:25:03.231015Z` 起承载 100% 流量。最终线上矩阵、Managed `robots.txt` 修复和大陆探针复发证据见[非语音只读交付验证记录](../releases/2026-07-20-readonly-delivery-proof.md)。
 
 `pnpm run ops:verify` 会先执行普通生产构建，再检查 Cloudflare 资源、secret、远端迁移、Wrangler dry-run 和性能预算。这样即使之前运行过治理夹具或只读静态测试，门禁也不会复用测试模式的 `dist` 或 Wrangler 暂存配置。
 
@@ -59,7 +59,7 @@ NANJINGHUA_MAINLAND_TARGET=mirror.nanjinghua.com pnpm ops:validate:mainland
 
 可通过 `GLOBALPING_TOKEN` 提高 API 配额；脚本不会把 token 写入报告，并会在创建客户端后从进程环境删除。`NANJINGHUA_MAINLAND_ROUNDS` 和 `NANJINGHUA_MAINLAND_DELAY_MS` 只用于受控复验，不得通过减少轮数掩盖稳定性问题。自动社区探针用于可重复筛查，不替代正式上线前至少三个真实终端网络上的手动浏览器验收。
 
-2026-07-20 起的[固定三网恢复复验](../releases/2026-07-20-mainland-recovery-recheck.md)首个窗口三轮 36/36 通过，第二窗口为 35/36；把 `www` 设为规范内容域后的第三窗口只有 24/36，上海移动对 `www` 的 12 次请求全部超时。恢复裸域并部署后，`2026-07-22T02:55:37Z` 至 `02:56:17Z` 的新窗口在深圳电信、长沙联通、上海移动取得 36/36。原因未定的 Globalping 调用 `fetch failed` 或当前无匹配探针均按基础设施错误与站点结果分开记录。单个新窗口不能替代跨时间稳定性和真实终端体验门槛，继续保持非音频预览。
+2026-07-20 起的[固定三网恢复复验](../releases/2026-07-20-mainland-recovery-recheck.md)首个窗口三轮 36/36，第二窗口 35/36；把 `www` 设为规范内容域后的第三窗口只有 24/36，上海移动对 `www` 的 12 次请求全部超时。恢复裸域后，`2026-07-22T02:55:37Z` 至 `02:56:17Z` 的第四窗口短暂取得 36/36；当前版本部署后的第五窗口于 `03:28:23Z` 至 `03:30:42Z` 再次降为 24/36，上海移动对裸域四条路径的 12 次请求全部超时。原因未定的 Globalping 调用 `fetch failed` 或当前无匹配探针均按基础设施错误与站点结果分开记录。标准路径未通过跨时间稳定性和真实终端体验门槛，继续保持非音频预览。
 
 ### 真实终端浏览器验收
 

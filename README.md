@@ -6,10 +6,11 @@
 
 - 正式域名：[https://nanjinghua.com](https://nanjinghua.com)
 - Worker 预览：[https://nanjinghua-com.xflash.workers.dev](https://nanjinghua-com.xflash.workers.dev)
-- 已部署源提交：`76e855f73e76eaa376981fc93461456d4e0e4747`
-- Cloudflare Worker Version：`39918078-a466-4692-86c4-a30377c9adca`
+- 已部署源提交：`36ca804c34106753002f342d3052e8c2b5089308`
+- Cloudflare Worker Version：`5656cbfa-9c89-4c96-8cc4-dfbce03bc0d9`（版本 28）
+- Cloudflare Deployment：`cdd0510e-dbe4-4c5e-b032-b5649fc77fb0`，自 `2026-07-22T03:25:03.231015Z` 起承载 100% 流量
 
-裸域与 `www` 均由 Cloudflare Worker 接入。`https://nanjinghua.com` 是规范地址，`www` 以 `308` 永久跳转至裸域并保留路径与查询；Cloudflare 的 Managed `robots.txt` 已关闭，避免平台托管响应绕过该跳转。当前版本不含真人语音，仍只称为非音频预览；Worker 预览域名只用于验收，其内容页面不允许搜索引擎收录。
+裸域与 `www` 均由 Cloudflare Worker 接入。`https://nanjinghua.com` 是规范地址，`www` 以 `308` 永久跳转至裸域并保留路径与查询；Cloudflare 的 Managed `robots.txt` 已关闭，避免平台托管响应绕过该跳转。当前版本不含真人语音，仍只称为非音频预览；Worker 预览域名只用于验收，其内容页面不允许搜索引擎收录。最新固定三网自动窗口为 24/36：深圳电信与长沙联通各 12/12，上海移动 0/12 且均为请求超时，因此不宣称中国大陆正式上线。
 
 最新部署与验收边界见 [2026-07-20 非语音只读交付验证记录](./docs/releases/2026-07-20-readonly-delivery-proof.md)。
 
