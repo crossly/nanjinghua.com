@@ -7,8 +7,8 @@ import test from "node:test";
 type DiagnosticRequest = {
 	type: "dns" | "http" | "mtr";
 	target: string;
-	locations: Array<{ magic: string }>;
-	limit: number;
+	locations: Array<{ magic: string }> | string;
+	limit?: number;
 	measurementOptions: Record<string, unknown>;
 };
 
@@ -21,6 +21,7 @@ type DiagnosticResult = {
 type FakeGlobalpingOptions = {
 	addresses: string[];
 	failingAddress?: string;
+	sensitiveFailureDetails?: boolean;
 };
 
 async function readJson(request: IncomingMessage): Promise<unknown> {
@@ -109,13 +110,17 @@ async function withFakeGlobalping(
 					respond(response, 404, { error: { message: "Measurement not found" } });
 					return;
 				}
+				const reusesDnsProbe =
+					measurementRequest.type === "dns" || measurementRequest.locations === "diagnostic-1";
 				const probe = {
 					country: "CN",
 					city: "Shanghai",
 					asn: 9808,
 					network: "China Mobile Communications Group",
+					latitude: reusesDnsProbe ? 31.22 : 31.23,
+					longitude: reusesDnsProbe ? 121.46 : 121.47,
 					tags: ["eyeball-network"],
-					resolvers: ["private", "private"],
+					resolvers: options.sensitiveFailureDetails ? ["198.51.100.24"] : ["private", "private"],
 				};
 				let result: Record<string, unknown>;
 				if (measurementRequest.type === "dns") {
@@ -131,7 +136,7 @@ async function withFakeGlobalping(
 							value: address,
 						})),
 						timings: { total: 291 },
-						resolver: "private",
+						resolver: options.sensitiveFailureDetails ? "198.51.100.24" : "private",
 					};
 				} else if (measurementRequest.type === "http") {
 					const failed = measurementRequest.target === options.failingAddress;
@@ -139,7 +144,9 @@ async function withFakeGlobalping(
 						? {
 								status: "failed",
 								resolvedAddress: null,
-								rawOutput: "Request timeout.",
+								rawOutput: options.sensitiveFailureDetails
+									? "Request timeout via probe 203.0.113.44."
+									: "Request timeout.",
 								timings: {
 									total: null,
 									dns: null,
@@ -161,7 +168,9 @@ async function withFakeGlobalping(
 						resolvedAddress: measurementRequest.target,
 						hops: [
 							{
-								resolvedAddress: "221.183.92.190",
+								resolvedAddress: options.sensitiveFailureDetails
+									? "203.0.113.45"
+									: "221.183.92.190",
 								asn: [9808],
 								stats: { rcv: 3, loss: 0 },
 							},
@@ -232,6 +241,10 @@ test("大陆路由诊断确认固定探针的全部 A 地址均可通过 HTTPS",
 			context.requests.map((request) => request.type),
 			["dns", "http"],
 		);
+		assert.deepEqual(
+			context.requests.map((request) => request.locations),
+			[[{ magic: "Shanghai+AS9808+eyeball" }], "diagnostic-1"],
+		);
 		assert.deepEqual(context.authorizationHeaders, [
 			"Bearer diagnostic-test-token",
 			"Bearer diagnostic-test-token",
@@ -244,6 +257,7 @@ test("大陆路由诊断对不可达 A 地址追加 TCP MTR 并拒绝通过", as
 		{
 			addresses: ["104.21.10.37", "172.67.189.230"],
 			failingAddress: "172.67.189.230",
+			sensitiveFailureDetails: true,
 		},
 		async (context) => {
 			const result = await runDiagnostic("mobile", {
@@ -277,7 +291,7 @@ test("大陆路由诊断对不可达 A 地址追加 TCP MTR 并拒绝通过", as
 			assert.equal(healthy?.https.passed, true);
 			assert.equal(healthy?.mtr, null);
 			assert.equal(failed?.https.passed, false);
-			assert.match(failed?.https.reasons.join(" ") ?? "", /Request timeout/);
+			assert.match(failed?.https.reasons.join(" ") ?? "", /HTTPS 请求超时/);
 			assert.equal(failed?.mtr?.targetReached, false);
 			assert.deepEqual(failed?.mtr?.respondingAsns, [9808]);
 			assert.equal(failed?.mtr?.lastRespondingAsn, 9808);
@@ -290,8 +304,12 @@ test("大陆路由诊断对不可达 A 地址追加 TCP MTR 并拒绝通过", as
 					["mtr", "172.67.189.230"],
 				],
 			);
+			assert.deepEqual(
+				context.requests.map((request) => request.locations),
+				[[{ magic: "Shanghai+AS9808+eyeball" }], "diagnostic-1", "diagnostic-1", "diagnostic-1"],
+			);
+			assert.doesNotMatch(result.stdout, /198\.51\.100\.24|203\.0\.113\.4[45]/);
 			const failedHttp = context.requests[2];
-			assert.deepEqual(failedHttp.locations, [{ magic: "Shanghai+AS9808+eyeball" }]);
 			assert.deepEqual(failedHttp.measurementOptions, {
 				protocol: "HTTPS",
 				port: 443,

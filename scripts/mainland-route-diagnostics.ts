@@ -22,8 +22,7 @@ export type MainlandRouteDiagnosticRequest =
 	| {
 			type: "http";
 			target: string;
-			locations: DiagnosticLocation[];
-			limit: 1;
+			locations: string;
 			measurementOptions: {
 				protocol: "HTTPS";
 				port: 443;
@@ -33,8 +32,7 @@ export type MainlandRouteDiagnosticRequest =
 	| {
 			type: "mtr";
 			target: string;
-			locations: DiagnosticLocation[];
-			limit: 1;
+			locations: string;
 			measurementOptions: {
 				packets: 3;
 				protocol: "TCP";
@@ -131,6 +129,36 @@ function diagnosticLocation(network: MainlandNetwork): DiagnosticLocation[] {
 	return [{ magic: `${network.city}+AS${network.asn}+eyeball` }];
 }
 
+function reusableMeasurementLocation(measurementId: string): string {
+	if (!/^[A-Za-z0-9_-]{1,128}$/.test(measurementId)) {
+		throw new Error("Globalping 首次测量 ID 无法用于固定探针");
+	}
+	return measurementId;
+}
+
+function safeStatus(value: unknown): string {
+	const status = stringValue(value);
+	return status && /^(?:failed|finished|in-progress|offline)$/.test(status) ? status : "missing";
+}
+
+function safeDnsStatusCodeName(value: unknown): string | null {
+	const name = stringValue(value);
+	return name && /^[A-Z0-9_-]{1,32}$/.test(name) ? name : null;
+}
+
+function safeResolver(value: unknown): string | null {
+	const resolver = stringValue(value);
+	if (resolver === null) return null;
+	return resolver === "private" ? "private" : "redacted";
+}
+
+function safeFailureReason(label: "DNS" | "HTTPS" | "MTR", status: string, raw: unknown): string {
+	const rawOutput = stringValue(raw);
+	if (rawOutput && /tim(?:e|ed)[ -]?out/i.test(rawOutput)) return `${label} 请求超时`;
+	if (status === "offline") return `${label} 固定探针离线`;
+	return `${label} 状态为 ${status}`;
+}
+
 export function selectMainlandNetwork(id: string): MainlandNetwork {
 	const network = mainlandNetworks.find((candidate) => candidate.id === id);
 	if (!network) throw new Error("运营商必须是 telecom、unicom 或 mobile");
@@ -157,14 +185,13 @@ export function createDnsDiagnosticRequest(
 export function createHttpsDiagnosticRequest(
 	target: string,
 	address: string,
-	network: MainlandNetwork,
+	probeMeasurementId: string,
 ): MainlandRouteDiagnosticRequest {
 	if (isIP(address) !== 4) throw new Error(`诊断地址不是 IPv4：${address}`);
 	return {
 		type: "http",
 		target: address,
-		locations: diagnosticLocation(network),
-		limit: 1,
+		locations: reusableMeasurementLocation(probeMeasurementId),
 		measurementOptions: {
 			protocol: "HTTPS",
 			port: 443,
@@ -175,14 +202,13 @@ export function createHttpsDiagnosticRequest(
 
 export function createMtrDiagnosticRequest(
 	address: string,
-	network: MainlandNetwork,
+	probeMeasurementId: string,
 ): MainlandRouteDiagnosticRequest {
 	if (isIP(address) !== 4) throw new Error(`诊断地址不是 IPv4：${address}`);
 	return {
 		type: "mtr",
 		target: address,
-		locations: diagnosticLocation(network),
-		limit: 1,
+		locations: reusableMeasurementLocation(probeMeasurementId),
 		measurementOptions: {
 			packets: 3,
 			protocol: "TCP",
@@ -204,9 +230,9 @@ function resultItem(measurement: GlobalpingRawMeasurement): {
 
 function probeReasons(probe: Record<string, unknown>, network: MainlandNetwork): string[] {
 	const reasons: string[] = [];
-	if (probe.country !== "CN") reasons.push(`探针不在中国大陆：${String(probe.country)}`);
+	if (probe.country !== "CN") reasons.push("探针国家不是 CN");
 	if (probe.city !== network.city) {
-		reasons.push(`探针不在固定回归点 ${network.city}：实际 ${String(probe.city)}`);
+		reasons.push(`探针不在固定回归点 ${network.city}`);
 	}
 	if (probe.asn !== network.asn) reasons.push(`探针 ASN 不是 AS${network.asn}`);
 	if (!stringArray(probe.tags).includes("eyeball-network")) reasons.push("探针不是居民网络");
@@ -219,9 +245,9 @@ function summarizeDns(
 ): DnsDiagnostic {
 	const { probe, result } = resultItem(measurement);
 	const reasons = probeReasons(probe, network);
-	const status = stringValue(result.status) ?? "missing";
+	const status = safeStatus(result.status);
 	const statusCode = numberValue(result.statusCode);
-	if (status !== "finished") reasons.push(stringValue(result.rawOutput) ?? `DNS 状态为 ${status}`);
+	if (status !== "finished") reasons.push(safeFailureReason("DNS", status, result.rawOutput));
 	if (status === "finished" && statusCode !== 0) {
 		reasons.push(`DNS 状态码为 ${String(statusCode)}`);
 	}
@@ -245,8 +271,8 @@ function summarizeDns(
 		reasons,
 		status,
 		statusCode,
-		statusCodeName: stringValue(result.statusCodeName),
-		resolver: stringValue(result.resolver),
+		statusCodeName: safeDnsStatusCodeName(result.statusCodeName),
+		resolver: safeResolver(result.resolver),
 		totalMs: numberValue(timings.total),
 		addresses,
 	};
@@ -259,15 +285,15 @@ function summarizeHttps(
 ): HttpsDiagnostic {
 	const { probe, result } = resultItem(measurement);
 	const reasons = probeReasons(probe, network);
-	const status = stringValue(result.status) ?? "missing";
+	const status = safeStatus(result.status);
 	const statusCode = numberValue(result.statusCode);
 	const resolvedAddress = stringValue(result.resolvedAddress);
 	if (status !== "finished") {
-		reasons.push(stringValue(result.rawOutput) ?? `HTTPS 状态为 ${status}`);
+		reasons.push(safeFailureReason("HTTPS", status, result.rawOutput));
 	} else {
 		if (statusCode !== 200) reasons.push(`HTTPS 状态为 ${String(statusCode)}`);
 		if (resolvedAddress !== address) {
-			reasons.push(`实际连接地址不是 ${address}：${resolvedAddress ?? "未知"}`);
+			reasons.push("实际连接地址与待测地址不一致");
 		}
 		if (!isRecord(result.tls) || result.tls.authorized !== true) {
 			reasons.push("TLS 证书未通过验证");
@@ -281,7 +307,7 @@ function summarizeHttps(
 		reasons,
 		status,
 		statusCode,
-		resolvedAddress,
+		resolvedAddress: resolvedAddress === address ? address : null,
 		totalMs: numberValue(timings.total),
 		tcpMs: numberValue(timings.tcp),
 		tlsMs: numberValue(timings.tls),
@@ -297,8 +323,8 @@ function summarizeMtr(
 ): MtrDiagnostic {
 	const { probe, result } = resultItem(measurement);
 	const reasons = probeReasons(probe, network);
-	const status = stringValue(result.status) ?? "missing";
-	if (status !== "finished") reasons.push(stringValue(result.rawOutput) ?? `MTR 状态为 ${status}`);
+	const status = safeStatus(result.status);
+	if (status !== "finished") reasons.push(safeFailureReason("MTR", status, result.rawOutput));
 	const hops = Array.isArray(result.hops) ? result.hops.filter(isRecord) : [];
 	const respondingHops = hops.filter((hop) => {
 		const stats = isRecord(hop.stats) ? hop.stats : {};
@@ -337,13 +363,13 @@ export async function runMainlandRouteDiagnostics(
 	if (dns.passed) {
 		for (const address of dns.addresses) {
 			const httpsMeasurement = await client.measureRaw(
-				createHttpsDiagnosticRequest(options.target, address, options.network),
+				createHttpsDiagnosticRequest(options.target, address, dnsMeasurement.id),
 			);
 			const https = summarizeHttps(httpsMeasurement, options.network, address);
 			let mtr: MtrDiagnostic | null = null;
 			if (!https.passed) {
 				const mtrMeasurement = await client.measureRaw(
-					createMtrDiagnosticRequest(address, options.network),
+					createMtrDiagnosticRequest(address, dnsMeasurement.id),
 				);
 				mtr = summarizeMtr(mtrMeasurement, options.network, address);
 			}

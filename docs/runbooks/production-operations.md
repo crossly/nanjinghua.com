@@ -73,7 +73,7 @@ NANJINGHUA_MAINLAND_TARGET=mirror.nanjinghua.com \
   pnpm ops:diagnose:mainland-route -- telecom
 ```
 
-命令先用探针系统递归解析器查询全部 IPv4 A 地址，再对每个地址使用目标 hostname 作为 Host/SNI 执行 HTTPS GET。失败地址会追加 TCP 443 MTR；报告只保留测量 ID、目标地址、耗时、是否到达目标及响应路径中的 ASN，不输出探针公网地址或中间路由地址。状态码 0 表示该时刻所有解析地址都可从所选探针访问，状态码 1 表示至少一个地址失败，状态码 2 表示参数、API 或测量基础设施错误。
+命令先从固定城市、ASN 和居民网络 selector 选取一个探针，用其系统递归解析器查询全部 IPv4 A 地址；后续逐地址 HTTPS 和失败地址 TCP 443 MTR 都把首次 DNS 测量 ID 作为 `locations`，由 Globalping 复用完全相同的探针。HTTPS 使用目标 hostname 作为 Host/SNI。报告只保留测量 ID、目标地址、受控失败摘要、耗时、是否到达目标及响应路径中的 ASN；原始错误、公共解析器地址、探针公网地址和中间路由地址均不输出。状态码 0 表示该时刻所有解析地址都可从所选探针访问，状态码 1 表示至少一个地址失败，状态码 2 表示参数、API 或测量基础设施错误。
 
 该命令是故障定位工具，不是验收捷径：即使返回 0，也不能替代三轮四路径门禁或三家真实终端浏览器验收；不得通过只测试成功地址来绕过域名正常解析结果。若失败停在 Cloudflare 共享 Anycast 地址路径，Worker、TanStack 路由或 D1 修改不会改变到达边缘前的行为，应保留报告并交由 Cloudflare、运营商或获批的替代交付负责人处理。
 

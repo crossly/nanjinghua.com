@@ -55,7 +55,7 @@ article: 2n5x3LmgsOfVrnpb100020mjs 2eGqauJdflUXJtQ9500020mjs 2qk88aGMv0spFcILE00
          2dMKsBpj3i7v5Xvb300020mjt 2LM9j1lfZTZrId3Gj00020mjt
 ```
 
-同一探针的窄诊断：
+同一 `Shanghai+AS9808+eyeball` selector 的窄诊断（独立测量未复用首次测量 ID，不能证明来自同一物理探针）：
 
 - `www.gov.cn`：HTTP 200，436 ms；测量 `2b0LjguQpOf9CgSmC00020mjr`。
 - `www.cloudflare.com/cdn-cgi/trace`：HTTP 200，705 ms；测量 `2WSnR4SK72SKlVrzd00020mju`。
@@ -65,7 +65,7 @@ article: 2n5x3LmgsOfVrnpb100020mjs 2eGqauJdflUXJtQ9500020mjs 2qk88aGMv0spFcILE00
 - Worker 预览域名同样超时；测量 `2JruieeZ2vSEhuixM00020mju`。
 - `http://nanjinghua.com/` 端口 80 也超时；测量 `2ZvHHHgoBH0QnhjdH00020mjv`。
 
-这些对照说明探针、DNS 和全部 Cloudflare 访问并未整体失效；问题集中在该上海移动线路到当前 Cloudflare 交付路径，且可以连续复现。
+这些对照说明该 selector 下的居民网络、DNS 和全部 Cloudflare 访问并未整体失效；问题集中在上海移动到当前 Cloudflare 交付路径，且可以连续复现。由于各项是独立选探针的测量，这组记录只支持网络和时间窗口层面的定位，不支持单探针地址因果；后续固定探针复验见 `2026-07-20-mainland-recovery-recheck.md`。
 
 ## 发布决策
 

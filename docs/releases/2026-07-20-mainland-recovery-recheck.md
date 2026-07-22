@@ -114,11 +114,11 @@ search:  29zfeVTkHnN7BvjiZ00020ng2
 api:     2FpHg8ltVljkq6HtW00020ng2
 ```
 
-同一上海移动探针对照进一步定位到 hostname 路径：
+同一 `Shanghai+AS9808+eyeball` selector 的对照进一步定位到 hostname 路径，但这些独立测量没有复用首次测量 ID，不能证明来自同一物理探针：
 
 - 裸域首页测量 `2GSEA9z8HgBmUKCtr00020ng3` 解析为 `104.21.10.37`，在 1,564 ms 内完成 TCP/TLS 并返回指向 `www` 的 `308`。
 - 紧接着的 `www` 首页测量 `2ltyZXfwFp4yLqcHw00020ng3` 超时，`resolvedAddress` 为 `null`。
-- 系统解析对照 `2P6jqGntayiNcmhss00020ng6` 与 `2iBGf5uTfApqWPqUQ00020ng6` 均返回 `104.21.10.37`、`172.67.189.230`，说明同一探针对两个 hostname 的 A 查询都成功。
+- 系统解析对照 `2P6jqGntayiNcmhss00020ng6` 与 `2iBGf5uTfApqWPqUQ00020ng6` 均返回 `104.21.10.37`、`172.67.189.230`，说明该固定 selector 对两个 hostname 的 A 查询都成功。
 - 2026-07-22 追加强制 IPv4 HTTP 测量时，Globalping 返回 `No matching IPv4 probes available.`；实时探针清单已没有上海 AS9808，未把该基础设施空缺记作站点成功或失败。
 
 运行时证据不支持继续把 `www` 作为规范内容域。实现因此恢复 `https://nanjinghua.com` 为规范内容域，并把 `www` 改为到裸域的永久跳转；发布后必须重新运行固定三网窗口，不能把这项配置调整本身当作恢复证明。
@@ -156,14 +156,16 @@ api:     2Vl6g46yVDmD3LyTX00020nze
 
 ## 第五窗口地址级定位
 
-为避免把 `resolvedAddress: null` 直接误判为 DNS 故障，新增 `pnpm ops:diagnose:mainland-route -- mobile`，从同一个上海移动 AS9808 居民探针依次执行系统递归 DNS、逐 A 地址 HTTPS 和失败地址 TCP 443 MTR。`2026-07-22T03:49:17Z` 至 `03:49:35Z` 的独立运行得到：
+为避免把 `resolvedAddress: null` 直接误判为 DNS 故障，新增 `pnpm ops:diagnose:mainland-route -- mobile`，从上海移动 AS9808 居民探针依次执行系统递归 DNS、逐 A 地址 HTTPS 和失败地址 TCP 443 MTR。最初 `2026-07-22T03:49:17Z` 至 `03:49:35Z` 的实现对每项测量重复使用同一城市、ASN 和居民网络 selector，但没有锁定同一物理探针；DNS `2iMxXrzKtL6CNVcIN00020nzx`、成功地址 HTTPS `2LdtxeDsmCYN0l6Fr00020nzx`、失败地址 HTTPS `2pdcoMwjmJ1lYU77000020nzx` 与 MTR `2gfTHkJVRpKPeCXIW00020nzx` 只保留为问题发现记录，不再承担同探针地址对照结论。
 
-- DNS 测量 `2iMxXrzKtL6CNVcIN00020nzx` 在 373 ms 内返回 `NOERROR`，A 地址为 `104.21.10.37` 与 `172.67.189.230`。
-- 对 `104.21.10.37` 保留 `nanjinghua.com` Host/SNI 的 HTTPS 测量 `2LdtxeDsmCYN0l6Fr00020nzx` 返回 200，TCP 192 ms、TLS 267 ms、首字节 380 ms、总耗时 839 ms，证书授权通过。
-- 同样请求 `172.67.189.230` 的测量 `2pdcoMwjmJ1lYU77000020nzx` 返回 `Request timeout.`，没有状态码或 TCP/TLS 计时。
-- 对失败地址的 TCP 443 MTR `2gfTHkJVRpKPeCXIW00020nzx` 共 16 跳，没有到达目标；安全化汇总中唯一响应 ASN 和最后响应 ASN 都是 AS9808。
+修复后，`2026-07-22T03:58:39Z` 至 `03:59:02Z` 的运行先创建 DNS 测量，再把该测量 ID 作为后续三项测量的 `locations`，由 Globalping 复用完全相同的探针：
 
-这组证据证明同一探针当时可以解析域名，也可以通过 HTTPS 到达其中一个 Cloudflare 地址；失败集中在另一个解析地址的网络路径，并发生在 Worker 之前。它不证明所有上海移动用户都使用相同路径，也不能单独归责 Cloudflare 或运营商，但足以停止用应用路由、SSR 或 D1 改动解释本次超时。Cloudflare 共享 Anycast 地址不能由 Worker 代码选择；在运营商或 Cloudflare 路径修复、正式 China Network 权益或获批替代交付出现以前，发布判断不变。
+- DNS 测量 `2CxHV0N7iS4w7ooen00020o06` 在 271 ms 内返回 `NOERROR`，A 地址为 `172.67.189.230` 与 `104.21.10.37`。
+- 对 `172.67.189.230` 保留 `nanjinghua.com` Host/SNI 的 HTTPS 测量 `2gnyleUxPDExJKH0A00020o06` 请求超时，没有状态码或 TCP/TLS 计时。
+- 对失败地址的 TCP 443 MTR `2FOzCj33uIuhyBzBy00020o06` 共 16 跳，没有到达目标；安全化汇总未保留任何路径地址，也没有可报告的响应 ASN。
+- 对 `104.21.10.37` 的同等 HTTPS 测量 `2cfcpK2U7NLcjQlex00020o07` 返回 200，TCP 203 ms、TLS 261 ms、首字节 519 ms、总耗时 984 ms，证书授权通过。
+
+修复后的证据证明同一探针当时可以解析域名，也可以通过 HTTPS 到达其中一个 Cloudflare 地址；失败集中在另一个解析地址的网络路径，并发生在 Worker 之前。它不证明所有上海移动用户都使用相同路径，也不能单独归责 Cloudflare 或运营商，但足以停止用应用路由、SSR 或 D1 改动解释本次超时。Cloudflare 共享 Anycast 地址不能由 Worker 代码选择；在运营商或 Cloudflare 路径修复、正式 China Network 权益或获批替代交付出现以前，发布判断不变。
 
 ## 发布判断
 
