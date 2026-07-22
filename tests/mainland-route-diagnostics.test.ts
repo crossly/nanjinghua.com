@@ -23,6 +23,8 @@ type FakeGlobalpingOptions = {
 	failingAddress?: string;
 	sensitiveFailureDetails?: boolean;
 	httpInfrastructureFailure?: "offline" | "wrong-probe";
+	httpInfrastructureFailureAddress?: string;
+	mtrOffline?: boolean;
 };
 
 async function readJson(request: IncomingMessage): Promise<unknown> {
@@ -113,11 +115,15 @@ async function withFakeGlobalping(
 				}
 				const reusesDnsProbe =
 					measurementRequest.type === "dns" || measurementRequest.locations === "diagnostic-1";
+				const hasHttpInfrastructureFailure =
+					measurementRequest.type === "http" &&
+					options.httpInfrastructureFailure !== undefined &&
+					(options.httpInfrastructureFailureAddress === undefined ||
+						measurementRequest.target === options.httpInfrastructureFailureAddress);
 				const probe = {
 					country: "CN",
 					city:
-						options.httpInfrastructureFailure === "wrong-probe" &&
-						measurementRequest.type === "http"
+						hasHttpInfrastructureFailure && options.httpInfrastructureFailure === "wrong-probe"
 							? "Nanjing"
 							: "Shanghai",
 					asn: 9808,
@@ -146,7 +152,7 @@ async function withFakeGlobalping(
 				} else if (measurementRequest.type === "http") {
 					const failed = measurementRequest.target === options.failingAddress;
 					result =
-						options.httpInfrastructureFailure === "offline"
+						hasHttpInfrastructureFailure && options.httpInfrastructureFailure === "offline"
 							? {
 									status: "offline",
 									rawOutput: "Probe 203.0.113.46 is offline.",
@@ -174,24 +180,26 @@ async function withFakeGlobalping(
 										tls: { authorized: true },
 									};
 				} else {
-					result = {
-						status: "finished",
-						resolvedAddress: measurementRequest.target,
-						hops: [
-							{
-								resolvedAddress: options.sensitiveFailureDetails
-									? "203.0.113.45"
-									: "221.183.92.190",
-								asn: [9808],
-								stats: { rcv: 3, loss: 0 },
-							},
-							{
-								resolvedAddress: null,
-								asn: [],
-								stats: { rcv: 0, loss: 100 },
-							},
-						],
-					};
+					result = options.mtrOffline
+						? { status: "offline", rawOutput: "Probe 203.0.113.47 is offline." }
+						: {
+								status: "finished",
+								resolvedAddress: measurementRequest.target,
+								hops: [
+									{
+										resolvedAddress: options.sensitiveFailureDetails
+											? "203.0.113.45"
+											: "221.183.92.190",
+										asn: [9808],
+										stats: { rcv: 3, loss: 0 },
+									},
+									{
+										resolvedAddress: null,
+										asn: [],
+										stats: { rcv: 0, loss: 100 },
+									},
+								],
+							};
 				}
 				respond(response, 200, {
 					id: match[1],
@@ -363,6 +371,71 @@ for (const failure of ["offline", "wrong-probe"] as const) {
 		);
 	});
 }
+
+test("大陆路由诊断不会让辅助 MTR 故障覆盖已经确认的 HTTPS 失败", async () => {
+	await withFakeGlobalping(
+		{ addresses: ["104.21.10.37"], failingAddress: "104.21.10.37", mtrOffline: true },
+		async (context) => {
+			const result = await runDiagnostic("mobile", {
+				GLOBALPING_API_BASE_URL: context.baseUrl,
+				NANJINGHUA_MAINLAND_TARGET: "nanjinghua.com",
+			});
+			assert.equal(result.code, 1);
+			assert.match(result.stderr, /至少一个解析地址不可达/);
+			assert.doesNotMatch(result.stdout, /203\.0\.113\.47/);
+			const report = JSON.parse(result.stdout) as {
+				passed: boolean;
+				outcome: string;
+				addresses: Array<{
+					https: { infrastructureError: boolean };
+					mtr: { infrastructureError: boolean };
+				}>;
+			};
+			assert.equal(report.passed, false);
+			assert.equal(report.outcome, "site-failure");
+			assert.equal(report.addresses[0].https.infrastructureError, false);
+			assert.equal(report.addresses[0].mtr.infrastructureError, true);
+			assert.deepEqual(
+				context.requests.map((request) => request.type),
+				["dns", "http", "mtr"],
+			);
+		},
+	);
+});
+
+test("大陆路由诊断不会让另一地址的探针故障覆盖已经确认的 HTTPS 失败", async () => {
+	await withFakeGlobalping(
+		{
+			addresses: ["104.21.10.37", "104.21.10.38"],
+			failingAddress: "104.21.10.37",
+			httpInfrastructureFailure: "offline",
+			httpInfrastructureFailureAddress: "104.21.10.38",
+		},
+		async (context) => {
+			const result = await runDiagnostic("mobile", {
+				GLOBALPING_API_BASE_URL: context.baseUrl,
+				NANJINGHUA_MAINLAND_TARGET: "nanjinghua.com",
+			});
+			assert.equal(result.code, 1);
+			assert.match(result.stderr, /至少一个解析地址不可达/);
+			const report = JSON.parse(result.stdout) as {
+				passed: boolean;
+				outcome: string;
+				addresses: Array<{ https: { infrastructureError: boolean } }>;
+			};
+			assert.equal(report.passed, false);
+			assert.equal(report.outcome, "site-failure");
+			assert.deepEqual(
+				report.addresses.map((item) => item.https.infrastructureError),
+				[false, true],
+			);
+			assert.deepEqual(
+				context.requests.map((request) => request.type),
+				["dns", "http", "mtr", "http"],
+			);
+		},
+	);
+});
 
 test("大陆路由诊断在运营商参数错误时不发起网络测量", async () => {
 	const result = await runDiagnostic("unknown", {

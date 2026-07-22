@@ -390,13 +390,14 @@ export async function runMainlandRouteDiagnostics(
 			addresses.push({ address, https, mtr });
 		}
 	}
-	const infrastructureError =
-		dns.infrastructureError ||
-		addresses.some(
-			(item) => item.https.infrastructureError || item.mtr?.infrastructureError === true,
-		);
+	const hasDecisiveSiteFailure =
+		(!dns.passed && !dns.infrastructureError) ||
+		addresses.some((item) => !item.https.passed && !item.https.infrastructureError);
+	const hasDecisiveInfrastructureError =
+		dns.infrastructureError || addresses.some((item) => item.https.infrastructureError);
 	const passed =
-		!infrastructureError &&
+		!hasDecisiveSiteFailure &&
+		!hasDecisiveInfrastructureError &&
 		dns.passed &&
 		addresses.length === dns.addresses.length &&
 		addresses.every((item) => item.https.passed);
@@ -410,7 +411,13 @@ export async function runMainlandRouteDiagnostics(
 			city: options.network.city,
 		},
 		passed,
-		outcome: infrastructureError ? "infrastructure-error" : passed ? "passed" : "site-failure",
+		outcome: hasDecisiveSiteFailure
+			? "site-failure"
+			: hasDecisiveInfrastructureError
+				? "infrastructure-error"
+				: passed
+					? "passed"
+					: "site-failure",
 		dns,
 		addresses,
 	};
