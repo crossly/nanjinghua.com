@@ -61,6 +61,22 @@ NANJINGHUA_MAINLAND_TARGET=mirror.nanjinghua.com pnpm ops:validate:mainland
 
 2026-07-20 起的[固定三网恢复复验](../releases/2026-07-20-mainland-recovery-recheck.md)首个窗口三轮 36/36，第二窗口 35/36；把 `www` 设为规范内容域后的第三窗口只有 24/36，上海移动对 `www` 的 12 次请求全部超时。恢复裸域后，`2026-07-22T02:55:37Z` 至 `02:56:17Z` 的第四窗口短暂取得 36/36；当前版本部署后的第五窗口于 `03:28:23Z` 至 `03:30:42Z` 再次降为 24/36，上海移动对裸域四条路径的 12 次请求全部超时。原因未定的 Globalping 调用 `fetch failed` 或当前无匹配探针均按基础设施错误与站点结果分开记录。标准路径未通过跨时间稳定性和真实终端体验门槛，继续保持非音频预览。
 
+### 大陆地址级路由诊断
+
+三网门禁出现请求超时后，使用同一个固定探针拆分 DNS 和 Cloudflare 地址路径：
+
+```bash
+pnpm ops:diagnose:mainland-route -- mobile
+
+# 诊断其他固定回归点或获批的替代 hostname
+NANJINGHUA_MAINLAND_TARGET=mirror.nanjinghua.com \
+  pnpm ops:diagnose:mainland-route -- telecom
+```
+
+命令先用探针系统递归解析器查询全部 IPv4 A 地址，再对每个地址使用目标 hostname 作为 Host/SNI 执行 HTTPS GET。失败地址会追加 TCP 443 MTR；报告只保留测量 ID、目标地址、耗时、是否到达目标及响应路径中的 ASN，不输出探针公网地址或中间路由地址。状态码 0 表示该时刻所有解析地址都可从所选探针访问，状态码 1 表示至少一个地址失败，状态码 2 表示参数、API 或测量基础设施错误。
+
+该命令是故障定位工具，不是验收捷径：即使返回 0，也不能替代三轮四路径门禁或三家真实终端浏览器验收；不得通过只测试成功地址来绕过域名正常解析结果。若失败停在 Cloudflare 共享 Anycast 地址路径，Worker、TanStack 路由或 D1 修改不会改变到达边缘前的行为，应保留报告并交由 Cloudflare、运营商或获批的替代交付负责人处理。
+
 ### 真实终端浏览器验收
 
 自动社区探针通过后，仍需在直接连接中国电信、联通、移动的三个真实终端上分别执行：

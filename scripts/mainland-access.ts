@@ -102,6 +102,22 @@ export type GlobalpingMeasurementClient = {
 	measure(request: GlobalpingMeasurementRequest): Promise<GlobalpingMeasurement>;
 };
 
+export function validateMainlandTargetHostname(target: string): string {
+	const parsed = new URL(`https://${target}`);
+	if (
+		parsed.hostname !== target ||
+		parsed.username ||
+		parsed.password ||
+		parsed.port ||
+		parsed.pathname !== "/" ||
+		parsed.search ||
+		parsed.hash
+	) {
+		throw new Error("NANJINGHUA_MAINLAND_TARGET 必须是小写 hostname，不得包含协议、端口或路径");
+	}
+	return target;
+}
+
 export type MainlandProbeSummary = {
 	network: string;
 	asn: number;

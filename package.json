@@ -30,6 +30,7 @@
 		"performance:check": "node scripts/check-performance-budget.ts",
 		"ops:backup": "node scripts/backup-production.ts",
 		"ops:restore-drill": "node scripts/restore-drill.ts",
+		"ops:diagnose:mainland-route": "node scripts/diagnose-mainland-route.ts",
 		"ops:validate:mainland": "node scripts/validate-mainland-access.ts",
 		"ops:validate:terminal": "node scripts/validate-terminal-access.ts",
 		"ops:verify": "pnpm run build && pnpm run validate:cloudflare && pnpm run validate:cloudflare:remote && pnpm run validate:secrets && pnpm exec wrangler d1 migrations list nanjinghua-submissions --remote && pnpm exec wrangler deploy --dry-run && pnpm run performance:check",

@@ -14,6 +14,13 @@ type GlobalpingApiClientOptions = {
 	requestTimeoutMs?: number;
 };
 
+export type GlobalpingRawMeasurement = {
+	id: string;
+	status: string;
+	createdAt: string;
+	results: unknown[];
+};
+
 function apiErrorBody(body: string): string {
 	return body.replace(/\s+/g, " ").trim().slice(0, 1_000);
 }
@@ -61,7 +68,7 @@ export class GlobalpingApiClient implements GlobalpingMeasurementClient {
 		}
 	}
 
-	async measure(request: GlobalpingMeasurementRequest): Promise<GlobalpingMeasurement> {
+	async measureRaw(request: unknown): Promise<GlobalpingRawMeasurement> {
 		const created = (await this.#request("POST", "/measurements", request)) as {
 			id?: unknown;
 		};
@@ -74,7 +81,7 @@ export class GlobalpingApiClient implements GlobalpingMeasurementClient {
 			const measurement = (await this.#request(
 				"GET",
 				`/measurements/${encodeURIComponent(created.id)}`,
-			)) as Partial<GlobalpingMeasurement>;
+			)) as Partial<GlobalpingRawMeasurement>;
 			if (measurement.status === "finished") {
 				if (
 					typeof measurement.id !== "string" ||
@@ -83,7 +90,7 @@ export class GlobalpingApiClient implements GlobalpingMeasurementClient {
 				) {
 					throw new Error(`Globalping 测量 ${created.id} 的最终响应不完整`);
 				}
-				return measurement as GlobalpingMeasurement;
+				return measurement as GlobalpingRawMeasurement;
 			}
 			if (measurement.status !== "in-progress") {
 				throw new Error(
@@ -93,5 +100,9 @@ export class GlobalpingApiClient implements GlobalpingMeasurementClient {
 			if (this.#pollIntervalMs > 0) await sleep(this.#pollIntervalMs);
 		}
 		throw new Error(`等待 Globalping 测量 ${created.id} 超时`);
+	}
+
+	async measure(request: GlobalpingMeasurementRequest): Promise<GlobalpingMeasurement> {
+		return (await this.measureRaw(request)) as GlobalpingMeasurement;
 	}
 }

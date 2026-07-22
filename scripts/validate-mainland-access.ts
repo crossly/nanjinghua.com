@@ -1,5 +1,5 @@
 import { GlobalpingApiClient } from "./globalping-client.ts";
-import { runMainlandAccessValidation } from "./mainland-access.ts";
+import { runMainlandAccessValidation, validateMainlandTargetHostname } from "./mainland-access.ts";
 
 if (process.argv.includes("--help")) {
 	console.log(`用法：pnpm ops:validate:mainland
@@ -33,20 +33,7 @@ function integerEnvironment(
 }
 
 function targetHostname(): string {
-	const target = process.env.NANJINGHUA_MAINLAND_TARGET ?? "nanjinghua.com";
-	const parsed = new URL(`https://${target}`);
-	if (
-		parsed.hostname !== target ||
-		parsed.username ||
-		parsed.password ||
-		parsed.port ||
-		parsed.pathname !== "/" ||
-		parsed.search ||
-		parsed.hash
-	) {
-		throw new Error("NANJINGHUA_MAINLAND_TARGET 必须是小写 hostname，不得包含协议、端口或路径");
-	}
-	return target;
+	return validateMainlandTargetHostname(process.env.NANJINGHUA_MAINLAND_TARGET ?? "nanjinghua.com");
 }
 
 try {
