@@ -300,8 +300,56 @@ img {
 	margin-left: auto;
 }
 
+.city-story__sources {
+	width: min(100%, 39rem);
+	margin: 4rem auto 0;
+	padding-top: 1.5rem;
+	border-top: 1px solid rgba(38, 59, 72, 0.28);
+}
+
+.city-story__sources h2 {
+	margin: 0;
+	font-family: var(--serif);
+	font-size: 1.75rem;
+	font-weight: 700;
+	color: var(--blue);
+}
+
+.city-story__sources ul {
+	margin: 1.25rem 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.city-story__sources li {
+	padding: 1rem 0;
+	border-top: 1px solid rgba(38, 59, 72, 0.18);
+}
+
+.city-story__sources a {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.55rem;
+	font-size: 0.875rem;
+	font-weight: 700;
+	color: var(--blue);
+}
+
+.city-story__sources a svg {
+	width: 1rem;
+	height: 1rem;
+}
+
+.city-story__sources p {
+	margin: 0.5rem 0 0;
+	font-size: 0.8125rem;
+	line-height: 1.75;
+	color: rgba(23, 23, 20, 0.7);
+}
+
 .city-story__header a:focus-visible,
-.city-story__music:focus-visible {
+.city-story__music:focus-visible,
+.city-story__sources a:focus-visible {
 	outline: 2px solid var(--red);
 	outline-offset: 5px;
 }
@@ -466,8 +514,7 @@ img {
 	list-style: none;
 }
 
-.city-map__locations a,
-.city-map__waiting {
+.city-map__locations a {
 	display: grid;
 	grid-template-columns: auto auto;
 	align-items: center;
@@ -515,7 +562,6 @@ img {
 	height: 1.1rem;
 }
 
-.city-map__locations span span,
 .city-map__locations a span {
 	font-family: var(--serif);
 	font-weight: 700;
@@ -587,10 +633,19 @@ img {
 }
 
 .city-overview__list p {
+	display: flex;
+	justify-content: space-between;
+	gap: 1rem;
 	margin: 0;
 	font-size: 0.75rem;
 	font-weight: 700;
 	color: var(--red);
+}
+
+.city-overview__list p em {
+	flex: 0 0 auto;
+	font-style: normal;
+	color: var(--blue);
 }
 
 .city-overview__list h3 {
@@ -651,12 +706,6 @@ img {
 .city-overview__archive svg {
 	width: 1rem;
 	height: 1rem;
-}
-
-.city-map__waiting {
-	color: rgba(23, 23, 20, 0.68);
-	background: rgba(247, 247, 244, 0.84);
-	backdrop-filter: blur(0.25rem);
 }
 
 .city-story-dialog {
@@ -3334,8 +3383,7 @@ img {
 		outline-offset: 3px;
 	}
 
-	.city-map__locations a,
-	.city-map__waiting {
+	.city-map__locations a {
 		min-width: 0;
 		padding: 0.3rem;
 	}

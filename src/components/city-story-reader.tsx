@@ -41,6 +41,26 @@ export function CityStoryReader({ story }: { story: CityStory }) {
 					<ArrowUpRight aria-hidden="true" strokeWidth={1.5} />
 				</a>
 			) : null}
+
+			{story.sourceNotes && story.sourceNotes.length > 0 ? (
+				<section
+					className="city-story__sources"
+					aria-labelledby={`city-story-${story.slug}-sources`}
+				>
+					<h2 id={`city-story-${story.slug}-sources`}>想再翻一翻</h2>
+					<ul>
+						{story.sourceNotes.map((source) => (
+							<li key={source.href}>
+								<a href={source.href}>
+									<span>{source.label}</span>
+									<ArrowUpRight aria-hidden="true" strokeWidth={1.5} />
+								</a>
+								<p>{source.note}</p>
+							</li>
+						))}
+					</ul>
+				</section>
+			) : null}
 		</article>
 	);
 }

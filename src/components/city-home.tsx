@@ -13,6 +13,7 @@ export function CityHome({ activeStory }: { activeStory?: CityStory }) {
 	const navigate = useNavigate();
 	const router = useRouter();
 	const mapTriggerRefs = useRef(new Map<string, HTMLAnchorElement>());
+	const overviewTriggerRefs = useRef(new Map<string, HTMLAnchorElement>());
 	const [visitedStorySlugs, setVisitedStorySlugs] = useState<readonly string[]>([]);
 	const [isInteractive, setIsInteractive] = useState(false);
 
@@ -38,15 +39,22 @@ export function CityHome({ activeStory }: { activeStory?: CityStory }) {
 
 	useEffect(() => {
 		if (activeStory) return;
-		const triggerStorySlug = window.sessionStorage.getItem(dialogTriggerStorageKey);
-		if (!triggerStorySlug) return;
+		const triggerKey = window.sessionStorage.getItem(dialogTriggerStorageKey);
+		if (!triggerKey) return;
 		window.sessionStorage.removeItem(dialogTriggerStorageKey);
-		mapTriggerRefs.current.get(triggerStorySlug)?.focus();
+		const [triggerType, triggerStorySlug] = triggerKey.includes(":")
+			? triggerKey.split(":", 2)
+			: ["map", triggerKey];
+		const triggerRefs = triggerType === "overview" ? overviewTriggerRefs : mapTriggerRefs;
+		triggerRefs.current.get(triggerStorySlug)?.focus();
 	}, [activeStory]);
 
-	function openStory(storySlug: string) {
+	function openStory(storySlug: string, trigger: HTMLAnchorElement) {
 		const isMobile = window.matchMedia("(max-width: 44rem)").matches;
-		if (!isMobile) window.sessionStorage.setItem(dialogTriggerStorageKey, storySlug);
+		if (!isMobile) {
+			const triggerType = trigger.closest(".city-overview__list") ? "overview" : "map";
+			window.sessionStorage.setItem(dialogTriggerStorageKey, `${triggerType}:${storySlug}`);
+		}
 		setVisitedStorySlugs((currentStories) => {
 			if (currentStories.includes(storySlug)) return currentStories;
 			const nextStories = [...currentStories, storySlug];
@@ -85,7 +93,7 @@ export function CityHome({ activeStory }: { activeStory?: CityStory }) {
 				<h1 id="site-title">南京话</h1>
 				<h2>南京城的声音</h2>
 				<p className="city-home__lede">
-					从一座想象的城市开始，慢慢走进巷口、车站、灯会和一顿还冒着热气的早饭。
+					从一座想象的城市开始，慢慢走进巷口、车站、灯会和一顿还冒着热气的早饭。这里的“声音”是说话与城市表达，不是音频功能。
 				</p>
 				<a href="#city-map" className="city-home__scroll">
 					<span>从公交站出发</span>
@@ -104,7 +112,7 @@ export function CityHome({ activeStory }: { activeStory?: CityStory }) {
 
 				<div className="city-map__canvas">
 					<img
-						src="/images/city-map.png"
+						src="/images/city-map.webp"
 						width="1536"
 						height="1024"
 						alt="一张受南京日常生活启发的想象城市插画，包含公交站、巷口、小店、戏台、菜场与车站等地点。"
@@ -121,36 +129,28 @@ export function CityHome({ activeStory }: { activeStory?: CityStory }) {
 									} as CityLocationStyle
 								}
 							>
-								{location.storySlug ? (
-									<a
-										href={`/stories/${location.storySlug}`}
-										className={
-											visitedStorySlugs.includes(location.storySlug)
-												? "city-map__location--visited"
-												: undefined
-										}
-										ref={(node) => {
-											if (node) mapTriggerRefs.current.set(location.storySlug ?? "", node);
-										}}
-										onClick={(event) => {
-											event.preventDefault();
-											openStory(location.storySlug ?? "");
-										}}
-										aria-label={`去${location.label}看看${
-											visitedStorySlugs.includes(location.storySlug) ? "，已去过" : ""
-										}`}
-									>
-										<MapPin aria-hidden="true" strokeWidth={1.8} />
-										<span>{String(index + 1).padStart(2, "0")}</span>
-										<strong>{location.label}</strong>
-									</a>
-								) : (
-									<span className="city-map__waiting">
-										<span className="visually-hidden">{`${location.label}，故事正在散步中`}</span>
-										<span aria-hidden="true">{String(index + 1).padStart(2, "0")}</span>
-										<strong aria-hidden="true">{location.label}</strong>
-									</span>
-								)}
+								<a
+									href={`/stories/${location.storySlug}`}
+									className={
+										visitedStorySlugs.includes(location.storySlug)
+											? "city-map__location--visited"
+											: undefined
+									}
+									ref={(node) => {
+										if (node) mapTriggerRefs.current.set(location.storySlug, node);
+									}}
+									onClick={(event) => {
+										event.preventDefault();
+										openStory(location.storySlug, event.currentTarget);
+									}}
+									aria-label={`去${location.label}看看${
+										visitedStorySlugs.includes(location.storySlug) ? "，已去过" : ""
+									}`}
+								>
+									<MapPin aria-hidden="true" strokeWidth={1.8} />
+									<span>{String(index + 1).padStart(2, "0")}</span>
+									<strong>{location.label}</strong>
+								</a>
 							</li>
 						))}
 					</ol>
@@ -159,19 +159,22 @@ export function CityHome({ activeStory }: { activeStory?: CityStory }) {
 				<ol className="city-map__mobile-list" aria-label="城市地点清单">
 					{cityLocations.map((location, index) => (
 						<li key={location.id}>
-							{location.storySlug ? (
-								<a href={`/stories/${location.storySlug}`}>
-									<span>{String(index + 1).padStart(2, "0")}</span>
-									<strong>{location.label}</strong>
-									<span>进去看看</span>
-								</a>
-							) : (
-								<div>
-									<span>{String(index + 1).padStart(2, "0")}</span>
-									<strong>{location.label}</strong>
-									<span>故事正在散步中</span>
-								</div>
-							)}
+							<a
+								href={`/stories/${location.storySlug}`}
+								onClick={(event) => {
+									event.preventDefault();
+									openStory(location.storySlug, event.currentTarget);
+								}}
+								aria-label={`${location.label}，${
+									visitedStorySlugs.includes(location.storySlug) ? "已去过" : "进去看看"
+								}`}
+							>
+								<span>{String(index + 1).padStart(2, "0")}</span>
+								<strong>{location.label}</strong>
+								<span>
+									{visitedStorySlugs.includes(location.storySlug) ? "已去过" : "进去看看"}
+								</span>
+							</a>
 						</li>
 					))}
 				</ol>
@@ -189,8 +192,20 @@ export function CityHome({ activeStory }: { activeStory?: CityStory }) {
 				<ol className="city-overview__list" aria-label="城市故事总览">
 					{cityStories.map((story) => (
 						<li key={story.slug}>
-							<a href={`/stories/${story.slug}`}>
-								<p>城市散步 · {story.scene}</p>
+							<a
+								href={`/stories/${story.slug}`}
+								ref={(node) => {
+									if (node) overviewTriggerRefs.current.set(story.slug, node);
+								}}
+								onClick={(event) => {
+									event.preventDefault();
+									openStory(story.slug, event.currentTarget);
+								}}
+							>
+								<p>
+									城市散步 · {story.scene}
+									{visitedStorySlugs.includes(story.slug) ? <em>已去过</em> : null}
+								</p>
 								<h3>{story.title}</h3>
 								<span>{story.summary}</span>
 								<ArrowRight aria-hidden="true" strokeWidth={1.5} />

@@ -196,13 +196,14 @@ test("城市地图、故事总览和旧资料柜都有等价文本入口", async
 			name: "一张受南京日常生活启发的想象城市插画，包含公交站、巷口、小店、戏台、菜场与车站等地点。",
 		}),
 	).toBeVisible();
-	await expect(
-		page.getByRole("list", { name: "城市地点", exact: true }).getByRole("listitem"),
-	).toHaveCount(15);
+	const cityLocations = page.getByRole("list", { name: "城市地点", exact: true });
+	await expect(cityLocations.getByRole("listitem")).toHaveCount(15);
+	await expect(cityLocations.getByRole("link")).toHaveCount(15);
 	await expect(page.getByRole("link", { name: "去公交站看看" })).toBeVisible();
-	await expect(page.getByText("巷口，故事正在散步中", { exact: true })).toHaveCount(1);
+	await expect(page.getByText(/故事正在散步中/)).toHaveCount(0);
 
 	const storyOverview = page.getByRole("list", { name: "城市故事总览" });
+	await expect(storyOverview.getByRole("link")).toHaveCount(15);
 	await expect(
 		storyOverview.getByRole("link", { name: /早高峰，南京人都在挤公交/ }),
 	).toHaveAttribute("href", "/stories/jigongjiao");
@@ -235,9 +236,13 @@ test.describe("减少动态", () => {
 			.poll(() =>
 				page
 					.locator(".city-overview__list svg")
-					.evaluate((element) => Number.parseFloat(getComputedStyle(element).transitionDuration)),
+					.evaluateAll((elements) =>
+						elements.every(
+							(element) => Number.parseFloat(getComputedStyle(element).transitionDuration) <= 0.01,
+						),
+					),
 			)
-			.toBeLessThanOrEqual(0.01);
+			.toBe(true);
 	});
 
 	test("城市故事在减少动态偏好下保持静态阅读", async ({ page }) => {
