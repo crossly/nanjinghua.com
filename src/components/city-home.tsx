@@ -12,8 +12,13 @@ const visitedStoriesStorageKey = "nanjinghua:visited-city-stories";
 export function CityHome({ activeStory }: { activeStory?: CityStory }) {
 	const navigate = useNavigate();
 	const router = useRouter();
-	const mapTriggerRefs = useRef(new Map<string, HTMLButtonElement>());
+	const mapTriggerRefs = useRef(new Map<string, HTMLAnchorElement>());
 	const [visitedStorySlugs, setVisitedStorySlugs] = useState<readonly string[]>([]);
+	const [isInteractive, setIsInteractive] = useState(false);
+
+	useEffect(() => {
+		setIsInteractive(true);
+	}, []);
 
 	useEffect(() => {
 		const savedStories = window.localStorage.getItem(visitedStoriesStorageKey);
@@ -63,7 +68,7 @@ export function CityHome({ activeStory }: { activeStory?: CityStory }) {
 	}
 
 	return (
-		<main className="city-home">
+		<main className="city-home" data-city-interactive={isInteractive || undefined}>
 			<header className="city-home__header">
 				<a href="/" aria-label="南京话首页">
 					南京话
@@ -117,8 +122,8 @@ export function CityHome({ activeStory }: { activeStory?: CityStory }) {
 								}
 							>
 								{location.storySlug ? (
-									<button
-										type="button"
+									<a
+										href={`/stories/${location.storySlug}`}
 										className={
 											visitedStorySlugs.includes(location.storySlug)
 												? "city-map__location--visited"
@@ -127,7 +132,8 @@ export function CityHome({ activeStory }: { activeStory?: CityStory }) {
 										ref={(node) => {
 											if (node) mapTriggerRefs.current.set(location.storySlug ?? "", node);
 										}}
-										onClick={() => {
+										onClick={(event) => {
+											event.preventDefault();
 											openStory(location.storySlug ?? "");
 										}}
 										aria-label={`去${location.label}看看${
@@ -137,7 +143,7 @@ export function CityHome({ activeStory }: { activeStory?: CityStory }) {
 										<MapPin aria-hidden="true" strokeWidth={1.8} />
 										<span>{String(index + 1).padStart(2, "0")}</span>
 										<strong>{location.label}</strong>
-									</button>
+									</a>
 								) : (
 									<span className="city-map__waiting">
 										<span className="visually-hidden">{`${location.label}，故事正在散步中`}</span>

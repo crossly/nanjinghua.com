@@ -9,11 +9,21 @@ test("预渲染检索页可从纯静态产物恢复查询与组合筛选", async
 
 	await page.goto("/browse?q=nanjing%20baiju");
 	await expect(page).toHaveURL(/\/browse\?q=nanjing(\+|%20)baiju/);
-	await expect(page.getByRole("heading", { level: 3, name: /南京白局/ })).toBeVisible();
+	await expect(
+		page.getByRole("heading", {
+			level: 3,
+			name: "国家级非物质文化遗产代表性项目“南京白局”（项目 Ⅴ-81）",
+		}),
+	).toBeVisible();
 	await expect(page.getByText("当前条件 · 1 项", { exact: true })).toBeVisible();
 
 	await page.reload();
-	await expect(page.getByRole("heading", { level: 3, name: /南京白局/ })).toBeVisible();
+	await expect(
+		page.getByRole("heading", {
+			level: 3,
+			name: "国家级非物质文化遗产代表性项目“南京白局”（项目 Ⅴ-81）",
+		}),
+	).toBeVisible();
 	await expect(page.getByText("当前条件 · 1 项", { exact: true })).toBeVisible();
 
 	await page.getByLabel("搜索题名、人物、词语、正文或普通话拼音").fill("");

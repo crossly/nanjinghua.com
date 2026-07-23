@@ -37,16 +37,17 @@ test("读者可以从城市地图进入公交站故事", async ({ page }) => {
 		"href",
 		"/browse",
 	);
+	await expect(page.locator("main.city-home")).toHaveAttribute("data-city-interactive", "true");
 	if ((page.viewportSize()?.width ?? 0) <= 704) {
+		const mobileStoryLink = page.getByRole("link", { name: /公交站.*进去看看/ });
 		await expect(
 			page.getByRole("list", { name: "城市地点清单" }).getByRole("listitem"),
 		).toHaveCount(15);
-		await expect(page.getByRole("link", { name: /公交站.*进去看看/ })).toHaveAttribute(
-			"href",
-			"/stories/jigongjiao",
-		);
+		await expect(mobileStoryLink).toHaveAttribute("href", "/stories/jigongjiao");
+		await mobileStoryLink.click();
+	} else {
+		await page.getByRole("link", { name: "去公交站看看" }).click();
 	}
-	await page.getByRole("button", { name: "去公交站看看" }).click();
 	await expect(page).toHaveURL(/\/stories\/jigongjiao$/);
 
 	if ((page.viewportSize()?.width ?? 0) <= 704) {
@@ -71,15 +72,15 @@ test("读者可以从城市地图进入公交站故事", async ({ page }) => {
 	await page.keyboard.press("Escape");
 	await expect(page).toHaveURL(/\/$/);
 	await expect(storyWindow).toHaveCount(0);
-	await expect(page.getByRole("button", { name: "去公交站看看" })).toBeFocused();
+	await expect(page.getByRole("link", { name: "去公交站看看" })).toBeFocused();
 
-	await page.getByRole("button", { name: "去公交站看看" }).click();
+	await page.getByRole("link", { name: "去公交站看看" }).click();
 	await page.getByRole("button", { name: "关闭故事窗口" }).click();
 	await expect(page).toHaveURL(/\/$/);
-	await expect(page.getByRole("button", { name: "去公交站看看" })).toBeFocused();
+	await expect(page.getByRole("link", { name: "去公交站看看" })).toBeFocused();
 
-	await page.getByRole("button", { name: "去公交站看看" }).click();
+	await page.getByRole("link", { name: "去公交站看看" }).click();
 	await page.goBack();
 	await expect(page).toHaveURL(/\/$/);
-	await expect(page.getByRole("button", { name: "去公交站看看" })).toBeFocused();
+	await expect(page.getByRole("link", { name: "去公交站看看" })).toBeFocused();
 });

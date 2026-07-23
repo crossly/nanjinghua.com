@@ -18,7 +18,9 @@ test("访客可以从品牌首页开始城市漫游", async ({ page }) => {
 			.getByText("一点点关于南京话、城市生活的记忆", { exact: true }),
 	).toBeVisible();
 	await expect(page.getByRole("img", { name: /想象城市插画/ })).toBeVisible();
-	await expect(page.getByRole("list", { name: "城市地点" }).getByRole("listitem")).toHaveCount(15);
+	await expect(
+		page.getByRole("list", { name: "城市地点", exact: true }).getByRole("listitem"),
+	).toHaveCount(15);
 	await expect(page.locator("audio")).toHaveCount(0);
 
 	const storyLink = page.getByRole("link", { name: /早高峰，南京人都在挤公交/ });

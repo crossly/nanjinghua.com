@@ -147,6 +147,7 @@ img {
 
 .city-story {
 	min-height: 100svh;
+	overflow-x: clip;
 	padding: 1.5rem clamp(1.25rem, 4vw, 4rem) 5rem;
 	color: var(--ink);
 	background:
@@ -465,7 +466,7 @@ img {
 	list-style: none;
 }
 
-.city-map__locations button,
+.city-map__locations a,
 .city-map__waiting {
 	display: grid;
 	grid-template-columns: auto auto;
@@ -480,11 +481,12 @@ img {
 	border: 1px solid rgba(38, 59, 72, 0.42);
 }
 
-.city-map__locations button {
+.city-map__locations a {
 	position: relative;
 	color: var(--white);
 	cursor: pointer;
 	background: var(--blue);
+	text-decoration: none;
 	transition:
 		transform 160ms ease,
 		background 160ms ease;
@@ -502,19 +504,19 @@ img {
 	border-radius: 50%;
 }
 
-.city-map__locations button:hover {
+.city-map__locations a:hover {
 	background: var(--red);
 	transform: translateY(-0.2rem);
 }
 
-.city-map__locations button svg {
+.city-map__locations a svg {
 	grid-row: span 2;
 	width: 1.1rem;
 	height: 1.1rem;
 }
 
 .city-map__locations span span,
-.city-map__locations button span {
+.city-map__locations a span {
 	font-family: var(--serif);
 	font-weight: 700;
 }
@@ -729,7 +731,7 @@ img {
 
 .city-home__header a:focus-visible,
 .city-home__scroll:focus-visible,
-.city-map__locations button:focus-visible,
+.city-map__locations a:focus-visible,
 .city-overview a:focus-visible,
 .city-story-dialog button:focus-visible {
 	outline: 2px solid var(--red);
@@ -3332,7 +3334,7 @@ img {
 		outline-offset: 3px;
 	}
 
-	.city-map__locations button,
+	.city-map__locations a,
 	.city-map__waiting {
 		min-width: 0;
 		padding: 0.3rem;

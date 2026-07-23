@@ -199,7 +199,7 @@ test("城市地图、故事总览和旧资料柜都有等价文本入口", async
 	await expect(
 		page.getByRole("list", { name: "城市地点", exact: true }).getByRole("listitem"),
 	).toHaveCount(15);
-	await expect(page.getByRole("button", { name: "去公交站看看" })).toBeVisible();
+	await expect(page.getByRole("link", { name: "去公交站看看" })).toBeVisible();
 	await expect(page.getByText("巷口，故事正在散步中", { exact: true })).toHaveCount(1);
 
 	const storyOverview = page.getByRole("list", { name: "城市故事总览" });
@@ -227,7 +227,7 @@ test.describe("减少动态", () => {
 		await expect
 			.poll(() =>
 				page
-					.getByRole("button", { name: "去公交站看看" })
+					.getByRole("link", { name: "去公交站看看" })
 					.evaluate((element) => getComputedStyle(element).animationName),
 			)
 			.toBe("none");
