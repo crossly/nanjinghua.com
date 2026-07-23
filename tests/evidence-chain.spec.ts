@@ -1,8 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 test("读者可以从专题文章追到档案条目和来源", async ({ page, request }) => {
-	await page.goto("/");
-	await page.getByRole("link", { name: "查看证据处理示例" }).click();
+	await page.goto("/articles/what-a-review-can-tell-us");
 
 	await expect(
 		page.getByRole("heading", { level: 1, name: "一篇综述能告诉我们什么？" }),

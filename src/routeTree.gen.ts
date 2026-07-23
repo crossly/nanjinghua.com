@@ -13,6 +13,7 @@ import { Route as RecordingKitRouteImport } from './routes/recording-kit'
 import { Route as ContributeRouteImport } from './routes/contribute'
 import { Route as BrowseRouteImport } from './routes/browse'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as StoriesStorySlugRouteImport } from './routes/stories/$storySlug'
 import { Route as PoliciesPolicySlugRouteImport } from './routes/policies/$policySlug'
 import { Route as ArticlesSlugRouteImport } from './routes/articles/$slug'
 import { Route as ArchiveArchiveIdRouteImport } from './routes/archive/$archiveId'
@@ -40,6 +41,11 @@ const BrowseRoute = BrowseRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StoriesStorySlugRoute = StoriesStorySlugRouteImport.update({
+  id: '/stories/$storySlug',
+  path: '/stories/$storySlug',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PoliciesPolicySlugRoute = PoliciesPolicySlugRouteImport.update({
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/archive/$archiveId': typeof ArchiveArchiveIdRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/policies/$policySlug': typeof PoliciesPolicySlugRoute
+  '/stories/$storySlug': typeof StoriesStorySlugRoute
   '/api/archive/$archiveId': typeof ApiArchiveArchiveIdRoute
   '/api/editor/submissions/$submissionId': typeof ApiEditorSubmissionsSubmissionIdRouteWithChildren
   '/api/editor/submissions/maintenance': typeof ApiEditorSubmissionsMaintenanceRoute
@@ -109,6 +116,7 @@ export interface FileRoutesByTo {
   '/archive/$archiveId': typeof ArchiveArchiveIdRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/policies/$policySlug': typeof PoliciesPolicySlugRoute
+  '/stories/$storySlug': typeof StoriesStorySlugRoute
   '/api/archive/$archiveId': typeof ApiArchiveArchiveIdRoute
   '/api/editor/submissions/$submissionId': typeof ApiEditorSubmissionsSubmissionIdRouteWithChildren
   '/api/editor/submissions/maintenance': typeof ApiEditorSubmissionsMaintenanceRoute
@@ -124,6 +132,7 @@ export interface FileRoutesById {
   '/archive/$archiveId': typeof ArchiveArchiveIdRoute
   '/articles/$slug': typeof ArticlesSlugRoute
   '/policies/$policySlug': typeof PoliciesPolicySlugRoute
+  '/stories/$storySlug': typeof StoriesStorySlugRoute
   '/api/archive/$archiveId': typeof ApiArchiveArchiveIdRoute
   '/api/editor/submissions/$submissionId': typeof ApiEditorSubmissionsSubmissionIdRouteWithChildren
   '/api/editor/submissions/maintenance': typeof ApiEditorSubmissionsMaintenanceRoute
@@ -140,6 +149,7 @@ export interface FileRouteTypes {
     | '/archive/$archiveId'
     | '/articles/$slug'
     | '/policies/$policySlug'
+    | '/stories/$storySlug'
     | '/api/archive/$archiveId'
     | '/api/editor/submissions/$submissionId'
     | '/api/editor/submissions/maintenance'
@@ -154,6 +164,7 @@ export interface FileRouteTypes {
     | '/archive/$archiveId'
     | '/articles/$slug'
     | '/policies/$policySlug'
+    | '/stories/$storySlug'
     | '/api/archive/$archiveId'
     | '/api/editor/submissions/$submissionId'
     | '/api/editor/submissions/maintenance'
@@ -168,6 +179,7 @@ export interface FileRouteTypes {
     | '/archive/$archiveId'
     | '/articles/$slug'
     | '/policies/$policySlug'
+    | '/stories/$storySlug'
     | '/api/archive/$archiveId'
     | '/api/editor/submissions/$submissionId'
     | '/api/editor/submissions/maintenance'
@@ -183,6 +195,7 @@ export interface RootRouteChildren {
   ArchiveArchiveIdRoute: typeof ArchiveArchiveIdRoute
   ArticlesSlugRoute: typeof ArticlesSlugRoute
   PoliciesPolicySlugRoute: typeof PoliciesPolicySlugRoute
+  StoriesStorySlugRoute: typeof StoriesStorySlugRoute
   ApiArchiveArchiveIdRoute: typeof ApiArchiveArchiveIdRoute
   ApiEditorSubmissionsSubmissionIdRoute: typeof ApiEditorSubmissionsSubmissionIdRouteWithChildren
   ApiEditorSubmissionsMaintenanceRoute: typeof ApiEditorSubmissionsMaintenanceRoute
@@ -216,6 +229,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/stories/$storySlug': {
+      id: '/stories/$storySlug'
+      path: '/stories/$storySlug'
+      fullPath: '/stories/$storySlug'
+      preLoaderRoute: typeof StoriesStorySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/policies/$policySlug': {
@@ -301,6 +321,7 @@ const rootRouteChildren: RootRouteChildren = {
   ArchiveArchiveIdRoute: ArchiveArchiveIdRoute,
   ArticlesSlugRoute: ArticlesSlugRoute,
   PoliciesPolicySlugRoute: PoliciesPolicySlugRoute,
+  StoriesStorySlugRoute: StoriesStorySlugRoute,
   ApiArchiveArchiveIdRoute: ApiArchiveArchiveIdRoute,
   ApiEditorSubmissionsSubmissionIdRoute:
     ApiEditorSubmissionsSubmissionIdRouteWithChildren,

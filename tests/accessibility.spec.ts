@@ -3,6 +3,7 @@ import { expect, type Locator, type Page, test } from "@playwright/test";
 
 const representativePages = [
 	["首页", "/"],
+	["城市故事", "/stories/jigongjiao"],
 	["专题", "/articles/what-is-nanjinghua"],
 	["最长外文题名档案", "/archive/NJH000010"],
 	["长中文题名档案", "/archive/NJH000013"],
@@ -98,17 +99,20 @@ for (const [label, path] of representativePages) {
 	});
 }
 
-test("键盘用户可以从首页进入检索并提交查询", async ({ page }) => {
+test("键盘用户可以从首页进入旧资料柜并提交查询", async ({ page }) => {
 	await page.goto("/");
 
-	await tabTo(page, page.locator(".site-header__brand"));
+	await tabTo(page, page.locator(".city-home__header").getByRole("link", { name: "南京话首页" }));
 	await expect
 		.poll(() =>
 			page.locator(":focus").evaluate((element) => getComputedStyle(element).outlineStyle),
 		)
 		.not.toBe("none");
 
-	const browseLink = page.locator(".site-header nav").getByRole("link");
+	const homeNavigation = page.getByRole("navigation", { name: "首页导航" });
+	await tabTo(page, homeNavigation.getByRole("link", { name: "逛一逛" }));
+	await tabTo(page, homeNavigation.getByRole("link", { name: "翻翻看" }));
+	const browseLink = homeNavigation.getByRole("link", { name: "旧资料柜" });
 	await tabTo(page, browseLink);
 	await browseLink.press("Enter");
 	await expect(page).toHaveURL(/\/browse\/?$/);
@@ -184,17 +188,26 @@ test("直接打开线索表单 fragment 会在控件启用后聚焦线索类型"
 	await expect(page.getByLabel("线索类型")).toBeFocused();
 });
 
-test("地图、历史路径和扫描件都有等价文本入口", async ({ page }) => {
+test("城市地图、故事总览和旧资料柜都有等价文本入口", async ({ page }) => {
 	await page.goto("/");
 
-	await expect(page.getByRole("img", { name: "1940 年《南京市区图》扫描件" })).toBeVisible();
 	await expect(
-		page.getByRole("link", { name: "在 Wikimedia Commons 查看 1940 年《南京市区图》来源" }),
-	).toHaveAttribute("href", /^https:\/\/commons\.wikimedia\.org/);
+		page.getByRole("img", {
+			name: "一张受南京日常生活启发的想象城市插画，包含公交站、巷口、小店、戏台、菜场与车站等地点。",
+		}),
+	).toBeVisible();
+	await expect(page.getByRole("list", { name: "城市地点" }).getByRole("listitem")).toHaveCount(15);
+	await expect(page.getByRole("button", { name: "去公交站看看" })).toBeVisible();
+	await expect(page.getByText("巷口，故事正在散步中", { exact: true })).toHaveCount(1);
 
-	const historicalPath = page.getByRole("region", { name: "从材料看见时间" });
-	await expect(historicalPath.getByRole("listitem")).toHaveCount(5);
-	await expect(historicalPath.getByRole("time")).toHaveCount(5);
+	const storyOverview = page.getByRole("list", { name: "城市故事总览" });
+	await expect(
+		storyOverview.getByRole("link", { name: /早高峰，南京人都在挤公交/ }),
+	).toHaveAttribute("href", "/stories/jigongjiao");
+	await expect(page.getByRole("link", { name: "去旧资料柜看看" })).toHaveAttribute(
+		"href",
+		"/browse",
+	);
 
 	await page.goto("/archive/NJH000008");
 	await expect(page.getByText(/一部英文官话语法原著/)).toBeVisible();
@@ -205,21 +218,23 @@ test("地图、历史路径和扫描件都有等价文本入口", async ({ page 
 });
 
 test.describe("减少动态", () => {
-	test("首页在减少动态偏好下关闭入场动画和箭头过渡", async ({ page }) => {
+	test("城市首页在减少动态偏好下压低地点与总览动效", async ({ page }) => {
 		await page.emulateMedia({ reducedMotion: "reduce" });
 		await page.goto("/");
 
 		await expect
 			.poll(() =>
-				page.locator(".hero__map").evaluate((element) => getComputedStyle(element).animationName),
+				page
+					.getByRole("button", { name: "去公交站看看" })
+					.evaluate((element) => getComputedStyle(element).animationName),
 			)
 			.toBe("none");
 		await expect
 			.poll(() =>
 				page
-					.locator(".hero__action svg")
-					.evaluate((element) => getComputedStyle(element).transitionDuration),
+					.locator(".city-overview__list svg")
+					.evaluate((element) => Number.parseFloat(getComputedStyle(element).transitionDuration)),
 			)
-			.toBe("0s");
+			.toBeLessThanOrEqual(0.01);
 	});
 });

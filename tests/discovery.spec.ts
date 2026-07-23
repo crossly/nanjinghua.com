@@ -1,8 +1,8 @@
 import { expect, test } from "@playwright/test";
 
-test("访客可以从首页检索正文、人物和普通话拼音", async ({ page }) => {
+test("访客可以从首页的旧资料柜检索正文、人物和普通话拼音", async ({ page }) => {
 	await page.goto("/");
-	await page.getByRole("link", { name: "浏览与检索档案" }).click();
+	await page.locator(".city-home__header").getByRole("link", { name: "旧资料柜" }).click();
 	await expect(page).toHaveURL(/\/browse\/?$/);
 
 	const query = page.getByLabel("搜索题名、人物、词语、正文或普通话拼音");

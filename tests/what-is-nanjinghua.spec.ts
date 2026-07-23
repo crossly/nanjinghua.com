@@ -1,8 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 test("读者可以区分专题中的三类语言对象并核查来源", async ({ page, request }) => {
-	await page.goto("/");
-	await page.getByRole("link", { name: "进入“南京话是什么？”专题" }).click();
+	await page.goto("/articles/what-is-nanjinghua");
 
 	await expect(page.getByRole("heading", { level: 1, name: "南京话是什么？" })).toBeVisible();
 	await expect(page.getByText("南京话", { exact: true }).first()).toBeVisible();

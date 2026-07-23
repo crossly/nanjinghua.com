@@ -1,8 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 test("读者可以在有限样本中理解今天的南京话怎样变化", async ({ page, request }) => {
-	await page.goto("/");
-	await page.getByRole("link", { name: "今天的南京话怎样变化？" }).click();
+	await page.goto("/articles/contemporary-nanjinghua-change");
 
 	await expect(
 		page.getByRole("heading", { level: 1, name: "今天的南京话怎样变化？" }),

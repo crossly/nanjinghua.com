@@ -1,8 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 test("读者可以区分历史南京音、南京官话与当代南京话", async ({ page }) => {
-	await page.goto("/");
-	await page.getByRole("link", { name: "历史上的南京音与南京官话是什么？" }).click();
+	await page.goto("/articles/historical-nanjing-speech");
 
 	await expect(
 		page.getByRole("heading", { level: 1, name: "历史上的南京音与南京官话是什么？" }),

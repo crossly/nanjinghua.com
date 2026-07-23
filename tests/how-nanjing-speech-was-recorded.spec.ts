@@ -1,8 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 test("读者可以沿材料链理解南京话如何被记录下来", async ({ page, request }) => {
-	await page.goto("/");
-	await page.getByRole("link", { name: "南京话如何被记录下来？" }).click();
+	await page.goto("/articles/how-nanjing-speech-was-recorded");
 
 	await expect(
 		page.getByRole("heading", { level: 1, name: "南京话如何被记录下来？" }),

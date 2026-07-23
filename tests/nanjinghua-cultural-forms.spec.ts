@@ -1,8 +1,7 @@
 import { expect, test } from "@playwright/test";
 
 test("读者可以沿五条不同证据理解南京话活在什么文化里", async ({ page, request }) => {
-	await page.goto("/");
-	await page.getByRole("link", { name: "南京话活在什么文化里？" }).click();
+	await page.goto("/articles/nanjinghua-cultural-forms");
 
 	await expect(
 		page.getByRole("heading", { level: 1, name: "南京话活在什么文化里？" }),
