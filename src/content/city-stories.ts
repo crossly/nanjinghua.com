@@ -3,6 +3,12 @@ export type MusicBookplate = {
 	href: string;
 };
 
+export type CityStorySourceNote = {
+	label: string;
+	href: string;
+	note: string;
+};
+
 export type CityStory = {
 	slug: string;
 	title: string;
@@ -20,6 +26,8 @@ export type CityStory = {
 		body: string;
 	}[];
 	music?: MusicBookplate;
+	relatedStorySlugs?: readonly string[];
+	sourceNotes?: readonly CityStorySourceNote[];
 };
 
 export type CityLocation = {

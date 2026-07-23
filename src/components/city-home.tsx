@@ -149,6 +149,26 @@ export function CityHome({ activeStory }: { activeStory?: CityStory }) {
 						))}
 					</ol>
 				</div>
+
+				<ol className="city-map__mobile-list" aria-label="城市地点清单">
+					{cityLocations.map((location, index) => (
+						<li key={location.id}>
+							{location.storySlug ? (
+								<a href={`/stories/${location.storySlug}`}>
+									<span>{String(index + 1).padStart(2, "0")}</span>
+									<strong>{location.label}</strong>
+									<span>进去看看</span>
+								</a>
+							) : (
+								<div>
+									<span>{String(index + 1).padStart(2, "0")}</span>
+									<strong>{location.label}</strong>
+									<span>故事正在散步中</span>
+								</div>
+							)}
+						</li>
+					))}
+				</ol>
 			</section>
 
 			<section className="city-overview" id="city-overview" aria-labelledby="city-overview-title">

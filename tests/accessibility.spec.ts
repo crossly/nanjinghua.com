@@ -196,7 +196,9 @@ test("城市地图、故事总览和旧资料柜都有等价文本入口", async
 			name: "一张受南京日常生活启发的想象城市插画，包含公交站、巷口、小店、戏台、菜场与车站等地点。",
 		}),
 	).toBeVisible();
-	await expect(page.getByRole("list", { name: "城市地点" }).getByRole("listitem")).toHaveCount(15);
+	await expect(
+		page.getByRole("list", { name: "城市地点", exact: true }).getByRole("listitem"),
+	).toHaveCount(15);
 	await expect(page.getByRole("button", { name: "去公交站看看" })).toBeVisible();
 	await expect(page.getByText("巷口，故事正在散步中", { exact: true })).toHaveCount(1);
 
@@ -233,6 +235,19 @@ test.describe("减少动态", () => {
 			.poll(() =>
 				page
 					.locator(".city-overview__list svg")
+					.evaluate((element) => Number.parseFloat(getComputedStyle(element).transitionDuration)),
+			)
+			.toBeLessThanOrEqual(0.01);
+	});
+
+	test("城市故事在减少动态偏好下保持静态阅读", async ({ page }) => {
+		await page.emulateMedia({ reducedMotion: "reduce" });
+		await page.goto("/stories/jigongjiao");
+
+		await expect
+			.poll(() =>
+				page
+					.locator(".city-story__music")
 					.evaluate((element) => Number.parseFloat(getComputedStyle(element).transitionDuration)),
 			)
 			.toBeLessThanOrEqual(0.01);

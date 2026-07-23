@@ -37,6 +37,15 @@ test("读者可以从城市地图进入公交站故事", async ({ page }) => {
 		"href",
 		"/browse",
 	);
+	if ((page.viewportSize()?.width ?? 0) <= 704) {
+		await expect(
+			page.getByRole("list", { name: "城市地点清单" }).getByRole("listitem"),
+		).toHaveCount(15);
+		await expect(page.getByRole("link", { name: /公交站.*进去看看/ })).toHaveAttribute(
+			"href",
+			"/stories/jigongjiao",
+		);
+	}
 	await page.getByRole("button", { name: "去公交站看看" }).click();
 	await expect(page).toHaveURL(/\/stories\/jigongjiao$/);
 
@@ -45,11 +54,20 @@ test("读者可以从城市地图进入公交站故事", async ({ page }) => {
 			page.getByRole("heading", { level: 1, name: "早高峰，南京人都在挤公交" }),
 		).toBeVisible();
 		await expect(page.getByRole("dialog")).toHaveCount(0);
+		const overflow = await page.evaluate(
+			() => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+		);
+		expect(overflow).toBeLessThanOrEqual(1);
 		return;
 	}
 
 	const storyWindow = page.getByRole("dialog", { name: "早高峰，南京人都在挤公交" });
 	await expect(storyWindow).toBeVisible();
+	await expect(page.getByRole("button", { name: "关闭故事窗口" })).toBeFocused();
+	await page.keyboard.press("Tab");
+	await expect
+		.poll(() => storyWindow.evaluate((dialog) => dialog.contains(document.activeElement)))
+		.toBe(true);
 	await page.keyboard.press("Escape");
 	await expect(page).toHaveURL(/\/$/);
 	await expect(storyWindow).toHaveCount(0);
