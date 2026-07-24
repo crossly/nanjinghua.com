@@ -28,7 +28,7 @@ CANDIDATE_ROOT = Path(".tts-candidates/qwen3-tts-flash-li")
 PUBLIC_AUDIO_DIR = Path("public/audio/nanjinghua-trials")
 
 TRIALS = (
-	("jigongjiao", "后头空得很，往里走走。"),
+	("jigongjiao", "后头空得很，往里走诶。"),
 	("lane", "上哪块去啊？"),
 	("shop", "老板，这个怎么卖啊？"),
 	("market", "便宜一得儿行啊？"),
@@ -41,7 +41,7 @@ TRIALS = (
 	("phone-screen", "你到哪块了？"),
 	("stage", "开场了，快坐得。"),
 	("desk", "这本你看到哪块了？"),
-	("festival-street", "人多得不得了。"),
+	("festival-street", "人多的一塌。"),
 	("station", "票证带了啊？"),
 )
 

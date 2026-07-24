@@ -63,6 +63,12 @@ test("读者可以直接打开公交站城市故事", async ({ page }) => {
 	await expect(page.locator(".city-story__body > p").first()).toContainText(
 		"车门一开，大家都往里挪",
 	);
+	const busPhrase = page
+		.getByRole("list", { name: "公交站场景对话" })
+		.getByRole("listitem")
+		.filter({ hasText: "后头空得很，往里走诶。" });
+	await expect(busPhrase).toContainText("后面很空，请往里面走。");
+	await expect(busPhrase.getByRole("button", { name: "播放：后头空得很，往里走诶。" })).toBeVisible();
 
 	const musicLink = page.getByRole("link", {
 		name: "在 QQ 音乐打开《挤公交（bonus track）》",
@@ -202,6 +208,12 @@ test("十五个城市地点可从地图和总览进入同一篇独立故事", as
 	await expect(page.getByText("旧资料柜", { exact: true })).toHaveCount(0);
 
 	await page.goto("/stories/festival-street");
+	const festivalPhrase = page
+		.getByRole("list", { name: "灯会街口场景对话" })
+		.getByRole("listitem")
+		.filter({ hasText: "人多的一塌。" });
+	await expect(festivalPhrase).toContainText("人特别多。");
+	await expect(festivalPhrase.getByRole("button", { name: "播放：人多的一塌。" })).toBeVisible();
 	const festivalMusicReference = page.getByRole("complementary", {
 		name: "推荐聆听：Come on！莱斯狗！",
 	});

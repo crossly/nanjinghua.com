@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-24T14:13:06.038321+00:00",
+  "generated_at": "2026-07-24T14:20:40.155737+00:00",
   "model": "qwen3-tts-flash",
   "voice": "Li",
   "voice_name": "南京-老李",
@@ -7,11 +7,11 @@
   "entries": [
     {
       "slug": "jigongjiao",
-      "text": "后头空得很，往里走走。",
-      "request_id": "15e30c51-fcab-9295-8a2e-26b7fbdbd357",
-      "duration_seconds": 1.68,
-      "size_bytes": 80718,
-      "sha256": "c07007377d9f14037e3b03246d1504e46a40f9c60fef3e51fe85654e7b773708"
+      "text": "后头空得很，往里走诶。",
+      "request_id": "8d045cbc-f3ae-9d65-acd7-aacec04c2ca7",
+      "duration_seconds": 2.0,
+      "size_bytes": 96078,
+      "sha256": "780eda50c9fc0c595e31284884fe5dea9c9bed49ecd6dc4aab937c3ee53fb821"
     },
     {
       "slug": "lane",
@@ -111,11 +111,11 @@
     },
     {
       "slug": "festival-street",
-      "text": "人多得不得了。",
-      "request_id": "6d864ca0-0159-9d09-863b-fa21f2f0f0fd",
-      "duration_seconds": 0.96,
-      "size_bytes": 46158,
-      "sha256": "fcd167743a3543ccd4500baf024f13fd59dc559268cb87afab22f2ec06d7d0f8"
+      "text": "人多的一塌。",
+      "request_id": "09c2af1f-e43b-941c-89ec-63e4e82b355a",
+      "duration_seconds": 0.88,
+      "size_bytes": 42318,
+      "sha256": "05716656bb464b7bcfd131dc6658fbf8e654b79867693ef4303425be602b244f"
     },
     {
       "slug": "station",
@@ -125,5 +125,6 @@
       "size_bytes": 65358,
       "sha256": "28778d8883313825308cae74cfa40bc19d15be2cef54628a493d65d3b35a8fb7"
     }
-  ]
+  ],
+  "generation_note": "Only jigongjiao and festival-street were regenerated after phrase review; other entries retain the previous Li candidates."
 }

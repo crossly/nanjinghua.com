@@ -18,7 +18,7 @@ const pendingReview = "待南京本地使用者复核" as const;
 
 const trialAudioBySlug: Record<string, { utterance: string; src: string }> = {
 	jigongjiao: {
-		utterance: "后头空得很，往里走走。",
+		utterance: "后头空得很，往里走诶。",
 		src: "/audio/nanjinghua-trials/jigongjiao.wav",
 	},
 	lane: { utterance: "上哪块去啊？", src: "/audio/nanjinghua-trials/lane.wav" },
@@ -40,7 +40,7 @@ const trialAudioBySlug: Record<string, { utterance: string; src: string }> = {
 	stage: { utterance: "开场了，快坐得。", src: "/audio/nanjinghua-trials/stage.wav" },
 	desk: { utterance: "这本你看到哪块了？", src: "/audio/nanjinghua-trials/desk.wav" },
 	"festival-street": {
-		utterance: "人多得不得了。",
+		utterance: "人多的一塌。",
 		src: "/audio/nanjinghua-trials/festival-street.wav",
 	},
 	station: { utterance: "票证带了啊？", src: "/audio/nanjinghua-trials/station.wav" },
@@ -52,7 +52,7 @@ const cityStoryDialogues: Record<string, CityStoryDialogue> = {
 		lines: [
 			{
 				speaker: "乘客",
-				utterance: "后头空得很，往里走走。",
+				utterance: "后头空得很，往里走诶。",
 				meaning: "后面很空，请往里面走。",
 				context: "车门口拥挤时提醒乘客往车厢里面移动",
 			},
@@ -429,7 +429,7 @@ const cityStoryDialogues: Record<string, CityStoryDialogue> = {
 		lines: [
 			{
 				speaker: "同行人",
-				utterance: "人多得不得了。",
+				utterance: "人多的一塌。",
 				meaning: "人特别多。",
 				context: "走进灯会街口时感叹拥挤",
 			},
