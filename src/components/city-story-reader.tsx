@@ -125,11 +125,29 @@ export function CityStoryReader({ story }: { story: CityStory }) {
 			</div>
 
 			{story.music ? (
-				<a className="city-story__music" href={story.music.href} target="_blank" rel="noreferrer">
-					<Music2 aria-hidden="true" strokeWidth={1.5} />
-					<span>{story.music.title}</span>
-					<ArrowUpRight aria-hidden="true" strokeWidth={1.5} />
-				</a>
+				<aside className="city-story__music" aria-label={`推荐聆听：${story.music.title}`}>
+					<div className="city-story__music-mark" aria-hidden="true">
+						<Music2 strokeWidth={1.5} />
+					</div>
+					<div className="city-story__music-copy">
+						<p>
+							<span>推荐聆听</span>
+							<span aria-hidden="true">·</span>
+							<span>{story.music.platform}</span>
+						</p>
+						<strong>{story.music.title}</strong>
+						<span>{story.music.artist}</span>
+					</div>
+					<a
+						href={story.music.href}
+						target="_blank"
+						rel="noreferrer"
+						aria-label={`在 ${story.music.platform}打开《${story.music.title}》`}
+					>
+						<span>去听</span>
+						<ArrowUpRight aria-hidden="true" strokeWidth={1.5} />
+					</a>
+				</aside>
 			) : null}
 		</article>
 	);

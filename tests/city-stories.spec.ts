@@ -64,7 +64,9 @@ test("读者可以直接打开公交站城市故事", async ({ page }) => {
 		"车门一开，大家都往里挪",
 	);
 
-	const musicLink = page.getByRole("link", { name: "去听《挤公交（bonus track）》" });
+	const musicLink = page.getByRole("link", {
+		name: "在 QQ 音乐打开《挤公交（bonus track）》",
+	});
 	await expect(musicLink).toHaveAttribute(
 		"href",
 		"https://y.qq.com/n/ryqq/songDetail/0038BI7X4Im2Kz",
@@ -200,12 +202,30 @@ test("十五个城市地点可从地图和总览进入同一篇独立故事", as
 	await expect(page.getByText("旧资料柜", { exact: true })).toHaveCount(0);
 
 	await page.goto("/stories/festival-street");
-	const festivalMusic = page.getByRole("link", { name: "去听《Come on！莱斯狗！》" });
+	const festivalMusicReference = page.getByRole("complementary", {
+		name: "推荐聆听：Come on！莱斯狗！",
+	});
+	await expect(festivalMusicReference.getByText("推荐聆听", { exact: true })).toBeVisible();
+	await expect(festivalMusicReference.getByText("QQ 音乐", { exact: true })).toBeVisible();
+	await expect(
+		festivalMusicReference.getByText("Come on！莱斯狗！", { exact: true }),
+	).toBeVisible();
+	await expect(
+		festivalMusicReference.getByText("朱小磊、晓乐、杨运、秦岭、薛子等", { exact: true }),
+	).toBeVisible();
+	const festivalMusic = festivalMusicReference.getByRole("link", {
+		name: "在 QQ 音乐打开《Come on！莱斯狗！》",
+	});
 	await expect(festivalMusic).toHaveAttribute(
 		"href",
 		"https://y.qq.com/n/ryqq/songDetail/000pEaf80BVErP",
 	);
 	await expect(festivalMusic).toHaveAttribute("target", "_blank");
+	expect(
+		await festivalMusicReference.evaluate(
+			(element) => element.getBoundingClientRect().right <= window.innerWidth,
+		),
+	).toBe(true);
 	await expect(page.locator("audio, video")).toHaveCount(0);
 });
 

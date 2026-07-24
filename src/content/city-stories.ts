@@ -1,5 +1,7 @@
 export type MusicBookplate = {
 	title: string;
+	artist: string;
+	platform: "QQ 音乐";
 	href: string;
 };
 
@@ -47,7 +49,9 @@ export const cityStories = [
 			},
 		],
 		music: {
-			title: "去听《挤公交（bonus track）》",
+			title: "挤公交（bonus track）",
+			artist: "D-Evil",
+			platform: "QQ 音乐",
 			href: "https://y.qq.com/n/ryqq/songDetail/0038BI7X4Im2Kz",
 		},
 	},
@@ -348,7 +352,9 @@ export const cityStories = [
 			},
 		],
 		music: {
-			title: "去听《Come on！莱斯狗！》",
+			title: "Come on！莱斯狗！",
+			artist: "朱小磊、晓乐、杨运、秦岭、薛子等",
+			platform: "QQ 音乐",
 			href: "https://y.qq.com/n/ryqq/songDetail/000pEaf80BVErP",
 		},
 	},

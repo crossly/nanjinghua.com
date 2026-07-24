@@ -188,8 +188,7 @@ img {
 	color: var(--red);
 }
 
-.city-story__back,
-.city-story__music {
+.city-story__back {
 	display: inline-flex;
 	align-items: center;
 	gap: 0.5rem;
@@ -202,8 +201,7 @@ img {
 	justify-self: end;
 }
 
-.city-story__back svg,
-.city-story__music svg {
+.city-story__back svg {
 	width: 1rem;
 	height: 1rem;
 }
@@ -445,17 +443,78 @@ img {
 }
 
 .city-story__music {
-	justify-content: center;
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 1rem;
 	width: min(100%, 39rem);
-	margin: 1rem auto 0;
-	padding: 1rem;
-	color: var(--white);
-	background: var(--blue);
-	border: 1px solid var(--blue);
+	margin: 2.5rem auto 0;
+	padding: 1.25rem 0;
+	border-block: 1px solid rgba(38, 59, 72, 0.24);
 }
 
-.city-story__music svg:last-child {
-	margin-left: auto;
+.city-story__music-mark {
+	display: grid;
+	width: 2.75rem;
+	height: 2.75rem;
+	place-items: center;
+	color: var(--red);
+	border: 1px solid rgba(155, 59, 47, 0.4);
+	border-radius: 50%;
+}
+
+.city-story__music-mark svg,
+.city-story__music > a svg {
+	width: 1rem;
+	height: 1rem;
+}
+
+.city-story__music-copy {
+	display: grid;
+	gap: 0.2rem;
+	min-width: 0;
+}
+
+.city-story__music-copy p {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem;
+	margin: 0;
+	font-size: 0.6875rem;
+	font-weight: 700;
+	color: var(--red);
+}
+
+.city-story__music-copy strong {
+	overflow-wrap: anywhere;
+	font-family: var(--serif);
+	font-size: 1.15rem;
+	line-height: 1.35;
+	color: var(--blue);
+}
+
+.city-story__music-copy > span {
+	font-size: 0.75rem;
+	line-height: 1.5;
+	color: rgba(23, 23, 20, 0.62);
+}
+
+.city-story__music > a {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+	padding: 0.55rem 0.7rem;
+	font-size: 0.75rem;
+	font-weight: 700;
+	color: var(--blue);
+	text-decoration: none;
+	border: 1px solid rgba(38, 59, 72, 0.35);
+}
+
+.city-story__music > a:hover {
+	color: var(--white);
+	background: var(--blue);
+	border-color: var(--blue);
 }
 
 .city-story__sources {
@@ -506,7 +565,7 @@ img {
 }
 
 .city-story__header a:focus-visible,
-.city-story__music:focus-visible,
+.city-story__music > a:focus-visible,
 .city-story__sources a:focus-visible {
 	outline: 2px solid var(--red);
 	outline-offset: 5px;
