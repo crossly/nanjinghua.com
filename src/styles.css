@@ -1154,152 +1154,8 @@ img {
 	height: 0.8rem;
 }
 
-.opening-collection {
-	display: grid;
-	grid-template-columns: minmax(7rem, 0.55fr) minmax(18rem, 1.45fr) minmax(18rem, 1fr);
-	gap: 4rem;
-	width: min(100% - 4rem, 90rem);
-	margin-inline: auto;
-	padding-block: 4rem 8rem;
-}
-
-.opening-collection__index {
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	min-height: 15rem;
-	padding-right: 2rem;
-	border-right: 1px solid rgba(23, 23, 20, 0.22);
-}
-
-.opening-collection__index span,
-.opening-collection__dimensions dt {
-	font-size: 0.75rem;
-	font-weight: 700;
-	color: var(--red);
-}
-
-.opening-collection__index strong {
-	font-family: var(--serif);
-	font-size: 4rem;
-	font-weight: 400;
-	line-height: 1;
-	color: var(--blue);
-}
-
 .section-label {
 	color: var(--red);
-}
-
-.opening-collection h2 {
-	max-width: 8ch;
-	margin: 1rem 0 0;
-	font-family: var(--serif);
-	font-size: 3.75rem;
-	font-weight: 600;
-	line-height: 1.18;
-	color: var(--blue);
-}
-
-.opening-collection__intro > p:not(.section-label) {
-	max-width: 37rem;
-	margin: 2rem 0 0;
-	font-size: 1rem;
-	line-height: 1.9;
-	color: rgba(23, 23, 20, 0.72);
-}
-
-.opening-collection__dimensions {
-	align-self: end;
-	margin: 0;
-	border-top: 1px solid rgba(23, 23, 20, 0.22);
-}
-
-.opening-collection__link {
-	display: inline-flex;
-	gap: 0.75rem;
-	align-items: center;
-	margin-top: 1.75rem;
-	padding-bottom: 0.35rem;
-	border-bottom: 1px solid currentColor;
-	font-size: 0.9rem;
-	font-weight: 700;
-	color: var(--blue);
-}
-
-.opening-collection__link svg {
-	width: 1rem;
-	height: 1rem;
-	transition: transform 180ms ease;
-}
-
-.opening-collection__link:hover svg,
-.opening-collection__link:focus-visible svg {
-	transform: translateX(0.25rem);
-}
-
-.opening-collection__published {
-	margin-top: 2.5rem;
-	padding-top: 1.25rem;
-	border-top: 1px solid rgba(23, 23, 20, 0.22);
-}
-
-.opening-collection__published p {
-	margin: 0;
-	font-size: 0.75rem;
-	font-weight: 700;
-	color: var(--red);
-}
-
-.opening-collection__published ol {
-	margin: 0;
-	padding: 0;
-	list-style: none;
-}
-
-.opening-collection__published :where(li + li) {
-	border-top: 1px solid rgba(23, 23, 20, 0.16);
-}
-
-.opening-collection__published li > a {
-	display: flex;
-	align-items: flex-start;
-	justify-content: space-between;
-	gap: 1.5rem;
-	margin-top: 0.8rem;
-	font-family: var(--serif);
-	font-size: 1.2rem;
-	font-weight: 600;
-	line-height: 1.45;
-	color: var(--blue);
-}
-
-.opening-collection__published svg {
-	flex: 0 0 auto;
-	width: 1rem;
-	height: 1rem;
-	margin-top: 0.35rem;
-	transition: transform 180ms ease;
-}
-
-.opening-collection__published li > a:hover svg,
-.opening-collection__published li > a:focus-visible svg {
-	transform: translateX(0.25rem);
-}
-
-.opening-collection__dimensions div {
-	display: grid;
-	grid-template-columns: 4rem 1fr;
-	gap: 1rem;
-	padding-block: 1.25rem;
-	border-bottom: 1px solid rgba(23, 23, 20, 0.22);
-}
-
-.opening-collection__dimensions dd {
-	margin: 0;
-	font-family: var(--serif);
-	font-size: 1.1rem;
-	line-height: 1.4;
 }
 
 .historical-path {
@@ -3391,11 +3247,6 @@ img {
 		font-size: 6.5rem;
 	}
 
-	.opening-collection {
-		grid-template-columns: 7rem 1fr;
-		gap: 3rem;
-	}
-
 	.historical-path__lead {
 		grid-template-columns: minmax(14rem, 0.7fr) minmax(0, 1.3fr);
 		gap: 3rem;
@@ -3413,10 +3264,6 @@ img {
 
 	.archive-highlights__lead {
 		grid-template-columns: minmax(14rem, 0.7fr) minmax(0, 1.3fr);
-	}
-
-	.opening-collection__dimensions {
-		grid-column: 2;
 	}
 
 	.evidence-example {
@@ -3657,7 +3504,6 @@ img {
 
 	.site-header,
 	.hero__content,
-	.opening-collection,
 	.historical-path,
 	.evidence-example,
 	.browse-entry,
@@ -3719,33 +3565,6 @@ img {
 	.hero__source {
 		right: 1.25rem;
 		bottom: 1rem;
-	}
-
-	.opening-collection {
-		grid-template-columns: 1fr;
-		gap: 2.5rem;
-		padding-block: 3rem 6rem;
-	}
-
-	.opening-collection__index {
-		flex-direction: row;
-		align-items: baseline;
-		min-height: 0;
-		padding: 0 0 1rem;
-		border-right: 0;
-		border-bottom: 1px solid rgba(23, 23, 20, 0.22);
-	}
-
-	.opening-collection__index strong {
-		font-size: 2.5rem;
-	}
-
-	.opening-collection h2 {
-		font-size: 2.75rem;
-	}
-
-	.opening-collection__dimensions {
-		grid-column: auto;
 	}
 
 	.historical-path {
