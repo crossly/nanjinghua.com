@@ -17,6 +17,7 @@
 		"build:readonly-static": "node scripts/build-readonly-static.ts",
 		"build:archive-exports": "node scripts/build-archive-exports.ts",
 		"build:recording-kit": "node scripts/build-recording-kit.ts",
+		"build:tts-corpus": "node scripts/build-nanjinghua-tts-corpus.ts",
 		"build:sitemap": "node scripts/build-sitemap.ts",
 		"validate:content": "node scripts/validate-content.ts",
 		"preview": "vite preview --port 4173",

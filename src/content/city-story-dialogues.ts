@@ -64,7 +64,7 @@ const cityStoryDialogues: Record<string, CityStoryDialogue> = {
 			},
 			{
 				speaker: "乘客",
-				utterance: "到站喊我一声。",
+				utterance: "到站喊我一声诶。",
 				meaning: "到站时提醒我一下。",
 				context: "请同行的人帮忙留意站点",
 			},
@@ -99,7 +99,7 @@ const cityStoryDialogues: Record<string, CityStoryDialogue> = {
 			},
 			{
 				speaker: "邻居",
-				utterance: "有空来家坐坐。",
+				utterance: "有空来家里头坐坐啊。",
 				meaning: "有空来家里坐坐。",
 				context: "分别前发出日常邀请",
 			},
@@ -139,7 +139,7 @@ const cityStoryDialogues: Record<string, CityStoryDialogue> = {
 		lines: [
 			{
 				speaker: "顾客",
-				utterance: "这个怎么卖的啊？",
+				utterance: "这个怎么卖啊？",
 				meaning: "这个多少钱？",
 				context: "在菜摊前询价",
 			},
@@ -180,7 +180,7 @@ const cityStoryDialogues: Record<string, CityStoryDialogue> = {
 			},
 			{
 				speaker: "客人",
-				utterance: "少来一点。",
+				utterance: "少搁一得儿。",
 				meaning: "少放一点。",
 				context: "客人说明辣油分量",
 			},
@@ -313,7 +313,7 @@ const cityStoryDialogues: Record<string, CityStoryDialogue> = {
 		lines: [
 			{
 				speaker: "邻居",
-				utterance: "你家住哪一栋啊？",
+				utterance: "你家住哪栋啊？",
 				meaning: "你住在哪一栋？",
 				context: "新邻居第一次碰面时确认住处",
 			},
@@ -325,13 +325,13 @@ const cityStoryDialogues: Record<string, CityStoryDialogue> = {
 			},
 			{
 				speaker: "邻居",
-				utterance: "帮我按个八楼。",
+				utterance: "帮我按一哈八楼。",
 				meaning: "请帮我按八楼。",
 				context: "进电梯后请邻居帮忙按楼层",
 			},
 			{
 				speaker: "邻居",
-				utterance: "有空来串门。",
+				utterance: "有空来家里头坐坐啊。",
 				meaning: "有空来家里坐坐。",
 				context: "新邻居分别时发出邀请",
 			},
@@ -406,7 +406,7 @@ const cityStoryDialogues: Record<string, CityStoryDialogue> = {
 			},
 			{
 				speaker: "读者",
-				utterance: "这句话再对一对。",
+				utterance: "这句话再对一哈。",
 				meaning: "这句话再核对一下。",
 				context: "发现记录可能有出入时提出复查",
 			},
@@ -435,7 +435,7 @@ const cityStoryDialogues: Record<string, CityStoryDialogue> = {
 			},
 			{
 				speaker: "同行人",
-				utterance: "你跟紧点，莫走散了。",
+				utterance: "跟紧点诶，莫走散了。",
 				meaning: "你跟紧一点，别走散了。",
 				context: "在人群中提醒同行人",
 			},

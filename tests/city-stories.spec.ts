@@ -68,7 +68,9 @@ test("读者可以直接打开公交站城市故事", async ({ page }) => {
 		.getByRole("listitem")
 		.filter({ hasText: "后头空得很，往里走诶。" });
 	await expect(busPhrase).toContainText("后面很空，请往里面走。");
-	await expect(busPhrase.getByRole("button", { name: "播放：后头空得很，往里走诶。" })).toBeVisible();
+	await expect(
+		busPhrase.getByRole("button", { name: "播放：后头空得很，往里走诶。" }),
+	).toBeVisible();
 
 	const musicLink = page.getByRole("link", {
 		name: "在 QQ 音乐打开《挤公交（bonus track）》",
