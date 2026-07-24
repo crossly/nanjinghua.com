@@ -193,7 +193,7 @@ test("城市地图、故事总览和旧资料柜都有等价文本入口", async
 
 	await expect(
 		page.getByRole("img", {
-			name: "一张受南京日常生活启发的想象城市插画，包含公交站、巷口、小店、戏台、菜场与车站等地点。",
+			name: "一张叙事型南京城市插画，十五个相连的街区场景依次呈现公交站、巷口、小店、菜场、早点铺、厨房、楼下、校门口、操场、新小区、电话、戏台、旧书桌、灯会街口和车站。",
 		}),
 	).toBeVisible();
 	const cityLocations = page.getByRole("list", { name: "城市地点", exact: true });

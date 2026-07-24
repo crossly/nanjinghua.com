@@ -1,5 +1,52 @@
 import { expect, test } from "@playwright/test";
 
+test("早点铺以高频南京话场景对话为主体", async ({ page }) => {
+	await page.goto("/stories/breakfast");
+
+	const dialogue = page.getByRole("list", { name: "早点铺场景对话" });
+	await expect(dialogue.getByRole("listitem")).toHaveCount(4);
+
+	const phrase = dialogue.getByRole("listitem").filter({ hasText: "阿要辣油啊？" });
+	await expect(phrase).toContainText("要不要加辣油？");
+	await expect(phrase).toContainText("摊主确认客人口味");
+	const playButton = phrase.getByRole("button", { name: "播放：阿要辣油啊？" });
+	await expect(playButton).toBeVisible();
+	await expect(playButton).toBeEnabled();
+	await playButton.click();
+	await expect(phrase.getByRole("button", { name: "暂停：阿要辣油啊？" })).toBeVisible();
+	await expect(page.getByText("待南京本地使用者复核", { exact: true })).toBeVisible();
+});
+
+test("十五个场景都提供三至五句待复核口语", async ({ page }) => {
+	const scenes = [
+		["公交站", "jigongjiao"],
+		["巷口", "lane"],
+		["小店", "shop"],
+		["菜场", "market"],
+		["早点铺", "breakfast"],
+		["厨房", "kitchen"],
+		["楼下", "downstairs"],
+		["校门口", "school-gate"],
+		["操场边", "playground"],
+		["新小区", "new-estate"],
+		["手机屏幕", "phone-screen"],
+		["戏台", "stage"],
+		["旧书桌", "desk"],
+		["灯会街口", "festival-street"],
+		["车站", "station"],
+	] as const;
+
+	for (const [scene, slug] of scenes) {
+		await page.goto(`/stories/${slug}`);
+		const dialogue = page.getByRole("list", { name: `${scene}场景对话` });
+		const lineCount = await dialogue.getByRole("listitem").count();
+		expect(lineCount).toBeGreaterThanOrEqual(3);
+		expect(lineCount).toBeLessThanOrEqual(5);
+		await expect(page.getByText("待南京本地使用者复核", { exact: true })).toBeVisible();
+		await expect(dialogue.getByRole("button")).toHaveCount(lineCount);
+	}
+});
+
 test("读者可以直接打开公交站城市故事", async ({ page }) => {
 	await page.goto("/stories/jigongjiao");
 
@@ -86,6 +133,22 @@ test("读者可以从城市地图进入公交站故事", async ({ page }) => {
 	await page.goBack();
 	await expect(page).toHaveURL(/\/$/);
 	await expect(page.getByRole("link", { name: "去公交站看看" })).toBeFocused();
+});
+
+test("地图图钉与故事索引双向同步", async ({ page }) => {
+	await page.goto("/");
+
+	const mapLink = page.getByRole("link", { name: "去菜场看看" });
+	const indexLink = page
+		.getByRole("list", { name: "城市故事索引" })
+		.getByRole("link", { name: /菜场里，话比菜新鲜/ });
+
+	await indexLink.hover();
+	await expect(mapLink).toHaveAttribute("data-active", "true");
+
+	await mapLink.focus();
+	await expect(indexLink).toHaveAttribute("data-active", "true");
+	await expect(mapLink).toContainText("04");
 });
 
 test("十五个城市地点可从地图和总览进入同一篇独立故事", async ({ page }) => {

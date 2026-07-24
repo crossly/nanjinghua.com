@@ -21,6 +21,17 @@ export type CityStory = {
 		alt: string;
 	};
 	paragraphs: readonly string[];
+	dialogue?: readonly {
+		speaker: string;
+		utterance: string;
+		meaning: string;
+		context: string;
+		audio?: {
+			src: string;
+			type: "audio/mpeg" | "audio/wav";
+		};
+	}[];
+	dialogueReview?: "待南京本地使用者复核" | "南京本地使用者已复核";
 	phraseCards: readonly {
 		title: string;
 		body: string;
@@ -148,9 +159,7 @@ export const cityStories = [
 			alt: "清晨的早点铺冒着热气，摊主在窄窄的柜台后准备早餐，街道刚刚苏醒。",
 		},
 		paragraphs: [
-			"早点铺的队伍不像队伍，往往是几个人顺着柜台站开。有人赶时间，把零钱攥在手里；有人端着刚出锅的东西，先吹一口气。天还没完全亮，热气已经把每个人的脸照得柔和一点。",
-			"坐不下也没关系，门口一块窄桌面、半截台阶，都能把早饭安放好。偶尔有人让一下位置，说一句别烫着，下一位就自然接过去。",
-			"南京话在早晨也不是一张固定的菜单。它可能只藏在招呼的尾音和催人趁热吃的语气里，听见了就觉得亲切，没听清也不耽误这一口热乎。",
+			"天刚亮，熟客在柜台前要一碗馄饨。摊主一边揭锅，一边把口味、分量和堂食外带问清楚。",
 		],
 		phraseCards: [
 			{
@@ -432,25 +441,25 @@ export type CityLocation = {
 };
 
 const cityLocationMetadata = [
-	{ id: "bus-stop", position: { x: 25, y: 68 }, storySlug: "jigongjiao" },
-	{ id: "lane", position: { x: 12, y: 48 }, storySlug: "lane" },
-	{ id: "shop", position: { x: 37, y: 44 }, storySlug: "shop" },
-	{ id: "stage", position: { x: 56, y: 34 }, storySlug: "stage" },
-	{ id: "desk", position: { x: 72, y: 24 }, storySlug: "desk" },
-	{ id: "market", position: { x: 48, y: 63 }, storySlug: "market" },
-	{ id: "breakfast", position: { x: 67, y: 55 }, storySlug: "breakfast" },
-	{ id: "kitchen", position: { x: 19, y: 28 }, storySlug: "kitchen" },
-	{ id: "downstairs", position: { x: 34, y: 79 }, storySlug: "downstairs" },
-	{ id: "school-gate", position: { x: 51, y: 80 }, storySlug: "school-gate" },
-	{ id: "playground", position: { x: 79, y: 70 }, storySlug: "playground" },
+	{ id: "bus-stop", position: { x: 10, y: 18 }, storySlug: "jigongjiao" },
+	{ id: "lane", position: { x: 30, y: 18 }, storySlug: "lane" },
+	{ id: "shop", position: { x: 50, y: 18 }, storySlug: "shop" },
+	{ id: "market", position: { x: 70, y: 18 }, storySlug: "market" },
+	{ id: "breakfast", position: { x: 90, y: 18 }, storySlug: "breakfast" },
+	{ id: "kitchen", position: { x: 10, y: 50 }, storySlug: "kitchen" },
+	{ id: "downstairs", position: { x: 30, y: 50 }, storySlug: "downstairs" },
+	{ id: "school-gate", position: { x: 50, y: 50 }, storySlug: "school-gate" },
+	{ id: "playground", position: { x: 70, y: 50 }, storySlug: "playground" },
+	{ id: "new-estate", position: { x: 90, y: 50 }, storySlug: "new-estate" },
+	{ id: "phone", position: { x: 10, y: 82 }, storySlug: "phone-screen" },
+	{ id: "stage", position: { x: 30, y: 82 }, storySlug: "stage" },
+	{ id: "desk", position: { x: 50, y: 82 }, storySlug: "desk" },
 	{
 		id: "festival-street",
-		position: { x: 82, y: 44 },
+		position: { x: 70, y: 82 },
 		storySlug: "festival-street",
 	},
-	{ id: "new-estate", position: { x: 61, y: 17 }, storySlug: "new-estate" },
-	{ id: "station", position: { x: 87, y: 85 }, storySlug: "station" },
-	{ id: "phone", position: { x: 44, y: 20 }, storySlug: "phone-screen" },
+	{ id: "station", position: { x: 90, y: 82 }, storySlug: "station" },
 ] as const satisfies readonly {
 	id: string;
 	position: { x: number; y: number };

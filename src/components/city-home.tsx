@@ -1,5 +1,5 @@
 import { useNavigate, useRouter } from "@tanstack/react-router";
-import { ArrowDown, ArrowRight, ArrowUpRight, MapPin, X } from "lucide-react";
+import { ArrowDown, ArrowRight, ArrowUpRight, X } from "lucide-react";
 import { type CSSProperties, useEffect, useRef, useState } from "react";
 
 import { type CityStory, cityLocations, cityStories } from "../content/city-stories";
@@ -15,6 +15,7 @@ export function CityHome({ activeStory }: { activeStory?: CityStory }) {
 	const mapTriggerRefs = useRef(new Map<string, HTMLAnchorElement>());
 	const overviewTriggerRefs = useRef(new Map<string, HTMLAnchorElement>());
 	const [visitedStorySlugs, setVisitedStorySlugs] = useState<readonly string[]>([]);
+	const [activeStorySlug, setActiveStorySlug] = useState<string>();
 	const [isInteractive, setIsInteractive] = useState(false);
 
 	useEffect(() => {
@@ -112,10 +113,10 @@ export function CityHome({ activeStory }: { activeStory?: CityStory }) {
 
 				<div className="city-map__canvas">
 					<img
-						src="/images/city-map.webp"
+						src="/images/city-map-v2.webp"
 						width="1536"
 						height="1024"
-						alt="一张受南京日常生活启发的想象城市插画，包含公交站、巷口、小店、戏台、菜场与车站等地点。"
+						alt="一张叙事型南京城市插画，十五个相连的街区场景依次呈现公交站、巷口、小店、菜场、早点铺、厨房、楼下、校门口、操场、新小区、电话、戏台、旧书桌、灯会街口和车站。"
 						fetchPriority="high"
 					/>
 					<ol className="city-map__locations" aria-label="城市地点">
@@ -131,6 +132,7 @@ export function CityHome({ activeStory }: { activeStory?: CityStory }) {
 							>
 								<a
 									href={`/stories/${location.storySlug}`}
+									data-active={activeStorySlug === location.storySlug || undefined}
 									className={
 										visitedStorySlugs.includes(location.storySlug)
 											? "city-map__location--visited"
@@ -143,11 +145,14 @@ export function CityHome({ activeStory }: { activeStory?: CityStory }) {
 										event.preventDefault();
 										openStory(location.storySlug, event.currentTarget);
 									}}
+									onMouseEnter={() => setActiveStorySlug(location.storySlug)}
+									onMouseLeave={() => setActiveStorySlug(undefined)}
+									onFocus={() => setActiveStorySlug(location.storySlug)}
+									onBlur={() => setActiveStorySlug(undefined)}
 									aria-label={`去${location.label}看看${
 										visitedStorySlugs.includes(location.storySlug) ? "，已去过" : ""
 									}`}
 								>
-									<MapPin aria-hidden="true" strokeWidth={1.8} />
 									<span>{String(index + 1).padStart(2, "0")}</span>
 									<strong>{location.label}</strong>
 								</a>
@@ -189,11 +194,12 @@ export function CityHome({ activeStory }: { activeStory?: CityStory }) {
 					<p>不想从地图开始，也可以从一段熟悉的日常走进去。</p>
 				</div>
 
-				<ol className="city-overview__list" aria-label="城市故事总览">
-					{cityStories.map((story) => (
+				<ol className="city-overview__list" aria-label="城市故事总览 城市故事索引">
+					{cityStories.map((story, index) => (
 						<li key={story.slug}>
 							<a
 								href={`/stories/${story.slug}`}
+								data-active={activeStorySlug === story.slug || undefined}
 								ref={(node) => {
 									if (node) overviewTriggerRefs.current.set(story.slug, node);
 								}}
@@ -201,13 +207,19 @@ export function CityHome({ activeStory }: { activeStory?: CityStory }) {
 									event.preventDefault();
 									openStory(story.slug, event.currentTarget);
 								}}
+								onMouseEnter={() => setActiveStorySlug(story.slug)}
+								onMouseLeave={() => setActiveStorySlug(undefined)}
+								onFocus={() => setActiveStorySlug(story.slug)}
+								onBlur={() => setActiveStorySlug(undefined)}
 							>
-								<p>
-									城市散步 · {story.scene}
-									{visitedStorySlugs.includes(story.slug) ? <em>已去过</em> : null}
-								</p>
-								<h3>{story.title}</h3>
-								<span>{story.summary}</span>
+								<span className="city-overview__number">{String(index + 1).padStart(2, "0")}</span>
+								<div>
+									<p>
+										城市散步 · {story.scene}
+										{visitedStorySlugs.includes(story.slug) ? <em>已去过</em> : null}
+									</p>
+									<h3>{story.title}</h3>
+								</div>
 								<ArrowRight aria-hidden="true" strokeWidth={1.5} />
 							</a>
 						</li>

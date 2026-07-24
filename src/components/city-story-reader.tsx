@@ -1,8 +1,41 @@
-import { ArrowUpRight, Music2 } from "lucide-react";
+import { ArrowUpRight, Music2, Pause, Volume2 } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 
-import type { CityStory } from "../content/city-stories";
+import { type CityStory, cityLocations } from "../content/city-stories";
+import { getCityStoryDialogue } from "../content/city-story-dialogues";
 
 export function CityStoryReader({ story }: { story: CityStory }) {
+	const audioRef = useRef<HTMLAudioElement | null>(null);
+	const [playingUtterance, setPlayingUtterance] = useState<string>();
+	const candidateDialogue = getCityStoryDialogue(story.slug);
+	const dialogue = story.dialogue ?? candidateDialogue?.lines;
+	const dialogueReview = story.dialogueReview ?? candidateDialogue?.review;
+	const mapIndex = cityLocations.findIndex((location) => location.storySlug === story.slug);
+
+	useEffect(
+		() => () => {
+			audioRef.current?.pause();
+		},
+		[],
+	);
+
+	function toggleAudio(line: NonNullable<CityStory["dialogue"]>[number]) {
+		if (!line.audio) return;
+		if (playingUtterance === line.utterance) {
+			audioRef.current?.pause();
+			setPlayingUtterance(undefined);
+			return;
+		}
+
+		audioRef.current?.pause();
+		const audio = new Audio(line.audio.src);
+		audioRef.current = audio;
+		setPlayingUtterance(line.utterance);
+		audio.addEventListener("ended", () => setPlayingUtterance(undefined), { once: true });
+		audio.addEventListener("error", () => setPlayingUtterance(undefined), { once: true });
+		void audio.play().catch(() => setPlayingUtterance(undefined));
+	}
+
 	return (
 		<article className="city-story__article">
 			<div className="city-story__lead">
@@ -19,19 +52,75 @@ export function CityStoryReader({ story }: { story: CityStory }) {
 					alt={story.image.alt}
 					fetchPriority="high"
 				/>
+				{mapIndex >= 0 ? (
+					<figcaption>
+						<span>地图 {String(mapIndex + 1).padStart(2, "0")}</span>
+						<strong>{story.scene}</strong>
+					</figcaption>
+				) : null}
 			</figure>
 
 			<div className="city-story__body">
-				{story.paragraphs.map((paragraph) => (
+				{story.paragraphs.slice(0, dialogue ? 1 : undefined).map((paragraph) => (
 					<p key={paragraph}>{paragraph}</p>
 				))}
 
-				{story.phraseCards.map((card) => (
-					<aside className="city-story__phrase" key={card.title} aria-label={card.title}>
-						<p>{card.title}</p>
-						<span>{card.body}</span>
-					</aside>
-				))}
+				{dialogue ? (
+					<section className="city-story__dialogue" aria-labelledby={`dialogue-${story.slug}`}>
+						<header>
+							<div>
+								<p>场景口语</p>
+								<h2 id={`dialogue-${story.slug}`}>听他们怎么说</h2>
+							</div>
+							{dialogueReview ? <span>{dialogueReview}</span> : null}
+						</header>
+						<ol aria-label={`${story.scene}场景对话`}>
+							{dialogue.map((line, index) => (
+								<li key={`${line.speaker}-${line.utterance}`}>
+									<span className="city-story__dialogue-index">
+										{String(index + 1).padStart(2, "0")}
+									</span>
+									<div>
+										<p>{line.speaker}</p>
+										<blockquote>{line.utterance}</blockquote>
+										<dl>
+											<div>
+												<dt>普通话</dt>
+												<dd>{line.meaning}</dd>
+											</div>
+											<div>
+												<dt>怎么用</dt>
+												<dd>{line.context}</dd>
+											</div>
+										</dl>
+									</div>
+									<button
+										type="button"
+										aria-label={`${
+											playingUtterance === line.utterance ? "暂停" : "播放"
+										}：${line.utterance}`}
+										disabled={!line.audio}
+										onClick={() => toggleAudio(line)}
+										title={line.audio ? "播放南京话试音" : "试音制作中"}
+									>
+										{playingUtterance === line.utterance ? (
+											<Pause aria-hidden="true" strokeWidth={1.6} />
+										) : (
+											<Volume2 aria-hidden="true" strokeWidth={1.6} />
+										)}
+									</button>
+								</li>
+							))}
+						</ol>
+					</section>
+				) : (
+					story.phraseCards.map((card) => (
+						<aside className="city-story__phrase" key={card.title} aria-label={card.title}>
+							<p>{card.title}</p>
+							<span>{card.body}</span>
+						</aside>
+					))
+				)}
 			</div>
 
 			{story.music ? (
