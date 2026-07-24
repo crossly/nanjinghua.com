@@ -1,0 +1,123 @@
+name: Mainland access evidence
+
+on:
+  schedule:
+    - cron: "17 0,8,16 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mainland-access-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      NANJINGHUA_MAINLAND_ROUNDS: "3"
+      NANJINGHUA_MAINLAND_DELAY_MS: "250"
+    steps:
+      - name: Initialize evidence
+        id: evidence
+        shell: bash
+        run: |
+          evidence_dir="test-results/mainland-access"
+          stamp="$(date -u +%Y-%m-%dT%H-%M-%SZ)"
+          report_path="$evidence_dir/$stamp.json"
+          stderr_path="$evidence_dir/$stamp.stderr.txt"
+          exit_code_path="$evidence_dir/$stamp.exit-code.txt"
+          generated_at="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          mkdir -p "$evidence_dir"
+          cat >"$report_path" <<JSON
+          {
+            "generatedAt": "$generated_at",
+            "target": "nanjinghua.com",
+            "passed": null,
+            "outcome": "infrastructure-error",
+            "exitCode": 2,
+            "reason": "validation step did not complete"
+          }
+          JSON
+          printf '%s\n' 'validation step did not complete' >"$stderr_path"
+          printf '%s\n' '2' >"$exit_code_path"
+          echo "report_path=$report_path" >>"$GITHUB_OUTPUT"
+          echo "stderr_path=$stderr_path" >>"$GITHUB_OUTPUT"
+          echo "exit_code_path=$exit_code_path" >>"$GITHUB_OUTPUT"
+
+      - name: Check out repository
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+        with:
+          version: 10.32.0
+
+      - name: Install Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 24.18.0
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Run three-network gate
+        id: validate
+        shell: bash
+        env:
+          GLOBALPING_TOKEN: ${{ secrets.GLOBALPING_TOKEN }}
+          REPORT_PATH: ${{ steps.evidence.outputs.report_path }}
+          STDERR_PATH: ${{ steps.evidence.outputs.stderr_path }}
+          EXIT_CODE_PATH: ${{ steps.evidence.outputs.exit_code_path }}
+        run: |
+          set +e
+          pnpm --silent run ops:validate:mainland >"$REPORT_PATH" 2>"$STDERR_PATH"
+          exit_code=$?
+          set -e
+
+          if [[ ! -s "$REPORT_PATH" ]] || ! node -e 'JSON.parse(require("node:fs").readFileSync(process.argv[1], "utf8"))' "$REPORT_PATH"; then
+            rm -f "$REPORT_PATH"
+            node - "$REPORT_PATH" <<'NODE'
+          const { writeFileSync } = require("node:fs");
+          const [reportPath] = process.argv.slice(2);
+          writeFileSync(
+            reportPath,
+            `${JSON.stringify({
+              generatedAt: new Date().toISOString(),
+              target: "nanjinghua.com",
+              passed: null,
+              outcome: "infrastructure-error",
+              exitCode: 2,
+              reason: "validator did not emit a JSON report",
+            }, null, 2)}\n`,
+          );
+          NODE
+            exit_code=2
+          fi
+
+          printf '%s\n' "$exit_code" >"$EXIT_CODE_PATH"
+          echo "exit_code=$exit_code" >>"$GITHUB_OUTPUT"
+
+      - name: Upload evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: mainland-access-${{ github.run_id }}-${{ github.run_attempt }}
+          path: test-results/mainland-access/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Enforce gate result
+        if: always()
+        shell: bash
+        env:
+          EXIT_CODE: ${{ steps.validate.outputs.exit_code }}
+        run: |
+          if [[ -z "$EXIT_CODE" ]]; then
+            echo "大陆门禁未生成结果。" >&2
+            exit 2
+          fi
+          exit "$EXIT_CODE"

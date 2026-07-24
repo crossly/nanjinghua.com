@@ -8,18 +8,13 @@ const config = defineConfig(({ mode }) => {
 		throw new Error("治理测试夹具不能进入 production 构建");
 	}
 	const readonlyStatic = mode === "readonly-static";
-
 	return {
 		resolve: { tsconfigPaths: true },
 		plugins: [
 			cloudflare({ viteEnvironment: { name: "ssr" } }),
 			tanstackStart({
 				server: { entry: "server.ts" },
-				pages: [
-					{ path: "/" },
-					{ path: "/articles/what-a-review-can-tell-us" },
-					{ path: "/archive/NJH000001" },
-				],
+				pages: [{ path: "/" }],
 				prerender: {
 					enabled: true,
 					failOnError: true,

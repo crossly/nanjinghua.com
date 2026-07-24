@@ -1,0 +1,130 @@
+{
+	"generated_at": "2026-07-24T14:20:40.155737+00:00",
+	"model": "qwen3-tts-flash",
+	"voice": "Li",
+	"voice_name": "南京-老李",
+	"language_type": "Chinese",
+	"entries": [
+		{
+			"slug": "jigongjiao",
+			"text": "后头空得很，往里走诶。",
+			"request_id": "8d045cbc-f3ae-9d65-acd7-aacec04c2ca7",
+			"duration_seconds": 2.0,
+			"size_bytes": 96078,
+			"sha256": "780eda50c9fc0c595e31284884fe5dea9c9bed49ecd6dc4aab937c3ee53fb821"
+		},
+		{
+			"slug": "lane",
+			"text": "上哪块去啊？",
+			"request_id": "68f75145-bec4-9811-8097-5261ef97f806",
+			"duration_seconds": 0.88,
+			"size_bytes": 42318,
+			"sha256": "282cfc80049882f4645dfa0088a38faa3424850fd1985da7701d830b47bafb75"
+		},
+		{
+			"slug": "shop",
+			"text": "老板，这个怎么卖啊？",
+			"request_id": "38b72b5f-b063-93a4-8f02-244e159d6c8e",
+			"duration_seconds": 1.76,
+			"size_bytes": 84558,
+			"sha256": "ee4a9df298e51b3c98b1a7a78ccd6e2ce05639394b6490a3f9abd05d40f429e2"
+		},
+		{
+			"slug": "market",
+			"text": "便宜一得儿行啊？",
+			"request_id": "c64563bf-a2cd-98da-8177-8b2ec1411f09",
+			"duration_seconds": 1.28,
+			"size_bytes": 61518,
+			"sha256": "8bd2b3ba7f966be3f0477a36952831515253c7c4eac969b362942d9d0b4e2c6e"
+		},
+		{
+			"slug": "breakfast",
+			"text": "阿要辣油啊？",
+			"request_id": "216f3295-a075-9995-8049-3d8e7a0a02e7",
+			"duration_seconds": 0.96,
+			"size_bytes": 46158,
+			"sha256": "7cb8913fd4ac48e747eddec1a185f42a7d080d97bc9abef7a368ec2b4536757b"
+		},
+		{
+			"slug": "kitchen",
+			"text": "莫搁盐了，够咸了。",
+			"request_id": "a1035784-6e00-9c60-a11f-f02294820df6",
+			"duration_seconds": 1.92,
+			"size_bytes": 92238,
+			"sha256": "1f6554a74ad871345bc21b821592d2cdbb42c1e8a609405f45a4248f42f4354f"
+		},
+		{
+			"slug": "downstairs",
+			"text": "今个蛮凉快的。",
+			"request_id": "b7010ddc-f0c1-99ae-91af-202fc5e15064",
+			"duration_seconds": 1.04,
+			"size_bytes": 49998,
+			"sha256": "ba0ff2f7c3fd7d076e68f33fbc7e52e596b39c6f5c1d734c48c8eaba98ca1ee0"
+		},
+		{
+			"slug": "school-gate",
+			"text": "今个作业多不多啊？",
+			"request_id": "7757ae82-4e40-953a-9b64-a4523339c2d3",
+			"duration_seconds": 1.28,
+			"size_bytes": 61518,
+			"sha256": "55719e17d8304115c7d354d18509dc3c22045ed0af92f3656c7ea9895fc3d26a"
+		},
+		{
+			"slug": "playground",
+			"text": "还差一个，阿有人来？",
+			"request_id": "ab3edd3e-f65c-9aa1-8708-f62914204366",
+			"duration_seconds": 1.84,
+			"size_bytes": 88398,
+			"sha256": "e7ac72be3a731df982c3c326ecc322c52e16e7b8e579ee45756f27a165c6af5f"
+		},
+		{
+			"slug": "new-estate",
+			"text": "电梯等一哈。",
+			"request_id": "ffed3122-a948-9187-8cdc-4bd09ab92048",
+			"duration_seconds": 1.04,
+			"size_bytes": 49998,
+			"sha256": "498b07f815401c42969dc26b100118e1e16ea51b6d6c1f020bdd278f39139b5a"
+		},
+		{
+			"slug": "phone-screen",
+			"text": "你到哪块了？",
+			"request_id": "6ba4c2e8-0e3d-9dfe-b268-0446f11c8615",
+			"duration_seconds": 0.88,
+			"size_bytes": 42318,
+			"sha256": "28a357d36e418bcf2e395cf65b4dcb14678a267de5dd786b9b57c67b586c37e5"
+		},
+		{
+			"slug": "stage",
+			"text": "开场了，快坐得。",
+			"request_id": "07d65942-d683-9b10-aa82-7026a261ecdd",
+			"duration_seconds": 1.44,
+			"size_bytes": 69198,
+			"sha256": "213aff958068ebec01abe1dda544385a175ac7c22d5c825bb5e496c74bf62ec3"
+		},
+		{
+			"slug": "desk",
+			"text": "这本你看到哪块了？",
+			"request_id": "4d1342dc-a409-9d5d-9797-eb05ba995491",
+			"duration_seconds": 1.12,
+			"size_bytes": 53838,
+			"sha256": "f35ea1edf4c1a54833b0a9aee616c1eb61e4a63bc309bcdcc5a4f88218a9ce84"
+		},
+		{
+			"slug": "festival-street",
+			"text": "人多的一塌。",
+			"request_id": "09c2af1f-e43b-941c-89ec-63e4e82b355a",
+			"duration_seconds": 0.88,
+			"size_bytes": 42318,
+			"sha256": "05716656bb464b7bcfd131dc6658fbf8e654b79867693ef4303425be602b244f"
+		},
+		{
+			"slug": "station",
+			"text": "票证带了啊？",
+			"request_id": "2e184677-899b-9f1d-a2a3-2bb6ceaf85f2",
+			"duration_seconds": 1.36,
+			"size_bytes": 65358,
+			"sha256": "28778d8883313825308cae74cfa40bc19d15be2cef54628a493d65d3b35a8fb7"
+		}
+	],
+	"generation_note": "Only jigongjiao and festival-street were regenerated after phrase review; other entries retain the previous Li candidates."
+}

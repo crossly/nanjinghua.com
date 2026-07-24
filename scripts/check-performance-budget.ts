@@ -8,6 +8,9 @@ const budgets = {
 	mainJavaScriptRaw: 600 * kibibyte,
 	stylesGzip: 10 * kibibyte,
 	homeImagesRaw: 1_800 * kibibyte,
+	cityMapRaw: 500 * kibibyte,
+	storyImageRaw: 450 * kibibyte,
+	storyImagesRaw: 5 * 1024 * kibibyte,
 } as const;
 
 function requireCondition(condition: unknown, message: string): asserts condition {
@@ -30,6 +33,14 @@ const homeImageBytes = ["nanjing-city-map-1940.jpg", "nanjing-baiju-performance.
 	(total, file) => total + statSync(join(process.cwd(), "public/images", file)).size,
 	0,
 );
+const imagesDirectory = join(process.cwd(), "public/images");
+const cityMapBytes = statSync(join(imagesDirectory, "city-map.webp")).size;
+const storyImageFiles = readdirSync(imagesDirectory).filter((file) =>
+	/^city-story-.+\.webp$/.test(file),
+);
+const storyImageSizes = storyImageFiles.map((file) => statSync(join(imagesDirectory, file)).size);
+const storyImagesBytes = storyImageSizes.reduce((total, size) => total + size, 0);
+const largestStoryImageBytes = Math.max(...storyImageSizes);
 
 requireCondition(
 	mainBytes.byteLength <= budgets.mainJavaScriptRaw,
@@ -38,6 +49,10 @@ requireCondition(
 requireCondition(mainGzip <= budgets.mainJavaScriptGzip, "生产入口 JavaScript gzip 超过 190 KiB");
 requireCondition(stylesGzip <= budgets.stylesGzip, "生产 CSS gzip 超过 10 KiB");
 requireCondition(homeImageBytes <= budgets.homeImagesRaw, "首页图片合计超过 1800 KiB");
+requireCondition(cityMapBytes <= budgets.cityMapRaw, "城市漫游地图超过 500 KiB");
+requireCondition(storyImageFiles.length === 15, "城市故事图片必须完整覆盖 15 个地点");
+requireCondition(largestStoryImageBytes <= budgets.storyImageRaw, "单张城市故事图片超过 450 KiB");
+requireCondition(storyImagesBytes <= budgets.storyImagesRaw, "城市故事图片合计超过 5 MiB");
 
 const css = styleBytes.toString("utf8");
 requireCondition(!/@import\s+url\(https?:/i.test(css), "CSS 不能通过远程 @import 阻塞正文");
@@ -49,6 +64,12 @@ console.log(
 			mainJavaScript: { raw: mainBytes.byteLength, gzip: mainGzip },
 			styles: { gzip: stylesGzip },
 			homeImages: { raw: homeImageBytes },
+			cityMap: { raw: cityMapBytes },
+			storyImages: {
+				count: storyImageFiles.length,
+				raw: storyImagesBytes,
+				largestRaw: largestStoryImageBytes,
+			},
 			budgets,
 		},
 		null,

@@ -109,6 +109,29 @@ test("部署门禁包含性能、Cloudflare 配置、秘密与远端迁移检查
 	assert.match(packageJson.scripts.deploy, /db:migrate:remote/);
 });
 
+test("定时大陆门禁只读运行并始终保留跨时间报告", () => {
+	const workflow = readFileSync(".github/workflows/mainland-access.yml", "utf8");
+	assert.match(workflow, /cron: "17 0,8,16 \* \* \*"/);
+	assert.match(workflow, /contents: read/);
+	assert.match(workflow, /pnpm --silent run ops:validate:mainland/);
+	assert.match(workflow, /NANJINGHUA_MAINLAND_ROUNDS: "3"/);
+	assert.match(workflow, /if: always\(\)/);
+	assert.match(workflow, /retention-days: 30/);
+	assert.match(workflow, /name: Initialize evidence[\s\S]*validation step did not complete/);
+	assert.match(workflow, /if-no-files-found: error/);
+	const jobEnvironment = workflow.slice(workflow.indexOf("jobs:"), workflow.indexOf("    steps:"));
+	assert.doesNotMatch(jobEnvironment, /GLOBALPING_TOKEN/);
+	const gateStep = workflow.slice(
+		workflow.indexOf("      - name: Run three-network gate"),
+		workflow.indexOf("      - name: Upload evidence"),
+	);
+	assert.match(gateStep, /GLOBALPING_TOKEN: \$\{\{ secrets\.GLOBALPING_TOKEN \}\}/);
+	assert.doesNotMatch(workflow, /wrangler deploy|pnpm run deploy|db:migrate/);
+	for (const action of workflow.matchAll(/uses: ([^\s#]+)/g)) {
+		assert.match(action[1], /@[0-9a-f]{40}$/);
+	}
+});
+
 test("D1 计数解析器读取 Wrangler JSON 并要求四张业务表完整", () => {
 	const output = JSON.stringify([
 		{

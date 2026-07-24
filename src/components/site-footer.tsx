@@ -11,7 +11,7 @@ export function SiteFooter() {
 					<a href="/" aria-label="南京话首页">
 						南京话
 					</a>
-					<p>南京话的历史 · 公共数字档案预览</p>
+					<p>一点点关于南京话、城市生活的记忆</p>
 				</div>
 
 				{policyNavigationGroups.map((group) => (
@@ -28,18 +28,15 @@ export function SiteFooter() {
 				))}
 
 				<div className="site-footer__actions">
-					<a href="/browse">浏览档案</a>
 					{READONLY_STATIC_DELIVERY ? null : (
 						<a href="/contribute">
-							提供线索
+							反馈与纠错
 							<ArrowUpRight aria-hidden="true" strokeWidth={1.5} />
 						</a>
 					)}
 				</div>
 
-				<p className="site-footer__legal">
-					档案元数据 CC0 · 原创文章 CC BY 4.0 · 第三方媒体逐项标注权利
-				</p>
+				<p className="site-footer__legal">原创文字 CC BY 4.0 · 图片与音频按页面说明使用</p>
 			</div>
 		</footer>
 	);

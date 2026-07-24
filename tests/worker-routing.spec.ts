@@ -44,7 +44,12 @@ test("构建后的 Worker 为静态发现文件和实际哈希资源执行索引
 	const worker = await loadBuiltWorker();
 	const hashedAsset = readdirSync("dist/client/assets").find((file) => file.endsWith(".js"));
 	expect(hashedAsset).toBeTruthy();
-	const paths = ["/robots.txt", "/sitemap.xml", `/assets/${hashedAsset}`];
+	const paths = [
+		"/robots.txt",
+		"/sitemap.xml",
+		`/assets/${hashedAsset}`,
+		"/audio/nanjinghua-trials/breakfast.wav",
+	];
 
 	for (const pathname of paths) {
 		const previewRequests: string[] = [];

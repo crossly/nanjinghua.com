@@ -9,8 +9,9 @@ type SiteEnv = SubmissionEnv & { ASSETS: Fetcher };
 function isStaticAssetRequest(request: Request): boolean {
 	const pathname = new URL(request.url).pathname;
 	return (
-		["/assets/", "/images/", "/downloads/"].some((prefix) => pathname.startsWith(prefix)) ||
-		["/favicon.svg", "/manifest.json", "/robots.txt", "/sitemap.xml"].includes(pathname)
+		["/assets/", "/audio/", "/images/", "/downloads/"].some((prefix) =>
+			pathname.startsWith(prefix),
+		) || ["/favicon.svg", "/manifest.json", "/robots.txt", "/sitemap.xml"].includes(pathname)
 	);
 }
 

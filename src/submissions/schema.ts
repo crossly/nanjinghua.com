@@ -26,9 +26,6 @@ export const submissionInputSchema = z
 		type: submissionTypeSchema,
 		description: z.string().trim().min(20, "说明至少需要 20 个字").max(4000),
 		sourceUrl: z.union([z.url("材料链接格式无效"), z.literal("")]).optional(),
-		archiveId: z
-			.union([z.string().regex(/^NJH\d{6}$/, "档案编号格式无效"), z.literal("")])
-			.optional(),
 		contactMethod: contactMethodSchema.optional(),
 		contactValue: optionalTrimmedText(320),
 		policyAccepted: z.literal(true, { error: "请确认信息用途与保留规则" }),
@@ -41,13 +38,6 @@ export const submissionInputSchema = z
 				code: "custom",
 				path: [input.contactMethod ? "contactValue" : "contactMethod"],
 				message: "联系方式类型与内容需要同时提供",
-			});
-		}
-		if ((input.type === "权利请求" || input.type === "隐私或安全请求") && !input.archiveId) {
-			context.addIssue({
-				code: "custom",
-				path: ["archiveId"],
-				message: "权利、隐私或安全请求必须关联受影响的档案编号",
 			});
 		}
 	});

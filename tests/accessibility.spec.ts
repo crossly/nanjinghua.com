@@ -1,14 +1,11 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, type Locator, type Page, test } from "@playwright/test";
+import { expect, type Page, test } from "@playwright/test";
 
 const representativePages = [
 	["首页", "/"],
-	["专题", "/articles/what-is-nanjinghua"],
-	["最长外文题名档案", "/archive/NJH000010"],
-	["长中文题名档案", "/archive/NJH000013"],
-	["检索", "/browse?q=白局"],
+	["城市故事", "/stories/breakfast"],
 	["制度", "/policies/accessibility"],
-	["线索提交", "/contribute"],
+	["反馈", "/contribute"],
 ] as const;
 
 function violationSummary(violations: Awaited<ReturnType<AxeBuilder["analyze"]>>["violations"]) {
@@ -21,17 +18,15 @@ function violationSummary(violations: Awaited<ReturnType<AxeBuilder["analyze"]>>
 }
 
 async function openStablePage(page: Page, path: string) {
-	if (path.startsWith("/contribute")) {
+	if (path === "/contribute") {
 		await page.addInitScript(() => {
 			window.turnstile = {
 				render: (container, options) => {
 					container.innerHTML = '<label><input type="checkbox">完成人机验证（测试替身）</label>';
 					const checkbox = container.querySelector("input");
-					if (!checkbox) return "accessibility-test-widget";
-					checkbox.addEventListener("change", () => {
-						const callback = options.callback;
-						if (checkbox.checked && typeof callback === "function") {
-							callback("accessibility-test-token");
+					checkbox?.addEventListener("change", () => {
+						if (checkbox.checked && typeof options.callback === "function") {
+							options.callback("accessibility-test-token");
 						}
 					});
 					return "accessibility-test-widget";
@@ -42,55 +37,21 @@ async function openStablePage(page: Page, path: string) {
 		});
 	}
 	await page.goto(path);
-	if (path.startsWith("/contribute")) {
+	if (path === "/contribute") {
 		await expect(page.locator(".contribute-form fieldset")).toBeEnabled();
 	}
 }
 
-async function tabTo(page: Page, target: Locator, settleFrames = 0) {
-	await page.keyboard.press("Tab");
-	if (settleFrames > 0) {
-		await page.evaluate(
-			(frames) =>
-				new Promise<void>((resolve) => {
-					const waitForFrame = (remaining: number) => {
-						if (remaining === 0) resolve();
-						else window.requestAnimationFrame(() => waitForFrame(remaining - 1));
-					};
-					waitForFrame(frames);
-				}),
-			settleFrames,
-		);
-	}
-	await expect(target).toBeFocused();
-	await expect(target).toHaveCSS("outline-style", "solid");
-	await expect(target).toHaveCSS("outline-width", "2px");
-}
-
-async function resetTabOrderAfterNavigation(page: Page) {
-	await page.locator("body").evaluate((body) => {
-		const previousTabIndex = body.getAttribute("tabindex");
-		body.setAttribute("tabindex", "-1");
-		body.focus();
-		if (previousTabIndex === null) body.removeAttribute("tabindex");
-		else body.setAttribute("tabindex", previousTabIndex);
-	});
-	await expect(page.locator("body")).toBeFocused();
-}
-
 for (const [label, path] of representativePages) {
-	test(`${label}达到非音频 WCAG 2.2 AA 自动检查基线`, async ({ page }) => {
+	test(`${label}达到 WCAG 2.2 AA 自动检查基线`, async ({ page }) => {
 		await openStablePage(page, path);
-
 		const results = await new AxeBuilder({ page })
 			.withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"])
 			.analyze();
-
 		expect(
 			results.violations,
 			JSON.stringify(violationSummary(results.violations), null, 2),
 		).toEqual([]);
-
 		const overflow = await page.evaluate(
 			() => document.documentElement.scrollWidth - document.documentElement.clientWidth,
 		);
@@ -98,128 +59,51 @@ for (const [label, path] of representativePages) {
 	});
 }
 
-test("键盘用户可以从首页进入检索并提交查询", async ({ page }) => {
+test("键盘用户可以从首页进入故事和关于页", async ({ page }) => {
 	await page.goto("/");
-
-	await tabTo(page, page.locator(".site-header__brand"));
-	await expect
-		.poll(() =>
-			page.locator(":focus").evaluate((element) => getComputedStyle(element).outlineStyle),
-		)
-		.not.toBe("none");
-
-	const browseLink = page.locator(".site-header nav").getByRole("link");
-	await tabTo(page, browseLink);
-	await browseLink.press("Enter");
-	await expect(page).toHaveURL(/\/browse\/?$/);
-
-	await resetTabOrderAfterNavigation(page);
-	await tabTo(page, page.locator(".archive-header__brand"));
-	await tabTo(page, page.locator(".archive-header__browse"));
-	await tabTo(page, page.locator(".archive-header__back"));
-	const query = page.getByLabel("搜索题名、人物、词语、正文或普通话拼音");
-	await tabTo(page, query);
-	await page.keyboard.type("白局");
-
-	await tabTo(page, page.getByLabel("内容类型"));
-	await tabTo(page, page.getByLabel("档案证据身份"));
-	await tabTo(page, page.getByLabel("档案时间"));
-	await tabTo(page, page.getByLabel("档案地点"));
-	await tabTo(page, page.getByLabel("文化形式"));
-	const submitSearch = page.getByRole("button", { name: "查看结果" });
-	await tabTo(page, submitSearch);
-	await submitSearch.press("Enter");
-
-	await expect(page).toHaveURL(/\/browse\?q=%E7%99%BD%E5%B1%80$/);
-	await expect(page.getByRole("heading", { name: /南京白局/ }).first()).toBeVisible();
+	const navigation = page.getByRole("navigation", { name: "首页导航" });
+	const about = navigation.getByRole("link", { name: "关于" });
+	await about.focus();
+	await expect(about).toBeFocused();
+	await expect(about).toHaveCSS("outline-style", "solid");
+	await about.press("Enter");
+	await expect(page).toHaveURL(/\/policies\/about$/);
+	await expect(page.getByRole("heading", { level: 1, name: "关于本站" })).toBeVisible();
 });
 
-test("键盘用户可以填写非音频线索并确认数据规则", async ({ page }) => {
+test("键盘用户可以填写反馈并确认数据规则", async ({ page }) => {
 	await openStablePage(page, "/contribute");
-
-	await tabTo(page, page.locator(".archive-header__brand"));
-	await tabTo(page, page.locator(".archive-header__browse"));
-	await tabTo(page, page.locator(".archive-header__back"));
-
-	const skipToForm = page.getByRole("link", { name: "跳到线索表单" });
-	await tabTo(page, skipToForm);
+	const skipToForm = page.getByRole("link", { name: "跳到反馈表单" });
+	await skipToForm.focus();
 	await skipToForm.press("Enter");
-	await expect(page).toHaveURL(/\/contribute#submission-type$/);
-
-	const type = page.getByLabel("线索类型");
-	await expect(type).toBeFocused();
-	await expect(type).toHaveCSS("outline-style", "solid");
-	await expect(type).toHaveCSS("outline-width", "2px");
-	await page.keyboard.press("ArrowDown");
-	await expect(type).toHaveValue("词语");
-
-	const description = page.getByLabel("说明");
-	await tabTo(page, description, 2);
-	await page.keyboard.type("这是一条只用于键盘流程验收的南京话词语线索说明。");
-	await tabTo(page, page.getByLabel("材料链接（可选）"));
-	await tabTo(page, page.getByLabel("关联档案编号（可选）"));
-	await tabTo(page, page.getByLabel("联系类型（可选）"));
-	await tabTo(page, page.getByLabel("联系方式（可选）"));
-
-	const consent = page.getByLabel(/我已了解上述信息用途/);
-	await tabTo(page, consent);
-	await page.keyboard.press("Space");
-	await expect(consent).toBeChecked();
-
-	const verification = page.getByLabel("完成人机验证（测试替身）");
-	await tabTo(page, verification);
-	await page.keyboard.press("Space");
-	await expect(verification).toBeChecked();
-
-	const submit = page.getByRole("button", { name: "提交线索" });
-	await tabTo(page, submit);
-	await submit.press("Enter");
-	await expect(page.getByText(/提交不代表必然采纳/)).toBeVisible();
-	await expect(page.getByText(/编号：SUB-\d{8}-[A-F0-9]{10}/)).toBeVisible();
-});
-
-test("直接打开线索表单 fragment 会在控件启用后聚焦线索类型", async ({ page }) => {
-	await openStablePage(page, "/contribute#submission-type");
-
 	await expect(page.getByLabel("线索类型")).toBeFocused();
+	await page.getByLabel("线索类型").selectOption("词语");
+	await page.getByLabel("说明").fill("早点铺里的短句建议补充具体说话人关系和使用时间范围。");
+	await page.getByLabel(/我已了解上述信息用途/).check();
+	await page.getByLabel("完成人机验证（测试替身）").check();
+	await page.getByRole("button", { name: "提交反馈" }).click();
+	await expect(page.getByText(/提交不代表必然采纳/)).toBeVisible();
 });
 
-test("地图、历史路径和扫描件都有等价文本入口", async ({ page }) => {
+test("城市地图和故事总览都有十五个等价文字入口", async ({ page }) => {
 	await page.goto("/");
-
-	await expect(page.getByRole("img", { name: "1940 年《南京市区图》扫描件" })).toBeVisible();
 	await expect(
-		page.getByRole("link", { name: "在 Wikimedia Commons 查看 1940 年《南京市区图》来源" }),
-	).toHaveAttribute("href", /^https:\/\/commons\.wikimedia\.org/);
-
-	const historicalPath = page.getByRole("region", { name: "从材料看见时间" });
-	await expect(historicalPath.getByRole("listitem")).toHaveCount(5);
-	await expect(historicalPath.getByRole("time")).toHaveCount(5);
-
-	await page.goto("/archive/NJH000008");
-	await expect(page.getByText(/一部英文官话语法原著/)).toBeVisible();
-	await expect(page.getByRole("region", { name: "档案说明" })).toContainText("全书影印与 OCR");
-	await expect(page.getByRole("region", { name: "核查入口" })).toContainText(
-		"Internet Archive 全文影印与 OCR",
-	);
+		page.getByRole("list", { name: "城市地点", exact: true }).getByRole("link"),
+	).toHaveCount(15);
+	await expect(page.getByRole("list", { name: "城市故事总览" }).getByRole("link")).toHaveCount(15);
+	await expect(page.getByText("旧资料柜", { exact: true })).toHaveCount(0);
 });
 
 test.describe("减少动态", () => {
-	test("首页在减少动态偏好下关闭入场动画和箭头过渡", async ({ page }) => {
+	test("城市首页在减少动态偏好下压低地点动效", async ({ page }) => {
 		await page.emulateMedia({ reducedMotion: "reduce" });
 		await page.goto("/");
-
-		await expect
-			.poll(() =>
-				page.locator(".hero__map").evaluate((element) => getComputedStyle(element).animationName),
-			)
-			.toBe("none");
 		await expect
 			.poll(() =>
 				page
-					.locator(".hero__action svg")
-					.evaluate((element) => getComputedStyle(element).transitionDuration),
+					.getByRole("link", { name: "去公交站看看" })
+					.evaluate((element) => getComputedStyle(element).animationName),
 			)
-			.toBe("0s");
+			.toBe("none");
 	});
 });

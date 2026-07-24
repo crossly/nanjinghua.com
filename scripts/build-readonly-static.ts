@@ -3,7 +3,6 @@ import { cp, mkdir, mkdtemp, rename, rm, stat } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { basename, dirname, join } from "node:path";
 
-import { buildArchiveExports } from "./build-archive-exports.ts";
 import { prepareReadonlyStatic } from "./prepare-readonly-static.ts";
 
 type Snapshot = {
@@ -65,7 +64,6 @@ async function buildReadonlyStatic(projectRoot = process.cwd()): Promise<void> {
 			await run("pnpm", ["run", "validate:content"], projectRoot);
 			await run("pnpm", ["run", "build:sitemap"], projectRoot);
 			await run("pnpm", ["exec", "vite", "build", "--mode", "readonly-static"], projectRoot);
-			await buildArchiveExports(projectRoot);
 			await prepareReadonlyStatic(projectRoot, join(projectRoot, "dist", "client"), generatedRoot);
 		} finally {
 			for (const saved of snapshots) await restore(saved);

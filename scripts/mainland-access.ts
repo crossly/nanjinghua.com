@@ -1,4 +1,11 @@
 import { setTimeout as sleep } from "node:timers/promises";
+import {
+	classifyDiagnosticOutcome,
+	type DiagnosticOutcome,
+	isGlobalpingInfrastructureStatus,
+	safeGlobalpingFailureReason,
+	safeGlobalpingStatus,
+} from "./network-diagnostics.ts";
 
 export const mainlandNetworks = [
 	{
@@ -29,16 +36,16 @@ export const mainlandRoutes = [
 		expectedContent: "南京话｜南京话的历史",
 	},
 	{
-		id: "article",
-		label: "专题",
-		path: "/articles/what-is-nanjinghua",
-		expectedContent: "南京话是什么？",
+		id: "story",
+		label: "城市故事",
+		path: "/stories/breakfast",
+		expectedContent: "早点铺的热气，先醒过来",
 	},
 	{
-		id: "search",
-		label: "搜索",
-		path: "/browse?q=%E7%99%BD%E5%B1%80",
-		expectedContent: "南京白局",
+		id: "about",
+		label: "关于本站",
+		path: "/policies/about",
+		expectedContent: "关于本站",
 	},
 	{
 		id: "api",
@@ -124,6 +131,8 @@ export type MainlandProbeSummary = {
 	city: string | null;
 	provider: string | null;
 	passed: boolean;
+	infrastructureError: boolean;
+	outcome: DiagnosticOutcome;
 	reasons: string[];
 	status: string;
 	statusCode: number | null;
@@ -134,20 +143,53 @@ export type MainlandProbeSummary = {
 };
 
 export type MainlandMeasurementSummary = {
-	id: string;
+	id: string | null;
 	createdAt: string;
 	route: MainlandRoute["id"];
 	path: string;
 	round: number;
 	passed: boolean;
+	outcome: DiagnosticOutcome;
 	results: MainlandProbeSummary[];
 };
+
+function unavailableMainlandMeasurement(
+	route: MainlandRoute,
+	round: number,
+): MainlandMeasurementSummary {
+	return {
+		id: null,
+		createdAt: new Date().toISOString(),
+		route: route.id,
+		path: route.path,
+		round,
+		passed: false,
+		outcome: "infrastructure-error",
+		results: mainlandNetworks.map((network) => ({
+			network: network.name,
+			asn: network.asn,
+			city: null,
+			provider: null,
+			passed: false,
+			infrastructureError: true,
+			outcome: "infrastructure-error",
+			reasons: ["Globalping API 测量不可用"],
+			status: "missing",
+			statusCode: null,
+			totalMs: null,
+			firstByteMs: null,
+			tlsAuthorized: false,
+			contentMatched: false,
+		})),
+	};
+}
 
 export type MainlandAccessReport = {
 	generatedAt: string;
 	target: string;
 	rounds: number;
 	passed: boolean;
+	outcome: DiagnosticOutcome;
 	measurements: MainlandMeasurementSummary[];
 	byRoute: Record<MainlandRoute["id"], { passed: number; total: number }>;
 	byNetwork: Record<number, { passed: number; total: number }>;
@@ -192,6 +234,8 @@ export function summarizeMainlandMeasurement(
 				city: null,
 				provider: null,
 				passed: false,
+				infrastructureError: true,
+				outcome: "infrastructure-error",
 				reasons: [`缺少 AS${network.asn} ${network.name} 探针结果`],
 				status: "missing",
 				statusCode: null,
@@ -209,22 +253,27 @@ export function summarizeMainlandMeasurement(
 			reasons.push(`探针不在固定回归点 ${network.city}：实际 ${probe.city ?? "未知"}`);
 		}
 		if (!probe.tags.includes("eyeball-network")) reasons.push("探针不是居民网络");
-		if (result.status !== "finished") {
-			reasons.push(result.rawOutput || `测量状态为 ${result.status}`);
+		const status = safeGlobalpingStatus(result.status);
+		const infrastructureError = reasons.length > 0 || isGlobalpingInfrastructureStatus(status);
+		if (status !== "finished") {
+			reasons.push(safeGlobalpingFailureReason("HTTPS", status, result.rawOutput));
 		} else {
 			if (result.statusCode !== 200) reasons.push(`HTTP 状态为 ${String(result.statusCode)}`);
 			if (result.tls?.authorized !== true) reasons.push("TLS 证书未通过验证");
 			if (!result.rawBody?.includes(route.expectedContent)) reasons.push("响应正文签名不匹配");
 		}
 
+		const passed = reasons.length === 0;
 		return {
 			network: network.name,
 			asn: network.asn,
 			city: probe.city,
 			provider: probe.network,
-			passed: reasons.length === 0,
+			passed,
+			infrastructureError,
+			outcome: infrastructureError ? "infrastructure-error" : passed ? "passed" : "site-failure",
 			reasons,
-			status: result.status,
+			status,
 			statusCode: result.statusCode ?? null,
 			totalMs: result.timings?.total ?? null,
 			firstByteMs: result.timings?.firstByte ?? null,
@@ -233,13 +282,15 @@ export function summarizeMainlandMeasurement(
 		};
 	});
 
+	const outcome = classifyDiagnosticOutcome(results);
 	return {
 		id: measurement.id,
 		createdAt: measurement.createdAt,
 		route: route.id,
 		path: route.path,
 		round,
-		passed: results.every((result) => result.passed),
+		passed: outcome === "passed",
+		outcome,
 		results,
 	};
 }
@@ -252,10 +303,14 @@ export async function runMainlandAccessValidation(
 	const totalMeasurements = options.rounds * mainlandRoutes.length;
 	for (let round = 1; round <= options.rounds; round += 1) {
 		for (const route of mainlandRoutes) {
-			const measurement = await client.measure(
-				createMainlandMeasurementRequest(options.target, route),
-			);
-			measurements.push(summarizeMainlandMeasurement(measurement, route, round));
+			try {
+				const measurement = await client.measure(
+					createMainlandMeasurementRequest(options.target, route),
+				);
+				measurements.push(summarizeMainlandMeasurement(measurement, route, round));
+			} catch {
+				measurements.push(unavailableMainlandMeasurement(route, round));
+			}
 			if (options.delayMs > 0 && measurements.length < totalMeasurements) {
 				await sleep(options.delayMs);
 			}
@@ -277,11 +332,15 @@ export async function runMainlandAccessValidation(
 		}
 	}
 
+	const outcome = classifyDiagnosticOutcome(
+		measurements.flatMap((measurement) => measurement.results),
+	);
 	return {
 		generatedAt: new Date().toISOString(),
 		target: options.target,
 		rounds: options.rounds,
-		passed: measurements.every((measurement) => measurement.passed),
+		passed: outcome === "passed",
+		outcome,
 		measurements,
 		byRoute,
 		byNetwork,

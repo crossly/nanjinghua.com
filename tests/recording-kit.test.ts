@@ -7,12 +7,7 @@ import path from "node:path";
 import { test } from "node:test";
 import { promisify } from "node:util";
 
-import { strFromU8, unzipSync } from "fflate";
-
-import { RECORDING_KIT_ARCHIVE_NAME, RECORDING_KIT_VERSION } from "../src/recording-kit/config.ts";
-
 const root = path.resolve("docs/recording-kit");
-const downloadPath = path.resolve("public/downloads", RECORDING_KIT_ARCHIVE_NAME);
 const run = promisify(execFile);
 
 async function readKitFile(relativePath: string) {
@@ -124,28 +119,4 @@ test("安全交接覆盖空派生目录并要求身份与授权离线分区", as
 	} finally {
 		await rm(rehearsalDirectory, { force: true, recursive: true });
 	}
-});
-
-test("公开 ZIP 包包含可直接使用的模板和完整演练", async () => {
-	const archive = unzipSync(await readFile(downloadPath));
-	const requiredEntries = [
-		"nanjinghua-recording-kit/README.md",
-		"nanjinghua-recording-kit/prompts.md",
-		"nanjinghua-recording-kit/technical-guide.md",
-		"nanjinghua-recording-kit/speaker-background-template.md",
-		"nanjinghua-recording-kit/consent-form.md",
-		"nanjinghua-recording-kit/secure-handoff-checklist.md",
-		"nanjinghua-recording-kit/rehearsal/manifest.sha256",
-		"nanjinghua-recording-kit/rehearsal/originals/SIM-0001-original.wav",
-		"nanjinghua-recording-kit/rehearsal/derivatives/SIM-0001-public.mp3",
-		"nanjinghua-recording-kit/rehearsal/restricted/identity/SIM-0001-identity.txt",
-		"nanjinghua-recording-kit/rehearsal/restricted/consent/SIM-0001-consent.txt",
-	];
-
-	for (const entry of requiredEntries) assert.ok(archive[entry], `ZIP 缺少 ${entry}`);
-	assert.ok(
-		strFromU8(archive["nanjinghua-recording-kit/README.md"]).includes(
-			`版本：${RECORDING_KIT_VERSION}`,
-		),
-	);
 });

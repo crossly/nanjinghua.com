@@ -2,7 +2,6 @@ import { createFileRoute } from "@tanstack/react-router";
 import "@tanstack/react-start";
 import { env } from "cloudflare:workers";
 
-import { isRegisteredArchiveIdentifier } from "../../content/registry";
 import { errorResponse } from "../../submissions/http";
 import { submissionInputSchema } from "../../submissions/schema";
 import { createSubmission } from "../../submissions/service";
@@ -36,12 +35,6 @@ export const Route = createFileRoute("/api/submissions")({
 						parsed.error.flatten().fieldErrors,
 					);
 				}
-				if (parsed.data.archiveId && !isRegisteredArchiveIdentifier(parsed.data.archiveId)) {
-					return errorResponse(422, "UNKNOWN_ARCHIVE_ID", "关联档案编号不存在，请核对后重试。", {
-						archiveId: ["未找到该永久档案编号"],
-					});
-				}
-
 				const turnstile = await verifyTurnstile(parsed.data.turnstileToken, request, environment);
 				if (turnstile.outcome === "rejected") {
 					return errorResponse(403, "TURNSTILE_REJECTED", "人机验证未通过，请刷新验证后重试。");
@@ -64,7 +57,7 @@ export const Route = createFileRoute("/api/submissions")({
 							referenceId: submission.id,
 							status: submission.status,
 							priority: submission.priority,
-							message: "线索已收到。提交不代表必然采纳，我们也无法保证逐条回复。",
+							message: "反馈已收到。提交不代表必然采纳，我们也无法保证逐条回复。",
 						},
 						{ status: 201 },
 					);

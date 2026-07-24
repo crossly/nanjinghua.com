@@ -83,9 +83,8 @@ export async function prepareReadonlyStatic(
 
 	const requiredFiles = [
 		"index.html",
-		join("browse", "index.html"),
-		join("archive", "NJH000001", "index.html"),
-		join("exports", "NJH000001.json"),
+		join("stories", "breakfast", "index.html"),
+		join("policies", "about", "index.html"),
 	];
 	for (const file of requiredFiles) {
 		if (!(await stat(join(target, file))).isFile()) {
@@ -93,14 +92,10 @@ export async function prepareReadonlyStatic(
 		}
 	}
 
-	const exportCount = (await readdir(join(target, "exports"))).filter((file) =>
-		file.endsWith(".json"),
-	).length;
-	if (exportCount === 0) throw new Error("只读静态产物没有档案导出");
-	return { target, exportCount };
+	return { target };
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
 	const result = await prepareReadonlyStatic();
-	console.log(`只读静态产物已生成：${result.target}（${result.exportCount} 条档案导出）。`);
+	console.log(`只读静态产物已生成：${result.target}。`);
 }

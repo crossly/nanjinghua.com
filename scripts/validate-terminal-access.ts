@@ -13,7 +13,6 @@ import {
 	parseCloudflareTrace,
 	parseCymruAsNameRecords,
 	parseCymruOriginRecords,
-	parseSearchResultCount,
 	redactTerminalDiagnostic,
 	refreshTerminalMeasurementFailures,
 	serializePublicTerminalReport,
@@ -38,8 +37,6 @@ type TerminalMeasurement = {
 	finalUrl: string | null;
 	contentMatched: boolean;
 	canonicalMatched: boolean;
-	interactionMatched: boolean | null;
-	searchResultCount: number | null;
 	resourceTypes: string[];
 	resourceFailures: string[];
 	consoleErrors: string[];
@@ -72,7 +69,7 @@ type OperatorConfirmations = {
 function usage(): string {
 	return `用法：pnpm ops:validate:terminal -- <telecom|unicom|mobile>
 
-在当前真实终端的可见 Chromium 中，对 nanjinghua.com 的非音频首页、专题、搜索、
+在当前真实终端的可见 Chromium 中，对 nanjinghua.com 的非音频首页、城市故事、关于页面、
 规范 URL、同源静态资源和离线恢复执行三轮验收。命令从目标域名的 Cloudflare trace
 	取得出口 IP，仅用它查询 Team Cymru ASN；报告不会保存或输出 IP。只有大陆位置、指定
 	运营商 ASN、全部自动检查、操作者可见确认和目标运营商直连声明同时通过时，命令才以
@@ -215,8 +212,6 @@ async function measureRoute(
 	let finalUrl: string | null = null;
 	let contentMatched = false;
 	let canonicalMatched = false;
-	let interactionMatched: boolean | null = options.route.id === "search" ? false : null;
-	let searchResultCount: number | null = null;
 	let screenshot: string | null = null;
 	const reasons: string[] = [];
 	try {
@@ -236,23 +231,6 @@ async function measureRoute(
 			(options.route.expectedQuery === null
 				? final.search === ""
 				: final.searchParams.get("q") === options.route.expectedQuery);
-		if (options.route.id === "search") {
-			const searchInput = page.getByLabel("搜索题名、人物、词语、正文或普通话拼音");
-			await searchInput.fill(options.route.expectedQuery);
-			await Promise.all([
-				page.waitForNavigation({ waitUntil: "domcontentloaded", timeout: 20_000 }),
-				searchInput.press("Enter"),
-			]);
-			await page.waitForTimeout(500);
-			const interactedUrl = new URL(page.url());
-			const interactedBodyText = await page.locator("body").innerText();
-			interactionMatched =
-				interactedUrl.origin === targetOrigin &&
-				interactedUrl.pathname === options.route.expectedPath &&
-				interactedUrl.searchParams.get("q") === options.route.expectedQuery &&
-				interactedBodyText.includes(options.route.expectedContent);
-			searchResultCount = parseSearchResultCount(interactedBodyText);
-		}
 		if (!options.headless && options.viewDelayMs > 0)
 			await page.waitForTimeout(options.viewDelayMs);
 		if (options.round === 1) {
@@ -273,10 +251,6 @@ async function measureRoute(
 	if (statusCode !== 200) reasons.push(`导航 HTTP 状态为 ${String(statusCode)}`);
 	if (!contentMatched) reasons.push("页面正文签名不匹配");
 	if (!canonicalMatched) reasons.push("最终规范 URL 不匹配");
-	if (interactionMatched === false) reasons.push("搜索表单交互未通过");
-	if (options.route.id === "search" && (!searchResultCount || searchResultCount < 1)) {
-		reasons.push("搜索结果计数缺失或为零");
-	}
 	for (const requiredType of ["stylesheet", "script"]) {
 		if (!resourceTypes.has(requiredType)) reasons.push(`没有观察到同源 ${requiredType} 资源`);
 	}
@@ -295,8 +269,6 @@ async function measureRoute(
 		finalUrl,
 		contentMatched,
 		canonicalMatched,
-		interactionMatched,
-		searchResultCount,
 		resourceTypes: [...resourceTypes].sort(),
 		resourceFailures,
 		consoleErrors,
@@ -319,12 +291,12 @@ async function verifyRecovery(
 	clientIps: string[],
 ): Promise<{ result: DetailedRecoveryResult; page: Page }> {
 	const page = await context.newPage();
-	const searchUrl = `https://${target}/browse?q=%E7%99%BD%E5%B1%80`;
+	const recoveryUrl = `https://${target}/stories/breakfast`;
 	let offlineFailureObserved = false;
 	const reasons: string[] = [];
 	let initialStatusCode: number | null = null;
 	try {
-		const initialResponse = await page.goto(searchUrl, {
+		const initialResponse = await page.goto(recoveryUrl, {
 			waitUntil: "domcontentloaded",
 			timeout: 20_000,
 		});
@@ -351,9 +323,12 @@ async function verifyRecovery(
 	let statusCode: number | null = null;
 	let contentMatched = false;
 	try {
-		const response = await page.goto(searchUrl, { waitUntil: "domcontentloaded", timeout: 20_000 });
+		const response = await page.goto(recoveryUrl, {
+			waitUntil: "domcontentloaded",
+			timeout: 20_000,
+		});
 		statusCode = response?.status() ?? null;
-		contentMatched = (await page.locator("body").innerText()).includes("南京白局");
+		contentMatched = (await page.locator("body").innerText()).includes("早点铺的热气，先醒过来");
 	} catch (error) {
 		reasons.push(
 			redactTerminalDiagnostic(error instanceof Error ? error.message : String(error), clientIps),
@@ -361,7 +336,7 @@ async function verifyRecovery(
 	}
 	if (!offlineFailureObserved) reasons.push("离线时页面没有出现预期请求失败");
 	if (statusCode !== 200) reasons.push(`恢复后 HTTP 状态为 ${String(statusCode)}`);
-	if (!contentMatched) reasons.push("恢复后搜索正文签名不匹配");
+	if (!contentMatched) reasons.push("恢复后故事正文签名不匹配");
 	const screenshot = "recovery.png";
 	await page.screenshot({ path: path.join(artifactDirectory, screenshot), fullPage: true });
 	return {
