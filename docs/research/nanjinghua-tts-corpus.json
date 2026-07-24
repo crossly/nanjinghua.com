@@ -8,8 +8,8 @@
 	"totals": {
 		"scenes": 15,
 		"lines": 60,
-		"generated": 15,
-		"notGenerated": 45
+		"generated": 60,
+		"notGenerated": 0
 	},
 	"scenes": [
 		{
@@ -33,8 +33,8 @@
 					"utterance": "莫挤，慢慢来。",
 					"meaning": "别挤，慢慢来。",
 					"context": "上下车的人挤在一起时提醒大家",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/jigongjiao-02.wav"
 				},
 				{
 					"id": "jigongjiao-03",
@@ -42,8 +42,8 @@
 					"utterance": "到站喊我一声诶。",
 					"meaning": "到站时提醒我一下。",
 					"context": "请同行的人帮忙留意站点",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/jigongjiao-03.wav"
 				},
 				{
 					"id": "jigongjiao-04",
@@ -51,8 +51,8 @@
 					"utterance": "晓得了，你坐得。",
 					"meaning": "知道了，你坐着吧。",
 					"context": "回应同行人的提醒",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/jigongjiao-04.wav"
 				}
 			]
 		},
@@ -77,8 +77,8 @@
 					"utterance": "去菜场转一趟。",
 					"meaning": "去一趟菜场。",
 					"context": "回应邻居询问去向",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/lane-02.wav"
 				},
 				{
 					"id": "lane-03",
@@ -86,8 +86,8 @@
 					"utterance": "吃过啦？",
 					"meaning": "吃过饭了吗？",
 					"context": "熟人见面时表达关心",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/lane-03.wav"
 				},
 				{
 					"id": "lane-04",
@@ -95,8 +95,8 @@
 					"utterance": "有空来家里头坐坐啊。",
 					"meaning": "有空来家里坐坐。",
 					"context": "分别前发出日常邀请",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/lane-04.wav"
 				}
 			]
 		},
@@ -121,8 +121,8 @@
 					"utterance": "两块五。",
 					"meaning": "两元五角。",
 					"context": "老板直接回答价格",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/shop-02.wav"
 				},
 				{
 					"id": "shop-03",
@@ -130,8 +130,8 @@
 					"utterance": "帮我拿一个。",
 					"meaning": "请给我拿一个。",
 					"context": "确认购买柜台后的商品",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/shop-03.wav"
 				},
 				{
 					"id": "shop-04",
@@ -139,8 +139,8 @@
 					"utterance": "拿好，慢走啊。",
 					"meaning": "拿好，慢走。",
 					"context": "结账后把商品递给顾客",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/shop-04.wav"
 				}
 			]
 		},
@@ -156,8 +156,8 @@
 					"utterance": "这个怎么卖啊？",
 					"meaning": "这个多少钱？",
 					"context": "在菜摊前询价",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/market-01.wav"
 				},
 				{
 					"id": "market-02",
@@ -174,8 +174,8 @@
 					"utterance": "帮我称一斤。",
 					"meaning": "请给我称一斤。",
 					"context": "确定分量后请摊主称重",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/market-03.wav"
 				},
 				{
 					"id": "market-04",
@@ -183,8 +183,8 @@
 					"utterance": "给你搭把小葱。",
 					"meaning": "再送你一点小葱。",
 					"context": "摊主装袋时添一点配菜",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/market-04.wav"
 				}
 			]
 		},
@@ -200,8 +200,8 @@
 					"utterance": "来一两馄饨。",
 					"meaning": "来一两馄饨。",
 					"context": "熟客在柜台前直接点单",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/breakfast-01.wav"
 				},
 				{
 					"id": "breakfast-02",
@@ -218,8 +218,8 @@
 					"utterance": "少搁一得儿。",
 					"meaning": "少放一点。",
 					"context": "客人说明辣油分量",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/breakfast-03.wav"
 				},
 				{
 					"id": "breakfast-04",
@@ -227,8 +227,8 @@
 					"utterance": "就在这块吃啊？",
 					"meaning": "就在这里吃吗？",
 					"context": "摊主确认堂食还是带走",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/breakfast-04.wav"
 				}
 			]
 		},
@@ -244,8 +244,8 @@
 					"utterance": "饭好了，来吃饭。",
 					"meaning": "饭做好了，来吃饭。",
 					"context": "从厨房招呼家人上桌",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/kitchen-01.wav"
 				},
 				{
 					"id": "kitchen-02",
@@ -262,8 +262,8 @@
 					"utterance": "把碗端出去。",
 					"meaning": "把碗端到外面去。",
 					"context": "开饭前请家人帮忙摆桌",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/kitchen-03.wav"
 				},
 				{
 					"id": "kitchen-04",
@@ -271,8 +271,8 @@
 					"utterance": "我来弄，你去坐得。",
 					"meaning": "我来做，你去坐着。",
 					"context": "接手厨房里的事情",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/kitchen-04.wav"
 				}
 			]
 		},
@@ -288,8 +288,8 @@
 					"utterance": "下来坐会儿啊。",
 					"meaning": "下来坐一会儿。",
 					"context": "在楼下招呼熟人一起聊天",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/downstairs-01.wav"
 				},
 				{
 					"id": "downstairs-02",
@@ -306,8 +306,8 @@
 					"utterance": "你家小孩还没回来啊？",
 					"meaning": "你家孩子还没回来吗？",
 					"context": "熟邻之间询问家人近况",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/downstairs-03.wav"
 				},
 				{
 					"id": "downstairs-04",
@@ -315,8 +315,8 @@
 					"utterance": "回头一道走。",
 					"meaning": "等一会儿一起走。",
 					"context": "聊天结束前约好同行",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/downstairs-04.wav"
 				}
 			]
 		},
@@ -341,8 +341,8 @@
 					"utterance": "书包背好。",
 					"meaning": "把书包背好。",
 					"context": "离开校门前提醒孩子整理东西",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/school-gate-02.wav"
 				},
 				{
 					"id": "school-gate-03",
@@ -350,8 +350,8 @@
 					"utterance": "路上慢点骑。",
 					"meaning": "路上骑慢一点。",
 					"context": "孩子骑车离开时叮嘱安全",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/school-gate-03.wav"
 				},
 				{
 					"id": "school-gate-04",
@@ -359,8 +359,8 @@
 					"utterance": "到家讲一声。",
 					"meaning": "到家后说一声。",
 					"context": "分别前请孩子报平安",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/school-gate-04.wav"
 				}
 			]
 		},
@@ -385,8 +385,8 @@
 					"utterance": "把球传过来。",
 					"meaning": "把球传给我。",
 					"context": "比赛中向队友要球",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/playground-02.wav"
 				},
 				{
 					"id": "playground-03",
@@ -394,8 +394,8 @@
 					"utterance": "这球算不算啊？",
 					"meaning": "这个球算不算？",
 					"context": "对进球或出界有疑问时确认",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/playground-03.wav"
 				},
 				{
 					"id": "playground-04",
@@ -403,8 +403,8 @@
 					"utterance": "再来一把。",
 					"meaning": "再来一局。",
 					"context": "一局结束后邀请继续",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/playground-04.wav"
 				}
 			]
 		},
@@ -420,8 +420,8 @@
 					"utterance": "你家住哪栋啊？",
 					"meaning": "你住在哪一栋？",
 					"context": "新邻居第一次碰面时确认住处",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/new-estate-01.wav"
 				},
 				{
 					"id": "new-estate-02",
@@ -438,8 +438,8 @@
 					"utterance": "帮我按一哈八楼。",
 					"meaning": "请帮我按八楼。",
 					"context": "进电梯后请邻居帮忙按楼层",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/new-estate-03.wav"
 				},
 				{
 					"id": "new-estate-04",
@@ -447,8 +447,8 @@
 					"utterance": "有空来家里头坐坐啊。",
 					"meaning": "有空来家里坐坐。",
 					"context": "新邻居分别时发出邀请",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/new-estate-04.wav"
 				}
 			]
 		},
@@ -464,8 +464,8 @@
 					"utterance": "喂，听得见啊？",
 					"meaning": "喂，能听见吗？",
 					"context": "电话刚接通时确认声音",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/phone-screen-01.wav"
 				},
 				{
 					"id": "phone-screen-02",
@@ -482,8 +482,8 @@
 					"utterance": "快到了，莫催。",
 					"meaning": "快到了，别催。",
 					"context": "回应家人询问",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/phone-screen-03.wav"
 				},
 				{
 					"id": "phone-screen-04",
@@ -491,8 +491,8 @@
 					"utterance": "到家给我讲一声。",
 					"meaning": "到家后告诉我一声。",
 					"context": "挂电话前叮嘱对方报平安",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/phone-screen-04.wav"
 				}
 			]
 		},
@@ -517,8 +517,8 @@
 					"utterance": "这段蛮好听的。",
 					"meaning": "这一段很好听。",
 					"context": "演出间隙与同行人交流感受",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/stage-02.wav"
 				},
 				{
 					"id": "stage-03",
@@ -526,8 +526,8 @@
 					"utterance": "后头还有一折。",
 					"meaning": "后面还有一折戏。",
 					"context": "提醒准备离席的人演出尚未结束",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/stage-03.wav"
 				},
 				{
 					"id": "stage-04",
@@ -535,8 +535,8 @@
 					"utterance": "散场一道走啊。",
 					"meaning": "散场后一起走。",
 					"context": "演出结束前与熟人约好同行",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/stage-04.wav"
 				}
 			]
 		},
@@ -561,8 +561,8 @@
 					"utterance": "这句话再对一哈。",
 					"meaning": "这句话再核对一下。",
 					"context": "发现记录可能有出入时提出复查",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/desk-02.wav"
 				},
 				{
 					"id": "desk-03",
@@ -570,8 +570,8 @@
 					"utterance": "莫在书上划。",
 					"meaning": "不要在书上画线。",
 					"context": "提醒同伴保护借阅资料",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/desk-03.wav"
 				},
 				{
 					"id": "desk-04",
@@ -579,8 +579,8 @@
 					"utterance": "用完搁回原处。",
 					"meaning": "用完放回原来的地方。",
 					"context": "整理桌面材料时提醒归位",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/desk-04.wav"
 				}
 			]
 		},
@@ -605,8 +605,8 @@
 					"utterance": "跟紧点诶，莫走散了。",
 					"meaning": "你跟紧一点，别走散了。",
 					"context": "在人群中提醒同行人",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/festival-street-02.wav"
 				},
 				{
 					"id": "festival-street-03",
@@ -614,8 +614,8 @@
 					"utterance": "前头有灯，去看看。",
 					"meaning": "前面有灯，去看看。",
 					"context": "发现灯彩后招呼同伴过去",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/festival-street-03.wav"
 				},
 				{
 					"id": "festival-street-04",
@@ -623,8 +623,8 @@
 					"utterance": "买一个带回去。",
 					"meaning": "买一个带回家。",
 					"context": "在摊位前商量购买纪念物",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/festival-street-04.wav"
 				}
 			]
 		},
@@ -649,8 +649,8 @@
 					"utterance": "时间还早，莫急。",
 					"meaning": "时间还早，别着急。",
 					"context": "看见旅客赶时间时安慰对方",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/station-02.wav"
 				},
 				{
 					"id": "station-03",
@@ -658,8 +658,8 @@
 					"utterance": "到了给家里讲一声。",
 					"meaning": "到了以后告诉家里一声。",
 					"context": "分别前叮嘱旅客报平安",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/station-03.wav"
 				},
 				{
 					"id": "station-04",
@@ -667,8 +667,8 @@
 					"utterance": "路上当心点。",
 					"meaning": "路上小心一点。",
 					"context": "旅客进站前最后叮嘱",
-					"audioStatus": "not-generated",
-					"audioSrc": null
+					"audioStatus": "generated",
+					"audioSrc": "/audio/nanjinghua-dialogues/station-04.wav"
 				}
 			]
 		}

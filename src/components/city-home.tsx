@@ -94,7 +94,7 @@ export function CityHome({ activeStory }: { activeStory?: CityStory }) {
 				<h1 id="site-title">南京话</h1>
 				<h2>南京城的声音</h2>
 				<p className="city-home__lede">
-					从一座想象的城市开始，慢慢走进巷口、车站、灯会和一顿还冒着热气的早饭。这里的“声音”先指说话与城市表达；故事页也提供少量
+					从一座想象的城市开始，慢慢走进巷口、车站、灯会和一顿还冒着热气的早饭。这里的“声音”先指说话与城市表达；故事页也为场景短句提供
 					AI 合成试音。
 				</p>
 				<a href="#city-map" className="city-home__scroll">

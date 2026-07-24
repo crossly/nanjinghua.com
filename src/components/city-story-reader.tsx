@@ -8,6 +8,7 @@ export function CityStoryReader({ story }: { story: CityStory }) {
 	const audioRef = useRef<HTMLAudioElement | null>(null);
 	const [playingUtterance, setPlayingUtterance] = useState<string>();
 	const dialogue = getCityStoryDialogue(story.slug);
+	const audioCount = dialogue?.lines.filter((line) => line.audio).length ?? 0;
 	const mapIndex = cityLocations.findIndex((location) => location.storySlug === story.slug);
 
 	useEffect(
@@ -72,7 +73,7 @@ export function CityStoryReader({ story }: { story: CityStory }) {
 							</div>
 							<div className="city-story__dialogue-meta">
 								<span>{dialogue.review}</span>
-								<span>AI 合成试音 · 每个场景 1 条</span>
+								<span>AI 合成试音 · 本场景 {audioCount} 条</span>
 							</div>
 						</header>
 						<ol aria-label={`${story.scene}场景对话`}>

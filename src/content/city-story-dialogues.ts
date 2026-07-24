@@ -1,3 +1,5 @@
+import { nanjinghuaAudioByLineId } from "./nanjinghua-audio-index.ts";
+
 export type CityStoryDialogueLine = {
 	speaker: string;
 	utterance: string;
@@ -15,36 +17,6 @@ export type CityStoryDialogue = {
 };
 
 const pendingReview = "待南京本地使用者复核" as const;
-
-const trialAudioBySlug: Record<string, { utterance: string; src: string }> = {
-	jigongjiao: {
-		utterance: "后头空得很，往里走诶。",
-		src: "/audio/nanjinghua-trials/jigongjiao.wav",
-	},
-	lane: { utterance: "上哪块去啊？", src: "/audio/nanjinghua-trials/lane.wav" },
-	shop: { utterance: "老板，这个怎么卖啊？", src: "/audio/nanjinghua-trials/shop.wav" },
-	market: { utterance: "便宜一得儿行啊？", src: "/audio/nanjinghua-trials/market.wav" },
-	breakfast: { utterance: "阿要辣油啊？", src: "/audio/nanjinghua-trials/breakfast.wav" },
-	kitchen: { utterance: "莫搁盐了，够咸了。", src: "/audio/nanjinghua-trials/kitchen.wav" },
-	downstairs: { utterance: "今个蛮凉快的。", src: "/audio/nanjinghua-trials/downstairs.wav" },
-	"school-gate": {
-		utterance: "今个作业多不多啊？",
-		src: "/audio/nanjinghua-trials/school-gate.wav",
-	},
-	playground: {
-		utterance: "还差一个，阿有人来？",
-		src: "/audio/nanjinghua-trials/playground.wav",
-	},
-	"new-estate": { utterance: "电梯等一哈。", src: "/audio/nanjinghua-trials/new-estate.wav" },
-	"phone-screen": { utterance: "你到哪块了？", src: "/audio/nanjinghua-trials/phone-screen.wav" },
-	stage: { utterance: "开场了，快坐得。", src: "/audio/nanjinghua-trials/stage.wav" },
-	desk: { utterance: "这本你看到哪块了？", src: "/audio/nanjinghua-trials/desk.wav" },
-	"festival-street": {
-		utterance: "人多的一塌。",
-		src: "/audio/nanjinghua-trials/festival-street.wav",
-	},
-	station: { utterance: "票证带了啊？", src: "/audio/nanjinghua-trials/station.wav" },
-};
 
 const cityStoryDialogues: Record<string, CityStoryDialogue> = {
 	jigongjiao: {
@@ -487,15 +459,13 @@ const cityStoryDialogues: Record<string, CityStoryDialogue> = {
 export function getCityStoryDialogue(slug: string): CityStoryDialogue | undefined {
 	const dialogue = cityStoryDialogues[slug];
 	if (!dialogue) return undefined;
-	const trialAudio = trialAudioBySlug[slug];
-	if (!trialAudio) return dialogue;
 
 	return {
 		...dialogue,
-		lines: dialogue.lines.map((line) =>
-			line.utterance === trialAudio.utterance
-				? { ...line, audio: { src: trialAudio.src, type: "audio/wav" } }
-				: line,
-		),
+		lines: dialogue.lines.map((line, index) => {
+			const lineId = `${slug}-${String(index + 1).padStart(2, "0")}`;
+			const audio = nanjinghuaAudioByLineId[lineId];
+			return audio ? { ...line, audio } : line;
+		}),
 	};
 }

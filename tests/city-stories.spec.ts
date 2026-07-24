@@ -17,7 +17,7 @@ test("早点铺以高频南京话场景对话为主体", async ({ page }) => {
 	const audioResponse = await page.request.get("/audio/nanjinghua-trials/breakfast.wav");
 	expect(audioResponse.status()).toBe(200);
 	await expect(page.getByText("待南京本地使用者复核", { exact: true })).toBeVisible();
-	await expect(page.getByText("AI 合成试音 · 每个场景 1 条", { exact: true })).toBeVisible();
+	await expect(page.getByText("AI 合成试音 · 本场景 4 条", { exact: true })).toBeVisible();
 });
 
 test("十五个场景都提供三至五句待复核口语", async ({ page }) => {
@@ -46,7 +46,11 @@ test("十五个场景都提供三至五句待复核口语", async ({ page }) => 
 		expect(lineCount).toBeGreaterThanOrEqual(3);
 		expect(lineCount).toBeLessThanOrEqual(5);
 		await expect(page.getByText("待南京本地使用者复核", { exact: true })).toBeVisible();
-		await expect(dialogue.getByRole("button")).toHaveCount(lineCount);
+		const playButtons = dialogue.getByRole("button");
+		await expect(playButtons).toHaveCount(lineCount);
+		for (let index = 0; index < lineCount; index += 1) {
+			await expect(playButtons.nth(index)).toBeEnabled();
+		}
 	}
 });
 
