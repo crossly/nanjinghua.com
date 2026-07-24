@@ -2,14 +2,12 @@ import { ArrowUpRight, Music2, Pause, Volume2 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
 import { type CityStory, cityLocations } from "../content/city-stories";
-import { getCityStoryDialogue } from "../content/city-story-dialogues";
+import { type CityStoryDialogueLine, getCityStoryDialogue } from "../content/city-story-dialogues";
 
 export function CityStoryReader({ story }: { story: CityStory }) {
 	const audioRef = useRef<HTMLAudioElement | null>(null);
 	const [playingUtterance, setPlayingUtterance] = useState<string>();
-	const candidateDialogue = getCityStoryDialogue(story.slug);
-	const dialogue = story.dialogue ?? candidateDialogue?.lines;
-	const dialogueReview = story.dialogueReview ?? candidateDialogue?.review;
+	const dialogue = getCityStoryDialogue(story.slug);
 	const mapIndex = cityLocations.findIndex((location) => location.storySlug === story.slug);
 
 	useEffect(
@@ -19,7 +17,7 @@ export function CityStoryReader({ story }: { story: CityStory }) {
 		[],
 	);
 
-	function toggleAudio(line: NonNullable<CityStory["dialogue"]>[number]) {
+	function toggleAudio(line: CityStoryDialogueLine) {
 		if (!line.audio) return;
 		if (playingUtterance === line.utterance) {
 			audioRef.current?.pause();
@@ -72,10 +70,13 @@ export function CityStoryReader({ story }: { story: CityStory }) {
 								<p>场景口语</p>
 								<h2 id={`dialogue-${story.slug}`}>听他们怎么说</h2>
 							</div>
-							{dialogueReview ? <span>{dialogueReview}</span> : null}
+							<div className="city-story__dialogue-meta">
+								<span>{dialogue.review}</span>
+								<span>AI 合成试音 · 每个场景 1 条</span>
+							</div>
 						</header>
 						<ol aria-label={`${story.scene}场景对话`}>
-							{dialogue.map((line, index) => (
+							{dialogue.lines.map((line, index) => (
 								<li key={`${line.speaker}-${line.utterance}`}>
 									<span className="city-story__dialogue-index">
 										{String(index + 1).padStart(2, "0")}
@@ -101,7 +102,7 @@ export function CityStoryReader({ story }: { story: CityStory }) {
 										}：${line.utterance}`}
 										disabled={!line.audio}
 										onClick={() => toggleAudio(line)}
-										title={line.audio ? "播放南京话试音" : "试音制作中"}
+										title={line.audio ? "播放 AI 合成试音" : "本句暂无试音"}
 									>
 										{playingUtterance === line.utterance ? (
 											<Pause aria-hidden="true" strokeWidth={1.6} />

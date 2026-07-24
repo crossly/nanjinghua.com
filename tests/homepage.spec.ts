@@ -12,7 +12,7 @@ test("访客可以从品牌首页开始城市漫游", async ({ page }) => {
 	await expect(page.locator("html")).toHaveAttribute("lang", "zh-CN");
 	await expect(page.getByRole("heading", { level: 1, name: "南京话" })).toBeVisible();
 	await expect(page.getByText("南京城的声音", { exact: true })).toBeVisible();
-	await expect(page.getByText(/“声音”是说话与城市表达，不是音频功能/)).toBeVisible();
+	await expect(page.getByText(/故事页也提供少量 AI 合成试音/)).toBeVisible();
 	await expect(
 		page
 			.locator(".city-home__intro")

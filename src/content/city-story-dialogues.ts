@@ -9,7 +9,7 @@ export type CityStoryDialogueLine = {
 	};
 };
 
-type CityStoryDialogue = {
+export type CityStoryDialogue = {
 	review: "待南京本地使用者复核" | "南京本地使用者已复核";
 	lines: readonly CityStoryDialogueLine[];
 };

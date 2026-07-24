@@ -336,13 +336,19 @@ img {
 	color: var(--blue);
 }
 
-.city-story__dialogue > header > span {
+.city-story__dialogue-meta {
+	display: grid;
+	gap: 0.2rem;
 	max-width: 10rem;
 	font-size: 0.6875rem;
 	font-weight: 700;
 	line-height: 1.5;
 	text-align: right;
 	color: rgba(23, 23, 20, 0.62);
+}
+
+.city-story__dialogue-meta span:last-child {
+	color: var(--red);
 }
 
 .city-story__dialogue ol {

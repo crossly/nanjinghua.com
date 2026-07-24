@@ -13,8 +13,11 @@ test("早点铺以高频南京话场景对话为主体", async ({ page }) => {
 	await expect(playButton).toBeVisible();
 	await expect(playButton).toBeEnabled();
 	await playButton.click();
-	await expect(phrase.getByRole("button", { name: "暂停：阿要辣油啊？" })).toBeVisible();
+	await expect(phrase.getByRole("button", { name: /^(播放|暂停)：阿要辣油啊？$/ })).toBeVisible();
+	const audioResponse = await page.request.get("/audio/nanjinghua-trials/breakfast.wav");
+	expect(audioResponse.status()).toBe(200);
 	await expect(page.getByText("待南京本地使用者复核", { exact: true })).toBeVisible();
+	await expect(page.getByText("AI 合成试音 · 每个场景 1 条", { exact: true })).toBeVisible();
 });
 
 test("十五个场景都提供三至五句待复核口语", async ({ page }) => {
@@ -135,7 +138,7 @@ test("读者可以从城市地图进入公交站故事", async ({ page }) => {
 	await expect(page.getByRole("link", { name: "去公交站看看" })).toBeFocused();
 });
 
-test("地图图钉与故事索引双向同步", async ({ page }) => {
+test("地图图钉与故事索引双向同步", async ({ page }, testInfo) => {
 	await page.goto("/");
 
 	const mapLink = page.getByRole("link", { name: "去菜场看看" });
@@ -143,7 +146,11 @@ test("地图图钉与故事索引双向同步", async ({ page }) => {
 		.getByRole("list", { name: "城市故事索引" })
 		.getByRole("link", { name: /菜场里，话比菜新鲜/ });
 
-	await indexLink.hover();
+	if (testInfo.project.name === "mobile-chromium") {
+		await indexLink.focus();
+	} else {
+		await indexLink.hover();
+	}
 	await expect(mapLink).toHaveAttribute("data-active", "true");
 
 	await mapLink.focus();

@@ -21,17 +21,6 @@ export type CityStory = {
 		alt: string;
 	};
 	paragraphs: readonly string[];
-	dialogue?: readonly {
-		speaker: string;
-		utterance: string;
-		meaning: string;
-		context: string;
-		audio?: {
-			src: string;
-			type: "audio/mpeg" | "audio/wav";
-		};
-	}[];
-	dialogueReview?: "待南京本地使用者复核" | "南京本地使用者已复核";
 	phraseCards: readonly {
 		title: string;
 		body: string;
