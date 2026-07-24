@@ -5,19 +5,18 @@ import test from "node:test";
 
 import { buildSitemap } from "../scripts/build-sitemap.ts";
 
-test("站点地图包含所有正式档案和专题且排除治理夹具", async () => {
+test("站点地图只包含当前城市故事、制度、采集工具与反馈页面", async () => {
 	const records = await buildSitemap();
 	const locations = records.map((record) => record.loc);
-	assert.equal(locations.filter((location) => location.includes("/archive/")).length, 20);
-	assert.equal(locations.filter((location) => location.includes("/articles/")).length, 7);
-	assert.equal(locations.filter((location) => location.includes("/policies/")).length, 8);
-	assert.ok(locations.includes("https://nanjinghua.com/browse"));
-	assert.ok(locations.includes("https://nanjinghua.com/policies/privacy"));
-	assert.ok(locations.includes("https://nanjinghua.com/archive/NJH000020"));
-	assert.ok(!locations.includes("https://nanjinghua.com/archive/NJH000021"));
-	assert.ok(!locations.includes("https://nanjinghua.com/archive/NJH000022"));
+	assert.equal(locations.length, 25);
+	assert.equal(locations.filter((location) => location.includes("/stories/")).length, 15);
+	assert.equal(locations.filter((location) => location.includes("/policies/")).length, 7);
+	assert.ok(locations.includes("https://nanjinghua.com/contribute"));
+	assert.ok(locations.includes("https://nanjinghua.com/recording-kit"));
+	assert.ok(!locations.some((location) => location.includes("/archive/")));
+	assert.ok(!locations.some((location) => location.includes("/articles/")));
+	assert.ok(!locations.includes("https://nanjinghua.com/browse"));
 
-	const sitemapPath = join(process.cwd(), "public", "sitemap.xml");
-	const sitemap = await readFile(sitemapPath, "utf8");
+	const sitemap = await readFile(join(process.cwd(), "public", "sitemap.xml"), "utf8");
 	assert.match(sitemap, /<urlset xmlns="http:\/\/www\.sitemaps\.org\/schemas\/sitemap\/0\.9">/);
 });

@@ -87,7 +87,7 @@ export async function createSubmission(db: D1Database, input: SubmissionInput, n
 				input.type,
 				input.description,
 				input.sourceUrl || null,
-				input.archiveId || null,
+				null,
 				priority,
 				timestamp,
 				timestamp,

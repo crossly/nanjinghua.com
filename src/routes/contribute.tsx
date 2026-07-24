@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ArrowRight, Send } from "lucide-react";
+import { Send } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-import { ArchiveHeader } from "../components/archive-header";
+import { InteriorHeader } from "../components/interior-header";
 
 declare global {
 	interface Window {
@@ -26,17 +26,13 @@ export const Route = createFileRoute("/contribute")({
 			typeof search.type === "string" && prefillableTypes.has(search.type)
 				? search.type
 				: undefined,
-		archiveId:
-			typeof search.archiveId === "string" && /^NJH\d{6}$/.test(search.archiveId)
-				? search.archiveId
-				: undefined,
 	}),
 	head: () => ({
 		meta: [
-			{ title: "提供线索｜南京话" },
+			{ title: "反馈与纠错｜南京话" },
 			{
 				name: "description",
-				content: "向南京话公共数字档案提供词语、出处、纠错、权利请求或录音意愿。",
+				content: "反馈南京话城市场景、候选短句、页面问题，或提出纠错与权利请求。",
 			},
 		],
 	}),
@@ -55,7 +51,6 @@ function ContributePage() {
 	const [message, setMessage] = useState("");
 	const [referenceId, setReferenceId] = useState("");
 	const [submissionType, setSubmissionType] = useState(search.type ?? "");
-	const rightsRequest = submissionType === "权利请求" || submissionType === "隐私或安全请求";
 
 	useEffect(() => {
 		fetch("/api/submissions")
@@ -139,7 +134,6 @@ function ContributePage() {
 					type: formData.get("type"),
 					description: formData.get("description"),
 					sourceUrl: formData.get("sourceUrl"),
-					archiveId: formData.get("archiveId"),
 					contactMethod: formData.get("contactMethod") || undefined,
 					contactValue: formData.get("contactValue") || undefined,
 					policyAccepted: formData.get("policyAccepted") === "on",
@@ -177,7 +171,7 @@ function ContributePage() {
 
 	return (
 		<main className="interior-page">
-			<ArchiveHeader />
+			<InteriorHeader />
 			<section className="contribute" aria-labelledby="contribute-title">
 				{/* biome-ignore lint/a11y/useValidAnchor: This is fragment navigation with a no-script fallback. */}
 				<a
@@ -190,38 +184,34 @@ function ContributePage() {
 						document.getElementById("submission-type")?.focus();
 					}}
 				>
-					跳到线索表单
+					跳到反馈表单
 				</a>
 				<header className="contribute__lead">
-					<p className="section-label">公众参与</p>
-					<h1 id="contribute-title">提供一条线索</h1>
-					<p>词语、材料出处、纠错和录音意愿会先成为待审核材料；权利、隐私与安全请求优先处理。</p>
+					<p className="section-label">联系与反馈</p>
+					<h1 id="contribute-title">反馈与纠错</h1>
+					<p>可以补充短句的真实使用语境、指出页面错误，或提出版权、隐私与无障碍问题。</p>
 				</header>
 
 				<section className="contribute__policy" aria-labelledby="submission-policy-title">
-					<h2 id="submission-policy-title">信息用途与保留</h2>
+					<h2 id="submission-policy-title">提交前请了解</h2>
 					<dl>
 						<div>
-							<dt>公开范围</dt>
-							<dd>提交内容不会直接公开，也不保证采纳或逐条回复。</dd>
+							<dt>不会自动发布</dt>
+							<dd>反馈会先由内容负责人核对，不因提交次数或身份直接进入页面。</dd>
 						</div>
 						<div>
 							<dt>联系方式</dt>
 							<dd>与线索正文分开保存；线索采纳或关闭 90 天后删除。</dd>
 						</div>
 						<div>
-							<dt>处理周期</dt>
-							<dd>180 天无处理会触发提醒；普通线索在宽限期后按规则关闭。</dd>
+							<dt>优先事项</dt>
+							<dd>版权、隐私、人身安全与访问障碍会优先核对。</dd>
 						</div>
 						<div>
-							<dt>材料接收</dt>
-							<dd>表单不接收文件；确认来源与授权后，编辑再联系接收原件。</dd>
+							<dt>请勿提交</dt>
+							<dd>表单不接收文件，请勿填写身份证件、住址或无关敏感信息。</dd>
 						</div>
 					</dl>
-					<a className="contribute__recording-kit" href="/recording-kit">
-						<span>查看真人语音采集包</span>
-						<ArrowRight aria-hidden="true" strokeWidth={1.5} />
-					</a>
 				</section>
 
 				<form
@@ -236,7 +226,7 @@ function ContributePage() {
 						className="contribute-form__fields"
 						disabled={!clientReady || phase === "submitting"}
 					>
-						<legend className="visually-hidden">线索内容</legend>
+						<legend className="visually-hidden">反馈内容</legend>
 						<label>
 							<span>线索类型</span>
 							<select
@@ -255,12 +245,11 @@ function ContributePage() {
 								<option value="" disabled>
 									选择类型
 								</option>
-								<option>词语</option>
-								<option>材料出处</option>
+								<option value="词语">短句与使用语境</option>
+								<option value="材料出处">背景资料或来源</option>
 								<option>纠错</option>
 								<option>权利请求</option>
 								<option>隐私或安全请求</option>
-								<option>录音意愿</option>
 							</select>
 						</label>
 
@@ -270,19 +259,8 @@ function ContributePage() {
 						</label>
 
 						<label>
-							<span>材料链接（可选）</span>
+							<span>相关页面或来源链接（可选）</span>
 							<input name="sourceUrl" type="url" inputMode="url" />
-						</label>
-
-						<label>
-							<span>{rightsRequest ? "关联档案编号（必填）" : "关联档案编号（可选）"}</span>
-							<input
-								name="archiveId"
-								pattern="NJH[0-9]{6}"
-								placeholder="NJH000001"
-								defaultValue={search.archiveId ?? ""}
-								required={rightsRequest}
-							/>
 						</label>
 
 						<label>
@@ -318,7 +296,7 @@ function ContributePage() {
 								}}
 							>
 								<Send aria-hidden="true" strokeWidth={1.5} />
-								<span>{phase === "submitting" ? "正在提交" : "提交线索"}</span>
+								<span>{phase === "submitting" ? "正在提交" : "提交反馈"}</span>
 							</button>
 							<p className={`form-message form-message--${phase}`} aria-live="polite">
 								{message}

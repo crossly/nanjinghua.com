@@ -1,24 +1,14 @@
-import { readdir, readFile, writeFile } from "node:fs/promises";
-import { join, resolve } from "node:path";
+import { writeFile } from "node:fs/promises";
+import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
+import { cityStories } from "../src/content/city-stories.ts";
 import { policyDocuments } from "../src/content/policies.ts";
 import { SITE_ORIGIN } from "../src/site.ts";
 
 type SitemapRecord = {
 	loc: string;
 	lastmod?: string;
-};
-
-type ArchiveMetadata = {
-	id: string;
-	updatedAt?: string;
-	publicationStatus?: "公开" | "目录占位" | "隐私删除";
-};
-
-type ArticleMetadata = {
-	slug: string;
-	updatedAt?: string;
 };
 
 function escapeXml(value: string): string {
@@ -30,38 +20,17 @@ function escapeXml(value: string): string {
 		.replaceAll("'", "&apos;");
 }
 
-async function readJsonFiles<T>(directory: string): Promise<T[]> {
-	const fileNames = (await readdir(directory))
-		.filter((fileName) => fileName.endsWith(".meta.json"))
-		.sort();
-	return Promise.all(
-		fileNames.map(async (fileName) =>
-			JSON.parse(await readFile(join(directory, fileName), "utf8")),
-		),
-	);
-}
-
 export async function buildSitemap(projectRoot = process.cwd()): Promise<SitemapRecord[]> {
 	const root = resolve(projectRoot);
-	const archives = await readJsonFiles<ArchiveMetadata>(join(root, "content", "archive"));
-	const articles = await readJsonFiles<ArticleMetadata>(join(root, "content", "articles"));
 	const records: SitemapRecord[] = [
 		{ loc: `${SITE_ORIGIN}/` },
-		{ loc: `${SITE_ORIGIN}/browse` },
+		...cityStories.map((story) => ({ loc: `${SITE_ORIGIN}/stories/${story.slug}` })),
 		...policyDocuments.map((document) => ({
 			loc: `${SITE_ORIGIN}/policies/${document.slug}`,
 			lastmod: document.updatedAt,
 		})),
-		...articles.map((article) => ({
-			loc: `${SITE_ORIGIN}/articles/${article.slug}`,
-			lastmod: article.updatedAt,
-		})),
-		...archives
-			.filter((entry) => entry.publicationStatus !== "隐私删除")
-			.map((entry) => ({
-				loc: `${SITE_ORIGIN}/archive/${entry.id}`,
-				lastmod: entry.updatedAt,
-			})),
+		{ loc: `${SITE_ORIGIN}/recording-kit` },
+		{ loc: `${SITE_ORIGIN}/contribute` },
 	];
 	const urls = records
 		.map(
@@ -70,7 +39,7 @@ export async function buildSitemap(projectRoot = process.cwd()): Promise<Sitemap
 		)
 		.join("\n");
 	const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`;
-	await writeFile(join(root, "public", "sitemap.xml"), xml, "utf8");
+	await writeFile(resolve(root, "public", "sitemap.xml"), xml, "utf8");
 	return records;
 }
 

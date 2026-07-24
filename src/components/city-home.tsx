@@ -1,5 +1,5 @@
 import { useNavigate, useRouter } from "@tanstack/react-router";
-import { ArrowDown, ArrowRight, ArrowUpRight, X } from "lucide-react";
+import { ArrowDown, ArrowRight, X } from "lucide-react";
 import { type CSSProperties, useEffect, useRef, useState } from "react";
 
 import { type CityStory, cityLocations, cityStories } from "../content/city-stories";
@@ -85,7 +85,7 @@ export function CityHome({ activeStory }: { activeStory?: CityStory }) {
 				<nav aria-label="首页导航">
 					<a href="#city-map">逛一逛</a>
 					<a href="#city-overview">翻翻看</a>
-					<a href="/browse">旧资料柜</a>
+					<a href="/policies/about">关于</a>
 				</nav>
 			</header>
 
@@ -226,17 +226,6 @@ export function CityHome({ activeStory }: { activeStory?: CityStory }) {
 						</li>
 					))}
 				</ol>
-
-				<aside className="city-overview__archive" aria-labelledby="city-archive-title">
-					<div>
-						<p>旧资料柜</p>
-						<h3 id="city-archive-title">有些旧页，也值得慢慢翻。</h3>
-					</div>
-					<a href="/browse">
-						<span>去旧资料柜看看</span>
-						<ArrowUpRight aria-hidden="true" strokeWidth={1.5} />
-					</a>
-				</aside>
 			</section>
 
 			{activeStory ? <CityStoryDialog story={activeStory} onDismiss={closeStory} /> : null}

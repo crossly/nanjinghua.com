@@ -9,25 +9,25 @@ export const terminalRoutes = [
 		expectedContent: "南京话的历史",
 	},
 	{
-		id: "article",
-		path: "/articles/what-is-nanjinghua",
-		expectedPath: "/articles/what-is-nanjinghua",
+		id: "story",
+		path: "/stories/breakfast",
+		expectedPath: "/stories/breakfast",
 		expectedQuery: null,
-		expectedContent: "南京话是什么？",
+		expectedContent: "早点铺的热气，先醒过来",
 	},
 	{
-		id: "search",
-		path: "/browse?q=%E7%99%BD%E5%B1%80",
-		expectedPath: "/browse",
-		expectedQuery: "白局",
-		expectedContent: "南京白局",
+		id: "about",
+		path: "/policies/about",
+		expectedPath: "/policies/about",
+		expectedQuery: null,
+		expectedContent: "关于本站",
 	},
 	{
 		id: "canonical",
-		path: "/articles/what-is-nanjinghua/",
-		expectedPath: "/articles/what-is-nanjinghua",
+		path: "/stories/breakfast/",
+		expectedPath: "/stories/breakfast",
 		expectedQuery: null,
-		expectedContent: "南京话是什么？",
+		expectedContent: "早点铺的热气，先醒过来",
 	},
 ] as const;
 
@@ -215,11 +215,6 @@ export function createPublicTerminalNetworkEvidence(
 		colo: trace.colo,
 		tls: trace.tls,
 	};
-}
-
-export function parseSearchResultCount(bodyText: string): number | null {
-	const match = bodyText.match(/(\d+)\s*项结果/u);
-	return match ? Number(match[1]) : null;
 }
 
 export function shouldRecordTerminalRequestFailure(

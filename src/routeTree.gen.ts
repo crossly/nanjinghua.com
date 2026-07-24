@@ -11,14 +11,10 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as RecordingKitRouteImport } from './routes/recording-kit'
 import { Route as ContributeRouteImport } from './routes/contribute'
-import { Route as BrowseRouteImport } from './routes/browse'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StoriesStorySlugRouteImport } from './routes/stories/$storySlug'
 import { Route as PoliciesPolicySlugRouteImport } from './routes/policies/$policySlug'
-import { Route as ArticlesSlugRouteImport } from './routes/articles/$slug'
-import { Route as ArchiveArchiveIdRouteImport } from './routes/archive/$archiveId'
 import { Route as ApiSubmissionsRouteImport } from './routes/api/submissions'
-import { Route as ApiArchiveArchiveIdRouteImport } from './routes/api/archive/$archiveId'
 import { Route as ApiEditorSubmissionsMaintenanceRouteImport } from './routes/api/editor/submissions/maintenance'
 import { Route as ApiEditorSubmissionsSubmissionIdRouteImport } from './routes/api/editor/submissions/$submissionId'
 import { Route as ApiEditorSubmissionsSubmissionIdDispositionsRouteImport } from './routes/api/editor/submissions/$submissionId/dispositions'
@@ -31,11 +27,6 @@ const RecordingKitRoute = RecordingKitRouteImport.update({
 const ContributeRoute = ContributeRouteImport.update({
   id: '/contribute',
   path: '/contribute',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BrowseRoute = BrowseRouteImport.update({
-  id: '/browse',
-  path: '/browse',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -53,24 +44,9 @@ const PoliciesPolicySlugRoute = PoliciesPolicySlugRouteImport.update({
   path: '/policies/$policySlug',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ArticlesSlugRoute = ArticlesSlugRouteImport.update({
-  id: '/articles/$slug',
-  path: '/articles/$slug',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ArchiveArchiveIdRoute = ArchiveArchiveIdRouteImport.update({
-  id: '/archive/$archiveId',
-  path: '/archive/$archiveId',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ApiSubmissionsRoute = ApiSubmissionsRouteImport.update({
   id: '/api/submissions',
   path: '/api/submissions',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiArchiveArchiveIdRoute = ApiArchiveArchiveIdRouteImport.update({
-  id: '/api/archive/$archiveId',
-  path: '/api/archive/$archiveId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ApiEditorSubmissionsMaintenanceRoute =
@@ -94,30 +70,22 @@ const ApiEditorSubmissionsSubmissionIdDispositionsRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/browse': typeof BrowseRoute
   '/contribute': typeof ContributeRoute
   '/recording-kit': typeof RecordingKitRoute
   '/api/submissions': typeof ApiSubmissionsRoute
-  '/archive/$archiveId': typeof ArchiveArchiveIdRoute
-  '/articles/$slug': typeof ArticlesSlugRoute
   '/policies/$policySlug': typeof PoliciesPolicySlugRoute
   '/stories/$storySlug': typeof StoriesStorySlugRoute
-  '/api/archive/$archiveId': typeof ApiArchiveArchiveIdRoute
   '/api/editor/submissions/$submissionId': typeof ApiEditorSubmissionsSubmissionIdRouteWithChildren
   '/api/editor/submissions/maintenance': typeof ApiEditorSubmissionsMaintenanceRoute
   '/api/editor/submissions/$submissionId/dispositions': typeof ApiEditorSubmissionsSubmissionIdDispositionsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/browse': typeof BrowseRoute
   '/contribute': typeof ContributeRoute
   '/recording-kit': typeof RecordingKitRoute
   '/api/submissions': typeof ApiSubmissionsRoute
-  '/archive/$archiveId': typeof ArchiveArchiveIdRoute
-  '/articles/$slug': typeof ArticlesSlugRoute
   '/policies/$policySlug': typeof PoliciesPolicySlugRoute
   '/stories/$storySlug': typeof StoriesStorySlugRoute
-  '/api/archive/$archiveId': typeof ApiArchiveArchiveIdRoute
   '/api/editor/submissions/$submissionId': typeof ApiEditorSubmissionsSubmissionIdRouteWithChildren
   '/api/editor/submissions/maintenance': typeof ApiEditorSubmissionsMaintenanceRoute
   '/api/editor/submissions/$submissionId/dispositions': typeof ApiEditorSubmissionsSubmissionIdDispositionsRoute
@@ -125,15 +93,11 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/browse': typeof BrowseRoute
   '/contribute': typeof ContributeRoute
   '/recording-kit': typeof RecordingKitRoute
   '/api/submissions': typeof ApiSubmissionsRoute
-  '/archive/$archiveId': typeof ArchiveArchiveIdRoute
-  '/articles/$slug': typeof ArticlesSlugRoute
   '/policies/$policySlug': typeof PoliciesPolicySlugRoute
   '/stories/$storySlug': typeof StoriesStorySlugRoute
-  '/api/archive/$archiveId': typeof ApiArchiveArchiveIdRoute
   '/api/editor/submissions/$submissionId': typeof ApiEditorSubmissionsSubmissionIdRouteWithChildren
   '/api/editor/submissions/maintenance': typeof ApiEditorSubmissionsMaintenanceRoute
   '/api/editor/submissions/$submissionId/dispositions': typeof ApiEditorSubmissionsSubmissionIdDispositionsRoute
@@ -142,45 +106,33 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/browse'
     | '/contribute'
     | '/recording-kit'
     | '/api/submissions'
-    | '/archive/$archiveId'
-    | '/articles/$slug'
     | '/policies/$policySlug'
     | '/stories/$storySlug'
-    | '/api/archive/$archiveId'
     | '/api/editor/submissions/$submissionId'
     | '/api/editor/submissions/maintenance'
     | '/api/editor/submissions/$submissionId/dispositions'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/browse'
     | '/contribute'
     | '/recording-kit'
     | '/api/submissions'
-    | '/archive/$archiveId'
-    | '/articles/$slug'
     | '/policies/$policySlug'
     | '/stories/$storySlug'
-    | '/api/archive/$archiveId'
     | '/api/editor/submissions/$submissionId'
     | '/api/editor/submissions/maintenance'
     | '/api/editor/submissions/$submissionId/dispositions'
   id:
     | '__root__'
     | '/'
-    | '/browse'
     | '/contribute'
     | '/recording-kit'
     | '/api/submissions'
-    | '/archive/$archiveId'
-    | '/articles/$slug'
     | '/policies/$policySlug'
     | '/stories/$storySlug'
-    | '/api/archive/$archiveId'
     | '/api/editor/submissions/$submissionId'
     | '/api/editor/submissions/maintenance'
     | '/api/editor/submissions/$submissionId/dispositions'
@@ -188,15 +140,11 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  BrowseRoute: typeof BrowseRoute
   ContributeRoute: typeof ContributeRoute
   RecordingKitRoute: typeof RecordingKitRoute
   ApiSubmissionsRoute: typeof ApiSubmissionsRoute
-  ArchiveArchiveIdRoute: typeof ArchiveArchiveIdRoute
-  ArticlesSlugRoute: typeof ArticlesSlugRoute
   PoliciesPolicySlugRoute: typeof PoliciesPolicySlugRoute
   StoriesStorySlugRoute: typeof StoriesStorySlugRoute
-  ApiArchiveArchiveIdRoute: typeof ApiArchiveArchiveIdRoute
   ApiEditorSubmissionsSubmissionIdRoute: typeof ApiEditorSubmissionsSubmissionIdRouteWithChildren
   ApiEditorSubmissionsMaintenanceRoute: typeof ApiEditorSubmissionsMaintenanceRoute
 }
@@ -215,13 +163,6 @@ declare module '@tanstack/react-router' {
       path: '/contribute'
       fullPath: '/contribute'
       preLoaderRoute: typeof ContributeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/browse': {
-      id: '/browse'
-      path: '/browse'
-      fullPath: '/browse'
-      preLoaderRoute: typeof BrowseRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -245,32 +186,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PoliciesPolicySlugRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/articles/$slug': {
-      id: '/articles/$slug'
-      path: '/articles/$slug'
-      fullPath: '/articles/$slug'
-      preLoaderRoute: typeof ArticlesSlugRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/archive/$archiveId': {
-      id: '/archive/$archiveId'
-      path: '/archive/$archiveId'
-      fullPath: '/archive/$archiveId'
-      preLoaderRoute: typeof ArchiveArchiveIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/api/submissions': {
       id: '/api/submissions'
       path: '/api/submissions'
       fullPath: '/api/submissions'
       preLoaderRoute: typeof ApiSubmissionsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/archive/$archiveId': {
-      id: '/api/archive/$archiveId'
-      path: '/api/archive/$archiveId'
-      fullPath: '/api/archive/$archiveId'
-      preLoaderRoute: typeof ApiArchiveArchiveIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/api/editor/submissions/maintenance': {
@@ -314,15 +234,11 @@ const ApiEditorSubmissionsSubmissionIdRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  BrowseRoute: BrowseRoute,
   ContributeRoute: ContributeRoute,
   RecordingKitRoute: RecordingKitRoute,
   ApiSubmissionsRoute: ApiSubmissionsRoute,
-  ArchiveArchiveIdRoute: ArchiveArchiveIdRoute,
-  ArticlesSlugRoute: ArticlesSlugRoute,
   PoliciesPolicySlugRoute: PoliciesPolicySlugRoute,
   StoriesStorySlugRoute: StoriesStorySlugRoute,
-  ApiArchiveArchiveIdRoute: ApiArchiveArchiveIdRoute,
   ApiEditorSubmissionsSubmissionIdRoute:
     ApiEditorSubmissionsSubmissionIdRouteWithChildren,
   ApiEditorSubmissionsMaintenanceRoute: ApiEditorSubmissionsMaintenanceRoute,

@@ -1,15 +1,14 @@
 export const policyNavigation = [
 	{ group: "项目", slug: "about", label: "关于本站" },
-	{ group: "项目", slug: "editorial", label: "编辑与证据原则" },
-	{ group: "项目", slug: "transparency", label: "透明度与合作" },
-	{ group: "权利与数据", slug: "rights-and-licensing", label: "版权与开放许可" },
-	{ group: "权利与数据", slug: "privacy", label: "隐私政策" },
-	{ group: "权利与数据", slug: "corrections-and-rights", label: "纠错与权利申诉" },
-	{ group: "参与", slug: "accessibility", label: "无障碍说明" },
-	{ group: "参与", slug: "participate", label: "参与贡献" },
+	{ group: "项目", slug: "editorial", label: "内容与复核" },
+	{ group: "项目", slug: "transparency", label: "AI 与透明度" },
+	{ group: "使用与反馈", slug: "rights-and-licensing", label: "版权与使用" },
+	{ group: "使用与反馈", slug: "privacy", label: "隐私说明" },
+	{ group: "使用与反馈", slug: "corrections-and-rights", label: "纠错与权利" },
+	{ group: "使用与反馈", slug: "accessibility", label: "无障碍说明" },
 ] as const;
 
-const policyGroupLabels = ["项目", "权利与数据", "参与"] as const;
+const policyGroupLabels = ["项目", "使用与反馈"] as const;
 
 export const policyNavigationGroups = policyGroupLabels.map((label) => ({
 	label,

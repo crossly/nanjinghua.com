@@ -3,12 +3,6 @@ export type MusicBookplate = {
 	href: string;
 };
 
-export type CityStorySourceNote = {
-	label: string;
-	href: string;
-	note: string;
-};
-
 export type CityStory = {
 	slug: string;
 	title: string;
@@ -27,13 +21,6 @@ export type CityStory = {
 	}[];
 	music?: MusicBookplate;
 	relatedStorySlugs?: readonly string[];
-	sourceNotes?: readonly CityStorySourceNote[];
-};
-
-const cityStoryArchiveNote: CityStorySourceNote = {
-	label: "去旧资料柜看看",
-	href: "/browse",
-	note: "这里可以继续浏览档案条目和专题文章，并查看各自的来源、权利与编辑说明；本页的城市场景是原创写作，不作为档案事实。",
 };
 
 export const cityStories = [
@@ -86,7 +73,6 @@ export const cityStories = [
 				body: "在巷口听见这句话，不一定真要逐项汇报一顿饭。它更像一句轻轻的“回来啦”，让人有机会停一停，也有机会笑着往前走。",
 			},
 		],
-		sourceNotes: [cityStoryArchiveNote],
 	},
 	{
 		slug: "shop",
@@ -110,7 +96,6 @@ export const cityStories = [
 				body: "一句普通的提醒，尾音放松一点，像是把找零、塑料袋和一句“路上当心”一块递到手里。",
 			},
 		],
-		sourceNotes: [cityStoryArchiveNote],
 	},
 	{
 		slug: "market",
@@ -134,7 +119,6 @@ export const cityStories = [
 				body: "在菜场，它可以是一句请人帮忙把袋子提稳的话。重点不在说得多漂亮，而在两个人都知道下一步该怎么接。",
 			},
 		],
-		sourceNotes: [cityStoryArchiveNote],
 	},
 	{
 		slug: "breakfast",
@@ -156,7 +140,6 @@ export const cityStories = [
 				body: "这是一句很实在的关照。早点铺里它既是在说食物，也是在提醒人别把自己的清晨过得太匆忙。",
 			},
 		],
-		sourceNotes: [cityStoryArchiveNote],
 	},
 	{
 		slug: "kitchen",
@@ -180,7 +163,6 @@ export const cityStories = [
 				body: "厨房里的一句接手，不必带方言色彩也足够亲近。它让下一件小事有人一起做，也给谈话留一点继续的时间。",
 			},
 		],
-		sourceNotes: [cityStoryArchiveNote],
 	},
 	{
 		slug: "downstairs",
@@ -204,7 +186,6 @@ export const cityStories = [
 				body: "它不是郑重的邀请，更像给晚风留出一个位置。想来就来，想先走也不用解释。",
 			},
 		],
-		sourceNotes: [cityStoryArchiveNote],
 	},
 	{
 		slug: "school-gate",
@@ -228,7 +209,6 @@ export const cityStories = [
 				body: "它可以是提醒，也可以只是陪伴。路不用赶完，今天发生的小事也不用一次讲清。",
 			},
 		],
-		sourceNotes: [cityStoryArchiveNote],
 	},
 	{
 		slug: "playground",
@@ -252,7 +232,6 @@ export const cityStories = [
 				body: "它不是不肯结束，只是大家都愿意把这一小段晚风再留一会儿。",
 			},
 		],
-		sourceNotes: [cityStoryArchiveNote],
 	},
 	{
 		slug: "new-estate",
@@ -276,7 +255,6 @@ export const cityStories = [
 				body: "在门禁、电梯或快递架旁，这句话把一件举手之劳说得很轻，也让陌生人有了下一次打招呼的理由。",
 			},
 		],
-		sourceNotes: [cityStoryArchiveNote],
 	},
 	{
 		slug: "phone-screen",
@@ -300,7 +278,6 @@ export const cityStories = [
 				body: "从门口跟到手机里，它还是一句普通的惦记。回复长短不重要，让人知道你平安就好。",
 			},
 		],
-		sourceNotes: [cityStoryArchiveNote],
 	},
 	{
 		slug: "stage",
@@ -321,14 +298,7 @@ export const cityStories = [
 		phraseCards: [
 			{
 				title: "听一会儿",
-				body: "不必预先懂得曲牌或唱词。先坐下来听一小段，再决定要不要去旧资料柜里多翻一点。",
-			},
-		],
-		sourceNotes: [
-			{
-				label: "国家级非物质文化遗产代表性项目“南京白局”",
-				href: "/archive/NJH000015",
-				note: "档案条目 NJH000015 整理了项目名录记录，并单独标明来源、权利和编辑状态；它是背景材料，不为本页原创场景背书。",
+				body: "不必预先懂得曲牌或唱词。先坐下来听一小段，也可以留意台上台下怎样接话。",
 			},
 		],
 	},
@@ -352,13 +322,6 @@ export const cityStories = [
 			{
 				title: "再对一对",
 				body: "面对旧材料，多找一份出处、多看一个年代，常常比急着下结论更接近“正本清源”。",
-			},
-		],
-		sourceNotes: [
-			{
-				label: "《南京方言志》（1993 年专志）",
-				href: "/archive/NJH000002",
-				note: "档案条目 NJH000002 提供书目信息、证据身份和权利说明；它是进一步查阅的入口，不是本页虚构地图的来源。",
 			},
 		],
 	},
@@ -388,7 +351,6 @@ export const cityStories = [
 			title: "去听《Come on！莱斯狗！》",
 			href: "https://y.qq.com/n/ryqq/songDetail/000pEaf80BVErP",
 		},
-		sourceNotes: [cityStoryArchiveNote],
 	},
 	{
 		slug: "station",
@@ -412,7 +374,6 @@ export const cityStories = [
 				body: "站台上的叮嘱会跟着人走很远。这里的“讲”就是“说”，重点始终是等一条平安抵达的消息。",
 			},
 		],
-		sourceNotes: [cityStoryArchiveNote],
 	},
 ] as const satisfies readonly CityStory[];
 

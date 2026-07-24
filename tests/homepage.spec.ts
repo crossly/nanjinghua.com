@@ -26,9 +26,10 @@ test("访客可以从品牌首页开始城市漫游", async ({ page }) => {
 
 	const storyLink = page.getByRole("link", { name: /早高峰，南京人都在挤公交/ });
 	await expect(storyLink).toHaveAttribute("href", "/stories/jigongjiao");
-	await expect(page.getByRole("link", { name: "去旧资料柜看看" })).toHaveAttribute(
+	await expect(page.getByRole("link", { name: "旧资料柜" })).toHaveCount(0);
+	await expect(page.getByRole("link", { name: "关于", exact: true })).toHaveAttribute(
 		"href",
-		"/browse",
+		"/policies/about",
 	);
 
 	const horizontalOverflow = await page.evaluate(
@@ -38,7 +39,13 @@ test("访客可以从品牌首页开始城市漫游", async ({ page }) => {
 });
 
 test("公开内容规范 URL 不使用尾斜杠", async ({ request }) => {
-	const response = await request.get("/articles/what-is-nanjinghua/", { maxRedirects: 0 });
+	const response = await request.get("/stories/breakfast/", { maxRedirects: 0 });
 	expect(response.status()).toBe(307);
-	expect(response.headers().location).toBe("/articles/what-is-nanjinghua");
+	expect(response.headers().location).toBe("/stories/breakfast");
+});
+
+test("旧资料柜公开页面已下线", async ({ request }) => {
+	for (const path of ["/browse", "/archive/NJH000001", "/articles/what-is-nanjinghua"]) {
+		expect((await request.get(path)).status(), path).toBe(404);
+	}
 });

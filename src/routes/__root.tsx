@@ -14,11 +14,11 @@ export const Route = createRootRoute({
 				content: "width=device-width, initial-scale=1",
 			},
 			{
-				title: "南京话｜南京话的历史",
+				title: "南京话｜南京城的声音",
 			},
 			{
 				name: "description",
-				content: "南京话是一项面向公众、证据优先的南京话历史与文化数字档案。",
+				content: "从十五个南京城日常场景出发，记录说话方式、城市生活和仍在变化的地方记忆。",
 			},
 			{
 				name: "theme-color",

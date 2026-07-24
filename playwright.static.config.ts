@@ -23,7 +23,7 @@ export default defineConfig({
 	],
 	webServer: {
 		command: "pnpm run build:readonly-static && pnpm run preview:static",
-		url: "http://127.0.0.1:4174/browse",
+		url: "http://127.0.0.1:4174/",
 		reuseExistingServer: false,
 		stdout: "pipe",
 		stderr: "pipe",

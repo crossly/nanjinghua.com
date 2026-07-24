@@ -1,7 +1,7 @@
 import { createFileRoute, notFound } from "@tanstack/react-router";
 import { ArrowRight } from "lucide-react";
 
-import { ArchiveHeader } from "../../components/archive-header";
+import { InteriorHeader } from "../../components/interior-header";
 import { getPolicyDocument, type PolicyLink, policyDocuments } from "../../content/policies";
 import { READONLY_STATIC_DELIVERY } from "../../delivery";
 import { SITE_ORIGIN } from "../../site";
@@ -36,7 +36,7 @@ function PolicyPage() {
 
 	return (
 		<main className="interior-page">
-			<ArchiveHeader />
+			<InteriorHeader />
 			<article className="policy-page">
 				<header className="policy-page__lead">
 					<p className="section-label">{document.eyebrow}</p>

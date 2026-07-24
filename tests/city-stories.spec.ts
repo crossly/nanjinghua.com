@@ -83,10 +83,7 @@ test("读者可以从城市地图进入公交站故事", async ({ page }) => {
 		"href",
 		"/stories/jigongjiao",
 	);
-	await expect(page.getByRole("link", { name: "去旧资料柜看看" })).toHaveAttribute(
-		"href",
-		"/browse",
-	);
+	await expect(page.getByRole("link", { name: "旧资料柜" })).toHaveCount(0);
 	await expect(page.locator("main.city-home")).toHaveAttribute("data-city-interactive", "true");
 	if ((page.viewportSize()?.width ?? 0) <= 704) {
 		const mobileStoryLink = page.getByRole("link", { name: /公交站.*进去看看/ });
@@ -200,16 +197,7 @@ test("十五个城市地点可从地图和总览进入同一篇独立故事", as
 	}
 
 	await page.goto("/stories/lane");
-	await expect(page.getByRole("heading", { level: 2, name: "想再翻一翻" })).toBeVisible();
-	await expect(page.getByRole("link", { name: "去旧资料柜看看" })).toHaveAttribute(
-		"href",
-		"/browse",
-	);
-
-	await page.goto("/stories/stage");
-	await expect(
-		page.getByRole("link", { name: "国家级非物质文化遗产代表性项目“南京白局”" }),
-	).toHaveAttribute("href", "/archive/NJH000015");
+	await expect(page.getByText("旧资料柜", { exact: true })).toHaveCount(0);
 
 	await page.goto("/stories/festival-street");
 	const festivalMusic = page.getByRole("link", { name: "去听《Come on！莱斯狗！》" });

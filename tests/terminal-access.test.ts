@@ -7,7 +7,6 @@ import {
 	parseCloudflareTrace,
 	parseCymruAsNameRecords,
 	parseCymruOriginRecords,
-	parseSearchResultCount,
 	redactTerminalDiagnostic,
 	refreshTerminalMeasurementFailures,
 	serializePublicTerminalReport,
@@ -101,30 +100,28 @@ test("终端页面矩阵分别保存请求路径和规范 pathname", () => {
 		[
 			{ id: "home", path: "/", expectedPath: "/", expectedQuery: null },
 			{
-				id: "article",
-				path: "/articles/what-is-nanjinghua",
-				expectedPath: "/articles/what-is-nanjinghua",
+				id: "story",
+				path: "/stories/breakfast",
+				expectedPath: "/stories/breakfast",
 				expectedQuery: null,
 			},
 			{
-				id: "search",
-				path: "/browse?q=%E7%99%BD%E5%B1%80",
-				expectedPath: "/browse",
-				expectedQuery: "白局",
+				id: "about",
+				path: "/policies/about",
+				expectedPath: "/policies/about",
+				expectedQuery: null,
 			},
 			{
 				id: "canonical",
-				path: "/articles/what-is-nanjinghua/",
-				expectedPath: "/articles/what-is-nanjinghua",
+				path: "/stories/breakfast/",
+				expectedPath: "/stories/breakfast",
 				expectedQuery: null,
 			},
 		],
 	);
 });
 
-test("搜索结果计数和远端诊断脱敏不依赖浏览器运行", () => {
-	assert.equal(parseSearchResultCount("当前条件 · 7 项结果"), 7);
-	assert.equal(parseSearchResultCount("没有结果"), null);
+test("远端诊断脱敏不依赖浏览器运行", () => {
 	assert.equal(
 		redactTerminalDiagnostic("client 203.0.113.42 and 2001:db8::1; encoded 203.0.113.42", [
 			"203.0.113.42",
@@ -232,7 +229,7 @@ test("指定运营商、三轮页面、网络恢复和人工确认全部满足�
 		endNetwork: network,
 		rounds: 3,
 		measurements: Array.from({ length: 12 }, (_, index) => ({
-			route: ["home", "article", "search", "canonical"][index % 4],
+			route: ["home", "story", "about", "canonical"][index % 4],
 			round: Math.floor(index / 4) + 1,
 			passed: true,
 		})),

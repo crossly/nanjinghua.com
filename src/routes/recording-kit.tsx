@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { ArrowRight, Download, FileCheck2, FolderLock, Headphones, Mic2 } from "lucide-react";
 
-import { ArchiveHeader } from "../components/archive-header";
+import { InteriorHeader } from "../components/interior-header";
 import { RECORDING_KIT_DOWNLOAD_PATH, RECORDING_KIT_VERSION } from "../recording-kit/config";
 
 export const Route = createFileRoute("/recording-kit")({
@@ -57,16 +57,17 @@ const consentScopes = [
 function RecordingKitPage() {
 	return (
 		<main className="interior-page">
-			<ArchiveHeader backHref="/contribute" backLabel="返回参与说明" />
+			<InteriorHeader backHref="/" backLabel="返回首页" />
 
 			<section className="recording-kit-hero" aria-labelledby="recording-kit-title">
 				<div>
-					<p className="section-label">公众采集工具 · v{RECORDING_KIT_VERSION}</p>
+					<p className="section-label">备用采集工具 · v{RECORDING_KIT_VERSION}</p>
 					<h1 id="recording-kit-title">真人语音采集包</h1>
 				</div>
 				<div className="recording-kit-hero__intro">
 					<p>
-						用常见手机或录音机，留下可追溯、可撤回且不表演化的南京话记录。先取得分项授权，再开始录音。
+						用常见手机或录音机，留下可追溯、可撤回且不表演化的南京话记录。当前城市故事中的 AI
+						合成试音不代表真实南京话录音。
 					</p>
 					<a className="recording-kit-download" href={RECORDING_KIT_DOWNLOAD_PATH} download>
 						<Download aria-hidden="true" strokeWidth={1.5} />
@@ -160,7 +161,7 @@ function RecordingKitPage() {
 					<div>
 						<span>受限 · A</span>
 						<h3>真实身份</h3>
-						<p>姓名与联系信息只用于核对授权和处理撤回，不进入公开档案。</p>
+						<p>姓名与联系信息只用于核对授权和处理撤回，不进入公开内容。</p>
 					</div>
 					<div>
 						<span>受限 · B</span>
@@ -188,7 +189,7 @@ function RecordingKitPage() {
 					<li>原始文件和派生文件校验清单</li>
 				</ul>
 				<a href="/contribute">
-					<span>先提交录音意愿</span>
+					<span>提交相关反馈</span>
 					<ArrowRight aria-hidden="true" strokeWidth={1.5} />
 				</a>
 			</section>
